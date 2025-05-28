@@ -653,46 +653,75 @@
             }
         }
         
-        // 제목에서 키워드 추출
+        // 제목에서 메인 키워드 추출 (보조 키워드 제외)
         function extractKeywordsFromTitle(title, category) {
             const keywords = [];
             
             switch (category) {
                 case 'travel':
-                    if (title.includes('제주')) keywords.push('제주도 여행');
-                    if (title.includes('부산')) keywords.push('부산 여행');
-                    if (title.includes('여행')) keywords.push('국내 여행지');
-                    if (title.includes('펜션')) keywords.push('펜션 예약');
-                    if (title.includes('호텔')) keywords.push('호텔 예약');
+                    if (title.includes('여행') || title.includes('휴가')) {
+                        keywords.push('여름 휴가지');
+                        keywords.push('국내 여행');
+                    }
+                    if (title.includes('펜션') || title.includes('숙박')) {
+                        keywords.push('숙박 예약');
+                    }
+                    if (title.includes('항공') || title.includes('교통')) {
+                        keywords.push('여행 교통편');
+                    }
                     break;
                     
                 case 'festival':
-                    if (title.includes('축제')) keywords.push('지역 축제');
-                    if (title.includes('공연')) keywords.push('야외 공연');
-                    if (title.includes('행사')) keywords.push('문화 행사');
+                    if (title.includes('축제') || title.includes('행사')) {
+                        keywords.push('지역 축제');
+                        keywords.push('문화 행사');
+                    }
+                    if (title.includes('공연') || title.includes('이벤트')) {
+                        keywords.push('야외 공연');
+                    }
                     break;
                     
                 case 'ticket':
-                    if (title.includes('콘서트')) keywords.push('콘서트 티켓');
-                    if (title.includes('뮤지컬')) keywords.push('뮤지컬 티켓');
-                    if (title.includes('야구')) keywords.push('야구 티켓');
-                    if (title.includes('축구')) keywords.push('축구 티켓');
+                    if (title.includes('콘서트') || title.includes('공연')) {
+                        keywords.push('콘서트 예매');
+                    }
+                    if (title.includes('뮤지컬') || title.includes('연극')) {
+                        keywords.push('공연 티켓');
+                    }
+                    if (title.includes('스포츠') || title.includes('야구') || title.includes('축구')) {
+                        keywords.push('스포츠 관람');
+                    }
                     break;
                     
                 case 'restaurant':
-                    if (title.includes('맛집')) keywords.push('지역 맛집');
-                    if (title.includes('음식')) keywords.push('맛집 추천');
-                    if (title.includes('카페')) keywords.push('카페 추천');
+                    if (title.includes('맛집') || title.includes('음식')) {
+                        keywords.push('맛집 탐방');
+                        keywords.push('외식 정보');
+                    }
+                    if (title.includes('카페') || title.includes('디저트')) {
+                        keywords.push('카페 투어');
+                    }
+                    if (title.includes('요리') || title.includes('레시피')) {
+                        keywords.push('요리 레시피');
+                    }
                     break;
                     
                 case 'welfare':
-                    if (title.includes('지원금')) keywords.push('정부 지원금');
-                    if (title.includes('혜택')) keywords.push('복지 혜택');
-                    if (title.includes('신청')) keywords.push('지원금 신청');
+                    if (title.includes('지원금') || title.includes('혜택')) {
+                        keywords.push('정부 혜택');
+                        keywords.push('지원금 정보');
+                    }
+                    if (title.includes('복지') || title.includes('정책')) {
+                        keywords.push('복지 정책');
+                    }
+                    if (title.includes('신청') || title.includes('접수')) {
+                        keywords.push('혜택 신청');
+                    }
                     break;
             }
             
-            return keywords.filter(k => k.length > 0);
+            // 중복 제거 및 메인 키워드만 반환
+            return [...new Set(keywords)];
         }
         
         // 카테고리별 트렌드 아이콘
