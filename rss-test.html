@@ -155,16 +155,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎫 구글 알리미 RSS 테스트</h1>
-            <p>실제 "티켓 예매" RSS 피드에서 키워드를 추출해봅시다!</p>
+            <h1>💰 구글 알리미 RSS 테스트</h1>
+            <p>실제 "지원금" RSS 피드에서 키워드를 추출해봅시다!</p>
         </div>
         
         <div class="rss-info">
             <strong>📡 테스트 RSS 피드:</strong><br>
             <code style="font-size: 0.9em; word-break: break-all;">
-                https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266
+                https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041
             </code><br>
-            <strong>🎯 키워드:</strong> "티켓 예매"
+            <strong>🎯 키워드:</strong> "지원금"
         </div>
         
         <button class="test-btn" onclick="testRssFeed()" id="testBtn">
@@ -207,7 +207,7 @@
             
             try {
                 // RSS 피드 URL
-                const rssUrl = "https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266";
+                const rssUrl = "https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041";
                 
                 // RSS를 JSON으로 변환하는 무료 API 사용
                 const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
@@ -264,17 +264,23 @@
             items.forEach(item => {
                 const title = item.title || '';
                 
-                // 간단한 키워드 추출 로직
-                if (title.includes('콘서트')) keywords.add('콘서트 티켓');
-                if (title.includes('뮤지컬')) keywords.add('뮤지컬 티켓');
-                if (title.includes('야구')) keywords.add('야구 티켓');
-                if (title.includes('축구')) keywords.add('축구 티켓');
-                if (title.includes('영화')) keywords.add('영화 티켓');
-                if (title.includes('축제')) keywords.add('축제 티켓');
-                if (title.includes('공연')) keywords.add('공연 티켓');
-                if (title.includes('스포츠')) keywords.add('스포츠 티켓');
-                if (title.includes('예매')) keywords.add('온라인 예매');
-                if (title.includes('할인')) keywords.add('티켓 할인');
+                // 지원금 관련 키워드 추출 로직
+                if (title.includes('청년')) keywords.add('청년 지원금');
+                if (title.includes('소상공인')) keywords.add('소상공인 지원금');
+                if (title.includes('코로나')) keywords.add('코로나 지원금');
+                if (title.includes('재난')) keywords.add('재난지원금');
+                if (title.includes('고용')) keywords.add('고용 지원금');
+                if (title.includes('창업')) keywords.add('창업 지원금');
+                if (title.includes('육아')) keywords.add('육아 지원금');
+                if (title.includes('주거')) keywords.add('주거 지원금');
+                if (title.includes('생계')) keywords.add('생계 지원금');
+                if (title.includes('임대료')) keywords.add('임대료 지원금');
+                if (title.includes('전기료')) keywords.add('전기료 지원금');
+                if (title.includes('국민지원금')) keywords.add('국민지원금');
+                if (title.includes('신청')) keywords.add('지원금 신청');
+                if (title.includes('혜택')) keywords.add('정부 혜택');
+                if (title.includes('복지')) keywords.add('복지 혜택');
+                if (title.includes('노인')) keywords.add('노인 복지');
                 
                 // 더 정교한 키워드 추출 로직 추가 가능
             });
