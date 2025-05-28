@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구글 알리미 RSS 테스트</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .rss-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .result-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .result-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        
+        .result-date {
+            color: #7f8c8d;
+            font-size: 0.8em;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+        }
+        
+        .keywords-extracted {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 구글 알리미 RSS 테스트</h1>
+            <p>실제 "티켓 예매" RSS 피드에서 키워드를 추출해봅시다!</p>
+        </div>
+        
+        <div class="rss-info">
+            <strong>📡 테스트 RSS 피드:</strong><br>
+            <code style="font-size: 0.9em; word-break: break-all;">
+                https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266
+            </code><br>
+            <strong>🎯 키워드:</strong> "티켓 예매"
+        </div>
+        
+        <button class="test-btn" onclick="testRssFeed()" id="testBtn">
+            🚀 RSS 피드 테스트 시작
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            RSS 피드에서 데이터를 가져오는 중...
+        </div>
+        
+        <div id="results" class="results">
+            <h3>📊 RSS 피드 결과</h3>
+            <div id="resultItems"></div>
+        </div>
+        
+        <div id="keywords" class="keywords-extracted" style="display: none;">
+            <h3>🔍 추출된 키워드들</h3>
+            <div id="keywordTags"></div>
+        </div>
+    </div>
+    
+    <script>
+        async function testRssFeed() {
+            const testBtn = document.getElementById('testBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const keywords = document.getElementById('keywords');
+            
+            // 초기화
+            testBtn.disabled = true;
+            testBtn.textContent = '테스트 중...';
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            keywords.style.display = 'none';
+            
+            // 기존 결과 삭제
+            document.getElementById('resultItems').innerHTML = '';
+            document.getElementById('keywordTags').innerHTML = '';
+            
+            try {
+                // RSS 피드 URL
+                const rssUrl = "https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266";
+                
+                // RSS를 JSON으로 변환하는 무료 API 사용
+                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+                
+                console.log('RSS API 호출:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                console.log('RSS 응답 데이터:', data);
+                
+                if (data.status === 'ok') {
+                    displayResults(data);
+                    extractKeywords(data.items);
+                    showMessage('RSS 피드 연동 성공! 🎉', 'success');
+                } else {
+                    throw new Error(data.message || 'RSS 피드를 가져올 수 없습니다.');
+                }
+                
+            } catch (error) {
+                console.error('RSS 테스트 오류:', error);
+                showMessage(`오류 발생: ${error.message}`, 'error');
+            } finally {
+                loading.style.display = 'none';
+                testBtn.disabled = false;
+                testBtn.textContent = '🔄 다시 테스트';
+            }
+        }
+        
+        function displayResults(data) {
+            const results = document.getElementById('results');
+            const resultItems = document.getElementById('resultItems');
+            
+            if (!data.items || data.items.length === 0) {
+                resultItems.innerHTML = '<div class="result-item">📭 현재 RSS 피드에 새로운 항목이 없습니다.</div>';
+            } else {
+                resultItems.innerHTML = data.items.map(item => `
+                    <div class="result-item">
+                        <div class="result-title">${item.title}</div>
+                        <div class="result-date">📅 ${new Date(item.pubDate).toLocaleDateString('ko-KR')}</div>
+                        <a href="${item.link}" target="_blank" class="result-link">🔗 원문 보기</a>
+                    </div>
+                `).join('');
+            }
+            
+            results.style.display = 'block';
+        }
+        
+        function extractKeywords(items) {
+            if (!items || items.length === 0) return;
+            
+            const keywords = new Set();
+            
+            items.forEach(item => {
+                const title = item.title || '';
+                
+                // 간단한 키워드 추출 로직
+                if (title.includes('콘서트')) keywords.add('콘서트 티켓');
+                if (title.includes('뮤지컬')) keywords.add('뮤지컬 티켓');
+                if (title.includes('야구')) keywords.add('야구 티켓');
+                if (title.includes('축구')) keywords.add('축구 티켓');
+                if (title.includes('영화')) keywords.add('영화 티켓');
+                if (title.includes('축제')) keywords.add('축제 티켓');
+                if (title.includes('공연')) keywords.add('공연 티켓');
+                if (title.includes('스포츠')) keywords.add('스포츠 티켓');
+                if (title.includes('예매')) keywords.add('온라인 예매');
+                if (title.includes('할인')) keywords.add('티켓 할인');
+                
+                // 더 정교한 키워드 추출 로직 추가 가능
+            });
+            
+            if (keywords.size > 0) {
+                const keywordTags = document.getElementById('keywordTags');
+                keywordTags.innerHTML = Array.from(keywords).map(keyword => 
+                    `<span class="keyword-tag">${keyword}</span>`
+                ).join('');
+                
+                document.getElementById('keywords').style.display = 'block';
+            }
+        }
+        
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            document.querySelector('.container').appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
