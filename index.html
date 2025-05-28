@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘의 키워드 도우미 - 중장년층 블로거를 위한 친절한 가이드</title>
+    <meta name="description" content="복잡한 키워드 도구는 그만! 오늘 써야 할 키워드를 쉽게 알려드립니다.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .date-display {
+            font-size: 1.5em;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .update-info {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        
+        .stats-bar {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .keyword-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .keyword-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .keyword-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-color: #ffd700;
+        }
+        
+        .keyword-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .trend-indicator {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .keyword-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 1;
+        }
+        
+        .rating {
+            font-size: 1.5em;
+        }
+        
+        .keyword-content {
+            margin-bottom: 15px;
+        }
+        
+        .search-trend {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .why-now {
+            color: #27ae60;
+            font-size: 1em;
+            margin-bottom: 8px;
+        }
+        
+        .difficulty {
+            color: #3498db;
+            font-size: 1em;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .info-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .tip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .tip-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .footer {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 700px;
+            margin: 30px auto;
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #2c3e50;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+        
+        .strategy-section {
+            margin-top: 20px;
+        }
+        
+        .strategy-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+        
+        .strategy-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .related-keywords {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin: 3px;
+        }
+        
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .date-display {
+                font-size: 1.2em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .keyword-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .modal-content {
+                margin: 20px auto;
+                padding: 20px;
+            }
+        }
+        
+        /* 로딩 애니메이션 */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 오늘의 키워드 도우미</h1>
+            <div class="date-display" id="currentDate"></div>
+            <div class="update-info">🔄 구글 알리미 연동 | 매일 오전 9시 자동 업데이트</div>
+            <div class="subtitle">복잡한 키워드 도구는 이제 그만!<br>오늘 써야 할 키워드를 쉽게 알려드려요</div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalKeywords">12</span>
+                <span class="stat-label">오늘의 추천 키워드</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="hotKeywords">6</span>
+                <span class="stat-label">🔥 HOT 키워드</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="lastUpdate">09:00</span>
+                <span class="stat-label">마지막 업데이트</span>
+            </div>
+        </div>
+        
+        <div class="keyword-grid" id="keywordGrid">
+            <!-- 키워드 카드들이 여기에 동적으로 생성됩니다 -->
+        </div>
+        
+        <div class="info-section">
+            <div class="section-title">💡 키워드 선택 가이드</div>
+            <div class="tip-grid">
+                <div class="tip-item">
+                    <strong>⭐⭐⭐⭐⭐ (5점)</strong><br>
+                    지금 당장 써도 성공! 검색량 많고 경쟁 적어서 초보자도 쉽게 상위 노출 가능
+                </div>
+                <div class="tip-item">
+                    <strong>⭐⭐⭐⭐ (4점)</strong><br>
+                    써볼 만한 키워드. 조금 경쟁이 있지만 좋은 콘텐츠로 충분히 승부 가능
+                </div>
+                <div class="tip-item">
+                    <strong>⭐⭐⭐ (3점)</strong><br>
+                    도전해볼 만한 키워드. 경쟁이 있지만 차별화된 내용으로 승부하면 OK
+                </div>
+                <div class="tip-item">
+                    <strong>🔥 트렌드 표시</strong><br>
+                    지금 이 순간 가장 많이 검색되고 있는 실시간 인기 키워드
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <div class="section-title">🚀 4단계 블로그 구조란?</div>
+            <div class="tip-grid">
+                <div class="tip-item">
+                    <strong>1단계: 메인 블로그</strong><br>
+                    짧고 임팩트 있게 관심을 끌어서 독자를 끌어들이는 글
+                </div>
+                <div class="tip-item">
+                    <strong>2단계: 기본 가이드</strong><br>
+                    전체적인 개요와 기본 정보를 제공하는 가이드 글
+                </div>
+                <div class="tip-item">
+                    <strong>3단계: 세부 전문 글</strong><br>
+                    각 분야별로 상세하고 전문적인 정보를 다루는 글들
+                </div>
+                <div class="tip-item">
+                    <strong>4단계: 심화/후속 글</strong><br>
+                    고급 정보나 후기, 업데이트 등을 다루는 심화 글들
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>💝 중장년층 블로거를 위한 무료 도구 | 디지털 격차 해소 프로젝트</p>
+            <p>🔄 구글 알리미 + 공공데이터 연동으로 매일 자동 업데이트</p>
+            <p>GitHub: <a href="https://github.com/sabrina242/keyword-helper" target="_blank" style="color: #3498db;">keyword-helper</a></p>
+        </div>
+    </div>
+    
+    <!-- 키워드 상세 모달 -->
+    <div id="keywordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 키워드 데이터 (나중에 외부 JSON 파일로 분리)
+        const keywordData = [
+            {
+                id: 'summer_vacation',
+                title: '여름휴가 예약',
+                trend: '🔥',
+                rating: 5,
+                searchVolume: '월 15,000건',
+                searchTrend: '📈 검색량 35% 증가 중!',
+                whyNow: '💡 6월 말이라 예약 피크 시기',
+                difficulty: '🎯 초보자도 쉽게 성공 가능',
+                competition: '보통',
+                source: '네이버 키워드도구',
+                relatedKeywords: [
+                    '여름휴가 숙박 예약', '여름휴가 펜션 예약', '여름휴가 리조트 예약',
+                    '7월 여름휴가 예약', '강원도 여름휴가', '아이와 여름휴가'
+                ],
+                reason: '6월 말은 여름휴가 예약 피크 시기입니다. 많은 사람들이 7-8월 휴가를 위해 지금 검색하고 있어요.',
+                strategy: [
+                    '🏖️ 1단계 메인글: "2024 여름휴가 예약 마감 임박! 놓치면 후회할 여행지"',
+                    '📋 2단계 기본가이드: "여름휴가 예약 완벽 가이드 (시기별 꿀팁)"',
+                    '🏨 3단계 세부 전문글: "지역별 숙박 추천", "여행 코스 상세", "예산 계획표"',
+                    '✨ 4단계 심화글: "여름휴가 후기", "내년 휴가 계획", "숨은 명소 발굴"'
+                ],
+                officialLinks: [
+                    '한국관광공사 여행정보',
+                    '여행사 공식 사이트',
+                    '숙박 예약 사이트',
+                    '교통편 예약 사이트'
+                ],
+                expectedResult: '조회수: 3,000-8,000회 예상 (개인 역량에 따라 차이)'
+            },
+            {
+                id: 'aircon_cleaning',
+                title: '에어컨 청소 업체',
+                trend: '🌡️',
+                rating: 4,
+                searchVolume: '월 8,500건',
+                searchTrend: '📈 검색량 28% 증가 중!',
+                whyNow: '💡 본격 더위 시작으로 수요 급증',
+                difficulty: '🎯 지역 특화로 경쟁 적음',
+                competition: '낮음',
+                source: '구글 트렌드',
+                relatedKeywords: [
+                    '에어컨 청소 업체 추천', '에어컨 청소 가격', '에어컨 분해청소',
+                    '서울 에어컨 청소', '에어컨 청소 후기', '에어컨 자가청소'
+                ],
+                reason: '본격적인 더위가 시작되면서 에어컨 청소 수요가 급증하는 시기입니다.',
+                strategy: [
+                    '❄️ 1단계 메인글: "에어컨 청소 안 하면 전기세 2배! 업체 선택 꿀팁"',
+                    '🔧 2단계 기본가이드: "에어컨 청소 완벽 가이드 (셀프 vs 업체)"',
+                    '🏢 3단계 세부 전문글: "지역별 업체 비교", "가격대별 서비스", "청소 전후 비교"',
+                    '💡 4단계 심화글: "에어컨 관리법", "업체 선택 실수담", "계절별 관리 팁"'
+                ],
+                officialLinks: [
+                    '에어컨 청소 업체 리스트',
+                    '가격 비교 사이트',
+                    '후기 플랫폼',
+                    '예약 사이트'
+                ],
+                expectedResult: '조회수: 2,000-5,000회 예상 (지역 특화로 상위 노출 유리)'
+            },
+            {
+                id: 'june_support',
+                title: '6월 지원금 신청',
+                trend: '💰',
+                rating: 5,
+                searchVolume: '월 12,000건',
+                searchTrend: '📈 검색량 42% 증가 중!',
+                whyNow: '💡 6월 신규 지원금 발표',
+                difficulty: '🎯 정확한 정보로 차별화 가능',
+                competition: '보통',
+                source: '정부24 검색량',
+                relatedKeywords: [
+                    '6월 신규 지원금', '국민지원금 신청', '청년 지원금 6월',
+                    '소상공인 지원금', '6월 복지혜택', '지원금 신청 방법'
+                ],
+                reason: '6월에 새로 발표된 정부 지원금들이 있어서 신청 방법을 찾는 사람들이 많습니다.',
+                strategy: [
+                    '💰 1단계 메인글: "6월 신규 지원금 총정리! 놓치면 손해인 혜택들"',
+                    '📋 2단계 기본가이드: "지원금 신청 완벽 가이드 (자격부터 신청까지)"',
+                    '📝 3단계 세부 전문글: "대상별 지원금", "서류 준비법", "신청 사이트별 방법"',
+                    '✨ 4단계 심화글: "신청 후기", "지원금 활용법", "다음 달 지원금 미리보기"'
+                ],
+                officialLinks: [
+                    '정부24 지원금 페이지',
+                    '복지로 혜택 안내',
+                    '해당 부처 보도자료',
+                    '지자체 공지사항'
+                ],
+                expectedResult: '조회수: 5,000-12,000회 예상 (정보성 콘텐츠로 신뢰도 상승)'
+            },
+            {
+                id: 'summer_festival',
+                title: '보령머드축제 2024',
+                trend: '🎪',
+                rating: 5,
+                searchVolume: '월 18,500건',
+                searchTrend: '📈 검색량 38% 증가 중!',
+                whyNow: '💡 7월 19-28일, 6월 1일 예매 시작',
+                difficulty: '🎯 지역별로 나누면 경쟁 적음',
+                competition: '보통',
+                source: '축제 기간 전후 급증',
+                relatedKeywords: [
+                    '보령머드축제 2024 일정', '보령머드축제 숙박', '보령머드축제 교통',
+                    '보령머드축제 예매', '보령머드축제 프로그램', '대천해수욕장 축제'
+                ],
+                reason: '2024년 7월 19일-28일 개최, 6월 1일부터 예매 시작으로 관심 급증',
+                strategy: [
+                    '🎪 1단계 메인글: "보령머드축제 2024 완벽 가이드! 예매부터 숙박까지"',
+                    '📅 2단계 기본가이드: "보령머드축제 기본 정보 (일정, 프로그램, 예매)"',
+                    '🏨 3단계 세부 전문글: "숙박 예약 가이드", "교통편 총정리", "주변 맛집 추천"',
+                    '📸 4단계 심화글: "축제 참가 후기", "포토스팟 추천", "내년 축제 미리보기"'
+                ],
+                officialLinks: [
+                    '보령머드축제 공식 홈페이지',
+                    '보령시청 축제 안내',
+                    '한국관광공사 축제 정보',
+                    '대천해수욕장 공식 사이트'
+                ],
+                expectedResult: '조회수: 4,000-10,000회 예상 (축제 시기 전후 트래픽 집중)'
+            },
+            {
+                id: 'watermelon_picking',
+                title: '수박 따기 체험',
+                trend: '🍉',
+                rating: 4,
+                searchVolume: '월 4,200건',
+                searchTrend: '📈 검색량 31% 증가 중!',
+                whyNow: '💡 수박 철이라 가족 체험 인기',
+                difficulty: '🎯 지역별 농장 정보로 특화',
+                competition: '낮음',
+                source: '여름철 계절성',
+                relatedKeywords: [
+                    '수박농장 체험', '아이와 수박따기', '경기도 수박농장',
+                    '수박 체험 농장', '수박따기 예약', '가족 농장 체험'
+                ],
+                reason: '수박 철이라 가족들과 체험 농장을 찾는 사람들이 늘고 있습니다.',
+                strategy: [
+                    '🍉 1단계 메인글: "달콤한 수박 따기 체험! 아이들과 가기 좋은 농장"',
+                    '🚜 2단계 기본가이드: "수박 따기 체험 완벽 가이드 (준비물부터 예약까지)"',
+                    '📍 3단계 세부 전문글: "지역별 농장 추천", "체험 프로그램 비교", "주변 볼거리"',
+                    '📝 4단계 심화글: "체험 후기", "수박 고르는 법", "농장 체험 시리즈"'
+                ],
+                officialLinks: [
+                    '농장 체험 예약 사이트',
+                    '농촌체험관광 협회',
+                    '지역 농장 연락처',
+                    '체험 프로그램 안내'
+                ],
+                expectedResult: '조회수: 1,000-3,500회 예상 (지역 특화로 충성도 높은 독자 확보)'
+            },
+            {
+                id: 'rainy_season',
+                title: '장마철 준비',
+                trend: '☔',
+                rating: 3,
+                searchVolume: '월 6,800건',
+                searchTrend: '📈 검색량 25% 증가 중!',
+                whyNow: '💡 장마 시작 전 준비 시기',
+                difficulty: '🎯 생활 팁으로 접근하면 좋음',
+                competition: '높음',
+                source: '기상청 데이터 연동',
+                relatedKeywords: [
+                    '장마철 준비물', '장마 대비법', '습기 제거',
+                    '장마철 건강관리', '장마 용품', '비올때 준비'
+                ],
+                reason: '곧 장마가 시작되어 미리 준비하려는 사람들이 늘고 있습니다.',
+                strategy: [
+                    '☔ 1단계 메인글: "장마철 대비 완벽 가이드! 홍수 피해 예방법"',
+                    '🏠 2단계 기본가이드: "장마철 준비 완벽 체크리스트 (집안부터 외출까지)"',
+                    '🛠️ 3단계 세부 전문글: "습기 제거법", "장마 용품 추천", "차량 관리법"',
+                    '💡 4단계 심화글: "장마철 건강 관리", "응급상황 대처법", "장마 후 관리"'
+                ],
+                officialLinks: [
+                    '기상청 장마 정보',
+                    '재난안전부 행동요령',
+                    '장마용품 쇼핑몰',
+                    '지자체 방재 정보'
+                ],
+                expectedResult: '조회수: 1,500-4,000회 예상 (경쟁 높아도 실용성으로 승부)'
+            }
+        ];
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            updateStats();
+            renderKeywords();
+        });
+        
+        // 현재 날짜 표시
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            const dateString = now.toLocaleDateString('ko-KR', options);
+            document.getElementById('currentDate').textContent = `${dateString} 기준`;
+        }
+        
+        // 통계 업데이트
+        function updateStats() {
+            const totalKeywords = keywordData.length;
+            const hotKeywords = keywordData.filter(k => k.rating >= 4).length;
+            
+            document.getElementById('totalKeywords').textContent = totalKeywords;
+            document.getElementById('hotKeywords').textContent = hotKeywords;
+            document.getElementById('lastUpdate').textContent = '09:00';
+        }
+        
+        // 키워드 카드 렌더링
+        function renderKeywords() {
+            const grid = document.getElementById('keywordGrid');
+            
+            // 평점 순으로 정렬
+            const sortedKeywords = keywordData.sort((a, b) => b.rating - a.rating);
+            
+            grid.innerHTML = sortedKeywords.map(keyword => `
+                <div class="keyword-card" onclick="showDetail('${keyword.id}')">
+                    <div class="keyword-header">
+                        <div class="trend-indicator">${keyword.trend}</div>
+                        <div class="keyword-title">${keyword.title}</div>
+                        <div class="rating">${'⭐'.repeat(keyword.rating)}</div>
+                    </div>
+                    <div class="keyword-content">
+                        <div class="search-trend">${keyword.searchTrend}</div>
+                        <div class="why-now">${keyword.whyNow}</div>
+                        <div class="difficulty">${keyword.difficulty}</div>
+                    </div>
+                    <button class="action-btn">블로그 구조 만들기</button>
+                </div>
+            `).join('');
+        }
+        
+        // 키워드 상세 모달 표시
+        function showDetail(keywordId) {
+            const keyword = keywordData.find(k => k.id === keywordId);
+            if (!keyword) return;
+            
+            const content = `
+                <h2>${keyword.trend} ${keyword.title} ${'⭐'.repeat(keyword.rating)}</h2>
+                
+                <div class="strategy-section">
+                    <div class="strategy-title">📊 기본 정보</div>
+                    <div class="strategy-item"><strong>검색량:</strong> ${keyword.searchVolume} (${keyword.source})</div>
+                    <div class="strategy-item"><strong>경쟁 정도:</strong> ${keyword.competition}</div>
+                    <div class="strategy-item"><strong>추천 이유:</strong> ${keyword.reason}</div>
+                </div>
+                
+                <div class="strategy-section">
+                    <div class="strategy-title">🔍 관련 검색 키워드</div>
+                    <div class="related-keywords">
+                        ${keyword.relatedKeywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="strategy-section">
+                    <div class="strategy-title">🚀 4단계 블로그 전략</div>
+                    ${keyword.strategy.map(item => `<div class="strategy-item">${item}</div>`).join('')}
+                </div>
+                
+                <div class="strategy-section">
+                    <div class="strategy-title">🔗 참고할 공식 사이트</div>
+                    ${keyword.officialLinks.map(link => `<div class="strategy-item">▶ ${link}</div>`).join('')}
+                </div>
+                
+                <div class="strategy-section">
+                    <div class="strategy-title">💎 예상 성과</div>
+                    <div class="strategy-item">${keyword.expectedResult}</div>
+                </div>
+                
+                <button class="action-btn" style="margin-top: 20px;" onclick="startBlogStructure('${keywordId}')">
+                    이 키워드로 블로그 구조 만들기
+                </button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('keywordModal').style.display = 'block';
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('keywordModal').style.display = 'none';
+        }
+        
+        // 블로그 구조 생성 시작
+        function startBlogStructure(keywordId) {
+            const keyword = keywordData.find(k => k.id === keywordId);
+            alert(`"${keyword.title}" 키워드로 4단계 블로그 구조를 만들어드릴게요!\n\n다음 단계에서 상세한 구조와 템플릿을 제공해드립니다.`);
+            closeModal();
+        }
+        
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('keywordModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
