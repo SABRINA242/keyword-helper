@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>구글 알리미 RSS 테스트</title>
+    <title>5개 RSS 피드 실제 데이터 테스트</title>
     <style>
         body {
             font-family: 'Malgun Gothic', sans-serif;
@@ -14,7 +14,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -32,16 +32,8 @@
             margin-bottom: 10px;
         }
         
-        .rss-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3498db;
-        }
-        
         .test-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -56,7 +48,7 @@
         
         .test-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
         }
         
         .test-btn:disabled {
@@ -91,29 +83,60 @@
             display: none;
         }
         
-        .result-item {
+        .category-section {
+            margin-bottom: 40px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .category-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .rss-url {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        
+        .news-item {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid #3498db;
         }
         
-        .result-title {
+        .news-title {
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 5px;
         }
         
-        .result-link {
+        .news-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .news-link {
             color: #3498db;
             text-decoration: none;
             font-size: 0.9em;
         }
         
-        .result-date {
+        .no-data {
             color: #7f8c8d;
-            font-size: 0.8em;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
         }
         
         .error {
@@ -122,114 +145,166 @@
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #f5c6cb;
-            margin-top: 20px;
         }
         
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #c3e6cb;
-            margin-top: 20px;
-        }
-        
-        .keywords-extracted {
+        .summary {
             background: #e3f2fd;
             padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .summary h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
         }
         
         .keyword-tag {
-            display: inline-block;
             background: #2196f3;
             color: white;
-            padding: 5px 12px;
+            padding: 5px 10px;
             border-radius: 15px;
             font-size: 0.9em;
-            margin: 3px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 구글 알리미 RSS 테스트</h1>
-            <p>실제 "지원금" RSS 피드에서 키워드를 추출해봅시다!</p>
+            <h1>🔍 5개 RSS 피드 실제 데이터 테스트</h1>
+            <p>구글 알리미에서 실제로 어떤 뉴스들이 나오는지 확인해봅시다!</p>
         </div>
         
-        <div class="rss-info">
-            <strong>📡 테스트 RSS 피드:</strong><br>
-            <code style="font-size: 0.9em; word-break: break-all;">
-                https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041
-            </code><br>
-            <strong>🎯 키워드:</strong> "지원금"
-        </div>
-        
-        <button class="test-btn" onclick="testRssFeed()" id="testBtn">
-            🚀 RSS 피드 테스트 시작
+        <button class="test-btn" onclick="testAllRssFeeds()" id="testBtn">
+            🚀 모든 RSS 피드 테스트 시작
         </button>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            RSS 피드에서 데이터를 가져오는 중...
+            5개 RSS 피드에서 데이터를 가져오는 중... (시간이 좀 걸릴 수 있습니다)
         </div>
         
         <div id="results" class="results">
-            <h3>📊 RSS 피드 결과</h3>
-            <div id="resultItems"></div>
-        </div>
-        
-        <div id="keywords" class="keywords-extracted" style="display: none;">
-            <h3>🔍 추출된 키워드들</h3>
-            <div id="keywordTags"></div>
+            <div id="travelSection" class="category-section">
+                <div class="category-title">🏖️ 여행 RSS</div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204012688</div>
+                <div id="travelData"></div>
+            </div>
+            
+            <div id="festivalSection" class="category-section">
+                <div class="category-title">🎪 축제 RSS</div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/1809780114746601589</div>
+                <div id="festivalData"></div>
+            </div>
+            
+            <div id="ticketSection" class="category-section">
+                <div class="category-title">🎫 예매 RSS</div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266</div>
+                <div id="ticketData"></div>
+            </div>
+            
+            <div id="restaurantSection" class="category-section">
+                <div class="category-title">🍽️ 맛집 RSS</div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018</div>
+                <div id="restaurantData"></div>
+            </div>
+            
+            <div id="welfareSection" class="category-section">
+                <div class="category-title">💰 복지 RSS</div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041</div>
+                <div id="welfareData"></div>
+            </div>
+            
+            <div class="summary" id="summary" style="display: none;">
+                <h3>📊 전체 요약</h3>
+                <div id="summaryContent"></div>
+            </div>
         </div>
     </div>
     
     <script>
-        async function testRssFeed() {
+        const RSS_FEEDS = {
+            travel: {
+                url: "https://www.google.com/alerts/feeds/17606266067575828344/4177095888204012688",
+                name: "여행",
+                icon: "🏖️"
+            },
+            festival: {
+                url: "https://www.google.com/alerts/feeds/17606266067575828344/1809780114746601589",
+                name: "축제", 
+                icon: "🎪"
+            },
+            ticket: {
+                url: "https://www.google.com/alerts/feeds/17606266067575828344/1809780114746605266",
+                name: "예매",
+                icon: "🎫"
+            },
+            restaurant: {
+                url: "https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018",
+                name: "맛집",
+                icon: "🍽️"
+            },
+            welfare: {
+                url: "https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041",
+                name: "복지",
+                icon: "💰"
+            }
+        };
+        
+        let allNewsData = {};
+        
+        async function testAllRssFeeds() {
             const testBtn = document.getElementById('testBtn');
             const loading = document.getElementById('loading');
             const results = document.getElementById('results');
-            const keywords = document.getElementById('keywords');
             
-            // 초기화
             testBtn.disabled = true;
             testBtn.textContent = '테스트 중...';
             loading.style.display = 'block';
             results.style.display = 'none';
-            keywords.style.display = 'none';
-            
-            // 기존 결과 삭제
-            document.getElementById('resultItems').innerHTML = '';
-            document.getElementById('keywordTags').innerHTML = '';
             
             try {
-                // RSS 피드 URL
-                const rssUrl = "https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041";
+                let totalNews = 0;
+                let successCount = 0;
                 
-                // RSS를 JSON으로 변환하는 무료 API 사용
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-                
-                console.log('RSS API 호출:', apiUrl);
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                console.log('RSS 응답 데이터:', data);
-                
-                if (data.status === 'ok') {
-                    displayResults(data);
-                    extractKeywords(data.items);
-                    showMessage('RSS 피드 연동 성공! 🎉', 'success');
-                } else {
-                    throw new Error(data.message || 'RSS 피드를 가져올 수 없습니다.');
+                for (const [category, feedInfo] of Object.entries(RSS_FEEDS)) {
+                    try {
+                        console.log(`${feedInfo.name} RSS 처리 중...`);
+                        
+                        const data = await fetchRssFeed(feedInfo.url);
+                        allNewsData[category] = data;
+                        
+                        displayCategoryData(category, data, feedInfo);
+                        
+                        if (data.items && data.items.length > 0) {
+                            totalNews += data.items.length;
+                            successCount++;
+                        }
+                        
+                        // API 제한 방지를 위한 대기
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                    } catch (error) {
+                        console.error(`${feedInfo.name} RSS 오류:`, error);
+                        displayError(category, error.message);
+                    }
                 }
                 
+                // 전체 요약 생성
+                generateSummary(totalNews, successCount);
+                
+                results.style.display = 'block';
+                
             } catch (error) {
-                console.error('RSS 테스트 오류:', error);
-                showMessage(`오류 발생: ${error.message}`, 'error');
+                console.error('전체 RSS 테스트 오류:', error);
+                alert('RSS 테스트 중 오류가 발생했습니다.');
             } finally {
                 loading.style.display = 'none';
                 testBtn.disabled = false;
@@ -237,73 +312,94 @@
             }
         }
         
-        function displayResults(data) {
-            const results = document.getElementById('results');
-            const resultItems = document.getElementById('resultItems');
+        async function fetchRssFeed(rssUrl) {
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            
+            if (data.status !== 'ok') {
+                throw new Error(data.message || 'RSS 피드를 가져올 수 없습니다.');
+            }
+            
+            return data;
+        }
+        
+        function displayCategoryData(category, data, feedInfo) {
+            const container = document.getElementById(`${category}Data`);
             
             if (!data.items || data.items.length === 0) {
-                resultItems.innerHTML = '<div class="result-item">📭 현재 RSS 피드에 새로운 항목이 없습니다.</div>';
-            } else {
-                resultItems.innerHTML = data.items.map(item => `
-                    <div class="result-item">
-                        <div class="result-title">${item.title}</div>
-                        <div class="result-date">📅 ${new Date(item.pubDate).toLocaleDateString('ko-KR')}</div>
-                        <a href="${item.link}" target="_blank" class="result-link">🔗 원문 보기</a>
-                    </div>
-                `).join('');
+                container.innerHTML = '<div class="no-data">📭 현재 새로운 뉴스가 없습니다.</div>';
+                return;
             }
             
-            results.style.display = 'block';
+            const newsHtml = data.items.map(item => `
+                <div class="news-item">
+                    <div class="news-title">${item.title || '제목 없음'}</div>
+                    <div class="news-date">📅 ${item.pubDate ? new Date(item.pubDate).toLocaleDateString('ko-KR') : '날짜 미상'}</div>
+                    ${item.link ? `<a href="${item.link}" target="_blank" class="news-link">🔗 원문 보기</a>` : ''}
+                </div>
+            `).join('');
+            
+            container.innerHTML = newsHtml;
         }
         
-        function extractKeywords(items) {
-            if (!items || items.length === 0) return;
+        function displayError(category, errorMessage) {
+            const container = document.getElementById(`${category}Data`);
+            container.innerHTML = `<div class="error">❌ 오류: ${errorMessage}</div>`;
+        }
+        
+        function generateSummary(totalNews, successCount) {
+            const summary = document.getElementById('summary');
+            const summaryContent = document.getElementById('summaryContent');
             
-            const keywords = new Set();
+            let allTitles = [];
             
-            items.forEach(item => {
-                const title = item.title || '';
-                
-                // 지원금 관련 키워드 추출 로직
-                if (title.includes('청년')) keywords.add('청년 지원금');
-                if (title.includes('소상공인')) keywords.add('소상공인 지원금');
-                if (title.includes('코로나')) keywords.add('코로나 지원금');
-                if (title.includes('재난')) keywords.add('재난지원금');
-                if (title.includes('고용')) keywords.add('고용 지원금');
-                if (title.includes('창업')) keywords.add('창업 지원금');
-                if (title.includes('육아')) keywords.add('육아 지원금');
-                if (title.includes('주거')) keywords.add('주거 지원금');
-                if (title.includes('생계')) keywords.add('생계 지원금');
-                if (title.includes('임대료')) keywords.add('임대료 지원금');
-                if (title.includes('전기료')) keywords.add('전기료 지원금');
-                if (title.includes('국민지원금')) keywords.add('국민지원금');
-                if (title.includes('신청')) keywords.add('지원금 신청');
-                if (title.includes('혜택')) keywords.add('정부 혜택');
-                if (title.includes('복지')) keywords.add('복지 혜택');
-                if (title.includes('노인')) keywords.add('노인 복지');
-                
-                // 더 정교한 키워드 추출 로직 추가 가능
+            // 모든 뉴스 제목 수집
+            Object.values(allNewsData).forEach(data => {
+                if (data.items) {
+                    data.items.forEach(item => {
+                        if (item.title) {
+                            allTitles.push(item.title);
+                        }
+                    });
+                }
             });
             
-            if (keywords.size > 0) {
-                const keywordTags = document.getElementById('keywordTags');
-                keywordTags.innerHTML = Array.from(keywords).map(keyword => 
-                    `<span class="keyword-tag">${keyword}</span>`
-                ).join('');
-                
-                document.getElementById('keywords').style.display = 'block';
-            }
+            // 키워드 추출 (간단한 방식)
+            const keywords = extractPotentialKeywords(allTitles);
+            
+            summaryContent.innerHTML = `
+                <p><strong>총 수집된 뉴스:</strong> ${totalNews}개</p>
+                <p><strong>성공한 RSS 피드:</strong> ${successCount}/5개</p>
+                <p><strong>추출 가능한 키워드들:</strong></p>
+                <div class="keyword-list">
+                    ${keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
+                </div>
+                <br>
+                <p><strong>🎯 실제 뉴스 제목들을 보고 어떤 키워드들을 추출할지 결정해봅시다!</strong></p>
+            `;
+            
+            summary.style.display = 'block';
         }
         
-        function showMessage(message, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = type;
-            messageDiv.textContent = message;
-            document.querySelector('.container').appendChild(messageDiv);
+        function extractPotentialKeywords(titles) {
+            const keywords = new Set();
             
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 5000);
+            titles.forEach(title => {
+                // 간단한 키워드 추출 (실제 제목에서)
+                const words = title.split(/[\s,\-\[\]()]+/);
+                words.forEach(word => {
+                    word = word.trim();
+                    if (word.length >= 2 && 
+                        !word.match(/^\d+$/) && 
+                        !['이번', '오늘', '내일', '다음'].includes(word)) {
+                        keywords.add(word);
+                    }
+                });
+            });
+            
+            // 상위 20개만 반환
+            return Array.from(keywords).slice(0, 20);
         }
     </script>
 </body>
