@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>축제 정보 키워드 도우미</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #e17055;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .controls button {
+            background: linear-gradient(45deg, #e17055, #fd79a8);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        .articles-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .articles-section h2 {
+            color: #e17055;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #fd79a8;
+            padding-bottom: 10px;
+        }
+        
+        .articles-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .articles-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .articles-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .articles-container::-webkit-scrollbar-thumb {
+            background: #e17055;
+            border-radius: 10px;
+        }
+        
+        .article-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .article-item:hover {
+            background: #fff5f3;
+            transform: translateX(5px);
+        }
+        
+        .article-item:last-child {
+            border-bottom: none;
+        }
+        
+        .article-item a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1em;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        
+        .article-item a:hover {
+            color: #e17055;
+        }
+        
+        .keywords-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .keywords-section h2 {
+            color: #e17055;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #fd79a8;
+            padding-bottom: 10px;
+        }
+        
+        .keywords-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .keywords-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .keywords-container::-webkit-scrollbar-thumb {
+            background: #e17055;
+            border-radius: 10px;
+        }
+        
+        .keyword-item {
+            background: linear-gradient(45deg, #fff0ed, #ffe8e6);
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        
+        .keyword-item:hover {
+            background: linear-gradient(45deg, #fd79a8, #e17055);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .keyword-item.selected {
+            background: linear-gradient(45deg, #e17055, #fd79a8);
+            color: white;
+            border-color: #d63031;
+            transform: scale(1.05);
+        }
+        
+        .keyword-count {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        
+        .keyword-item.selected .keyword-count {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .copy-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #fff0ed, #ffe8e6);
+            border-radius: 10px;
+            border: 2px dashed #e17055;
+        }
+        
+        .copy-section h3 {
+            color: #e17055;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .selected-keywords {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            min-height: 50px;
+            border: 1px solid #fd79a8;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            color: #e17055;
+            border: 2px solid #e17055;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: #e17055;
+            color: white;
+        }
+        
+        .loading-message, .error-message, .no-data-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        
+        .guidance-message {
+            background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffeb3b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        
+        .guidance-message.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .articles-section, .keywords-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← 메인으로</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🎪 축제 정보 키워드</h1>
+            <p>전국 축제 일정과 예매 정보! 놓치지 말아야 할 축제 키워드를 발굴하세요</p>
+        </div>
+        
+        <div class="controls">
+            <button id="fetchButton">🎊 최신 축제 정보 가져오기</button>
+            <button id="resetButton" style="display: none;">🔄 전체 보기</button>
+        </div>
+        
+        <div class="guidance-message" id="guidanceMessage">
+            👈 왼쪽 기사들을 참고해서 원하는 키워드를 선택하고, 조합해서 활용하세요!
+        </div>
+        
+        <div class="main-content">
+            <div class="articles-section">
+                <h2>🎉 최신 축제 정보</h2>
+                <div class="articles-container" id="articlesContainer">
+                    <div class="loading-message">버튼을 눌러서 최신 축제 정보를 가져오세요!</div>
+                </div>
+            </div>
+            
+            <div class="keywords-section">
+                <h2>🎯 인기 키워드</h2>
+                <div class="keywords-container" id="keywordsContainer">
+                    <div class="no-data-message">축제 정보를 가져오면 키워드가 표시됩니다.</div>
+                </div>
+                
+                <div class="copy-section">
+                    <h3>📋 선택된 키워드 조합</h3>
+                    <div class="selected-keywords" id="selectedKeywords">
+                        키워드를 선택하면 여기에 표시됩니다
+                    </div>
+                    <button class="copy-btn" id="copyBtn">키워드 조합 복사하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const RSS_URL = 'https://www.google.co.kr/alerts/feeds/17606266067575828344/2724755524646139218';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        
+        const fetchButton = document.getElementById('fetchButton');
+        const resetButton = document.getElementById('resetButton');
+        const articlesContainer = document.getElementById('articlesContainer');
+        const keywordsContainer = document.getElementById('keywordsContainer');
+        const selectedKeywordsDiv = document.getElementById('selectedKeywords');
+        const copyBtn = document.getElementById('copyBtn');
+        const guidanceMessage = document.getElementById('guidanceMessage');
+        
+        let allArticles = [];
+        let selectedKeywordsList = [];
+        
+        fetchButton.addEventListener('click', fetchNews);
+        resetButton.addEventListener('click', resetView);
+        copyBtn.addEventListener('click', copyKeywords);
+        
+        async function fetchNews() {
+            articlesContainer.innerHTML = '<div class="loading-message">축제 정보를 가져오는 중...</div>';
+            keywordsContainer.innerHTML = '<div class="loading-message">키워드 분석 중...</div>';
+            
+            try {
+                const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const xmlText = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                
+                let items = xmlDoc.querySelectorAll('item');
+                if (items.length === 0) {
+                    items = xmlDoc.querySelectorAll('entry');
+                }
+                
+                if (items.length === 0) {
+                    articlesContainer.innerHTML = '<div class="no-data-message">축제 정보를 찾을 수 없습니다.</div>';
+                    keywordsContainer.innerHTML = '<div class="no-data-message">키워드가 없습니다.</div>';
+                    return;
+                }
+                
+                allArticles = [];
+                let allTitlesText = '';
+                
+                items.forEach(item => {
+                    const titleElement = item.querySelector('title');
+                    const linkElement = item.querySelector('link');
+                    
+                    if (titleElement) {
+                        const title = titleElement.textContent;
+                        const link = linkElement ? (linkElement.getAttribute('href') || linkElement.textContent) : '#';
+                        
+                        allArticles.push({ title, link });
+                        allTitlesText += title + ' ';
+                    }
+                });
+                
+                displayArticles(allArticles);
+                displayKeywords(allTitlesText);
+                
+                fetchButton.style.display = 'none';
+                resetButton.style.display = 'inline-block';
+                
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                articlesContainer.innerHTML = `<div class="error-message">축제 정보를 가져오는 중 오류가 발생했습니다: ${error.message}</div>`;
+                keywordsContainer.innerHTML = '<div class="error-message">키워드를 분석할 수 없습니다.</div>';
+            }
+        }
+        
+        function displayArticles(articles) {
+            if (articles.length === 0) {
+                articlesContainer.innerHTML = '<div class="no-data-message">표시할 기사가 없습니다.</div>';
+                return;
+            }
+            
+            let articlesHtml = '';
+            articles.forEach(article => {
+                articlesHtml += `
+                    <div class="article-item">
+                        <a href="${article.link}" target="_blank" rel="noopener noreferrer">
+                            ${article.title}
+                        </a>
+                    </div>
+                `;
+            });
+            
+            articlesContainer.innerHTML = articlesHtml;
+        }
+        
+        function displayKeywords(text) {
+            const keywords = extractKeywords(text, 15);
+            
+            if (keywords.length === 0) {
+                keywordsContainer.innerHTML = '<div class="no-data-message">키워드를 찾을 수 없습니다.</div>';
+                return;
+            }
+            
+            let keywordsHtml = '';
+            keywords.forEach(kw => {
+                keywordsHtml += `
+                    <div class="keyword-item" data-keyword="${kw.keyword}" onclick="selectKeyword('${kw.keyword}', this)">
+                        ${kw.keyword} <span class="keyword-count">(${kw.count})</span>
+                    </div>
+                `;
+            });
+            
+            keywordsContainer.innerHTML = keywordsHtml;
+        }
+        
+        function selectKeyword(keyword, element) {
+            if (selectedKeywordsList.includes(keyword)) {
+                selectedKeywordsList = selectedKeywordsList.filter(k => k !== keyword);
+                element.classList.remove('selected');
+            } else {
+                selectedKeywordsList.push(keyword);
+                element.classList.add('selected');
+                
+                if (!guidanceMessage.classList.contains('show')) {
+                    guidanceMessage.classList.add('show');
+                }
+            }
+            
+            updateSelectedKeywords();
+            
+            if (selectedKeywordsList.length > 0) {
+                const filteredArticles = allArticles.filter(article => 
+                    selectedKeywordsList.some(kw => 
+                        article.title.toLowerCase().includes(kw.toLowerCase())
+                    )
+                );
+                displayArticles(filteredArticles);
+            } else {
+                displayArticles(allArticles);
+                guidanceMessage.classList.remove('show');
+            }
+        }
+        
+        function updateSelectedKeywords() {
+            if (selectedKeywordsList.length === 0) {
+                selectedKeywordsDiv.textContent = '키워드를 선택하면 여기에 표시됩니다';
+                return;
+            }
+            
+            selectedKeywordsDiv.innerHTML = selectedKeywordsList.map(keyword => 
+                `<span style="background: #e17055; color: white; padding: 5px 12px; border-radius: 15px; margin: 3px; display: inline-block;">${keyword}</span>`
+            ).join('');
+        }
+        
+        function copyKeywords() {
+            if (selectedKeywordsList.length === 0) {
+                alert('먼저 키워드를 선택해주세요!');
+                return;
+            }
+            
+            const keywordText = selectedKeywordsList.join(', ');
+            
+            navigator.clipboard.writeText(keywordText).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✅ 복사 완료!';
+                copyBtn.style.background = 'linear-gradient(45deg, #4caf50, #66bb6a)';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = 'linear-gradient(45deg, #4caf50, #66bb6a)';
+                }, 2000);
+            }).catch(err => {
+                alert('복사 중 오류가 발생했습니다.');
+            });
+        }
+        
+        function resetView() {
+            displayArticles(allArticles);
+            selectedKeywordsList = [];
+            updateSelectedKeywords();
+            guidanceMessage.classList.remove('show');
+            
+            document.querySelectorAll('.keyword-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+        
+        function extractKeywords(text, topN = 10) {
+            const cleanedText = text.toLowerCase()
+                .replace(/[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+                
+            const words = cleanedText.split(/\s+/);
+            const stopwords = [
+                '이', '가', '을', '를', '은', '는', '에', '에서', '의', '과', '와', '도', '으로', '하다', '이다', '되다', '그', '저', '것', '수', '등', '및', '제', '더',
+                '입니다', '합니다', '하는', '하고', '한', '요', '그리고', '하지만', '또는', '다른', '위해', '속', '앞', '뒤', '때문', '정도', '관련', '통해', '바로', '지금',
+                '년', '시', '분', '초', '항상', '보통', '자주', '가끔', '거의', '더', '덜', '가장', '좀', '잘', '못', '꼭', '수도',
+                '우리', '너희', '그들', '나', '너', '뉴스', '속보', '기자', '영상', '발표', '공개', '결정', '공식',
+                'a', 'an', 'the', 'is', 'are', 'be', 'and', 'of', 'to', 'in', 'it', 'for', 'on', 'with', 'as', 'by',
+                /^\d+$/, /^[a-zA-Z]{1,2}$/, /^[ㄱ-ㅎㅏ-ㅣ가-힣]{1}$/
+            ];
+            
+            const wordFrequencies = {};
+            words.forEach(word => {
+                if (word.length < 2) return;
+                
+                let isStopword = false;
+                for (const stop of stopwords) {
+                    if (typeof stop === 'string' && word === stop) {
+                        isStopword = true;
+                        break;
+                    }
+                    if (stop instanceof RegExp && stop.test(word)) {
+                        isStopword = true;
+                        break;
+                    }
+                }
+                
+                if (!isStopword) {
+                    wordFrequencies[word] = (wordFrequencies[word] || 0) + 1;
+                }
+            });
+            
+            return Object.entries(wordFrequencies)
+                .map(([keyword, count]) => ({ keyword, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, topN);
+        }
+    </script>
+</body>
+</html>
