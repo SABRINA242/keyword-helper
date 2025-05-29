@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -27,28 +27,28 @@
         .header {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .header h1 {
             color: #e17055;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 8px;
         }
         
         .header p {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1em;
         }
         
         .controls {
             background: white;
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 15px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
@@ -73,15 +73,15 @@
         
         .main-content {
             display: grid;
-            grid-template-columns: 1000px 200px;
-            gap: 20px;
+            grid-template-columns: 700px 300px;
+            gap: 0;
             min-height: 600px;
             justify-content: center;
         }
         
         .articles-section {
             background: white;
-            border-radius: 15px;
+            border-radius: 15px 0 0 15px;
             padding: 30px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
@@ -145,23 +145,66 @@
         
         .keywords-section {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 0 15px 15px 0;
+            padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .keywords-section h2 {
             color: #e17055;
-            font-size: 1.8em;
-            margin-bottom: 25px;
+            font-size: 1.4em;
+            margin-bottom: 15px;
             border-bottom: 3px solid #ff7675;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            order: 1;
+        }
+        
+        .copy-section {
+            margin: 15px 0 10px 0;
+            padding: 12px;
+            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
+            border-radius: 8px;
+            border: 2px dashed #e17055;
+            order: 2;
+        }
+        
+        .copy-section h3 {
+            color: #e17055;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .selected-keywords {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            min-height: 40px;
+            border: 1px solid #ff7675;
+            font-size: 0.9em;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
         }
         
         .keywords-container {
-            max-height: 500px;
+            max-height: 300px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 8px;
+            order: 3;
+            flex-grow: 1;
         }
         
         .keywords-container::-webkit-scrollbar {
@@ -175,13 +218,13 @@
         
         .keyword-item {
             background: linear-gradient(45deg, #fff5f3, #ffeaa7);
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-radius: 25px;
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            font-size: 1.1em;
+            font-size: 0.95em;
             font-weight: 500;
         }
         
@@ -206,41 +249,6 @@
         
         .keyword-item.selected .keyword-count {
             color: rgba(255,255,255,0.8);
-        }
-        
-        .copy-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
-            border-radius: 10px;
-            border: 2px dashed #e17055;
-        }
-        
-        .copy-section h3 {
-            color: #e17055;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-        
-        .selected-keywords {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            min-height: 50px;
-            border: 1px solid #ff7675;
-        }
-        
-        .copy-btn {
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: all 0.3s ease;
         }
         
         .copy-btn:hover {
@@ -320,6 +328,7 @@
             
             .articles-section, .keywords-section {
                 padding: 20px;
+                border-radius: 15px;
             }
         }
     </style>
@@ -352,9 +361,6 @@
             
             <div class="keywords-section">
                 <h2>🎯 인기 키워드</h2>
-                <div class="keywords-container" id="keywordsContainer">
-                    <div class="no-data-message">맛집 정보를 가져오면 키워드가 표시됩니다.</div>
-                </div>
                 
                 <div class="copy-section">
                     <h3>📋 선택된 키워드 조합</h3>
@@ -362,6 +368,10 @@
                         키워드를 선택하면 여기에 표시됩니다
                     </div>
                     <button class="copy-btn" id="copyBtn">키워드 조합 복사하기</button>
+                </div>
+                
+                <div class="keywords-container" id="keywordsContainer">
+                    <div class="no-data-message">맛집 정보를 가져오면 키워드가 표시됩니다.</div>
                 </div>
             </div>
         </div>
@@ -444,8 +454,21 @@
                 return;
             }
             
+            // 맛집 관련 긍정적 키워드 우선 정렬
+            const positiveKeywords = ['맛집', '추천', '인기', '유명', '화제', '맛있는', '맛난', '현지인', '숨은', '명소', '오픈', '신규', '새로', '후기', '리뷰', '베스트', '맛', '음식', '요리', '메뉴'];
+            
+            const sortedArticles = [...articles].sort((a, b) => {
+                const aScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (a.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                const bScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (b.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                return bScore - aScore;
+            });
+            
             let articlesHtml = '';
-            articles.forEach(article => {
+            sortedArticles.forEach(article => {
                 articlesHtml += `
                     <div class="article-item">
                         <a href="${article.link}" target="_blank" rel="noopener noreferrer">
