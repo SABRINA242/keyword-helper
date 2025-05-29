@@ -161,10 +161,50 @@
             order: 1;
         }
         
+        .copy-section {
+            margin: 15px 0 10px 0;
+            padding: 12px;
+            background: linear-gradient(45deg, #fff1f2, #fce4ec);
+            border-radius: 8px;
+            border: 2px dashed #e91e63;
+            order: 2;
+        }
+        
+        .copy-section h3 {
+            color: #e91e63;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .selected-keywords {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            min-height: 40px;
+            border: 1px solid #f8bbd9;
+            font-size: 0.9em;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
         .keywords-container {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
             padding-right: 8px;
+            order: 3;
+            flex-grow: 1;
         }
         
         .keywords-container::-webkit-scrollbar {
@@ -209,43 +249,6 @@
         
         .keyword-item.selected .keyword-count {
             color: rgba(255,255,255,0.8);
-        }
-        
-        .copy-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: linear-gradient(45deg, #fff1f2, #fce4ec);
-            border-radius: 10px;
-            border: 2px dashed #e91e63;
-        }
-        
-        .copy-section h3 {
-            color: #e91e63;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-        
-        .selected-keywords {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            min-height: 40px;
-            border: 1px solid #f8bbd9;
-            font-size: 0.9em;
-        }
-        
-        .copy-btn {
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            width: 100%;
         }
         
         .copy-btn:hover {
@@ -325,6 +328,7 @@
             
             .articles-section, .keywords-section {
                 padding: 20px;
+                border-radius: 15px;
             }
         }
     </style>
@@ -357,9 +361,6 @@
             
             <div class="keywords-section">
                 <h2>🎯 인기 키워드</h2>
-                <div class="keywords-container" id="keywordsContainer">
-                    <div class="no-data-message">뉴스를 가져오면 키워드가 표시됩니다.</div>
-                </div>
                 
                 <div class="copy-section">
                     <h3>📋 선택된 키워드 조합</h3>
@@ -367,6 +368,10 @@
                         키워드를 선택하면 여기에 표시됩니다
                     </div>
                     <button class="copy-btn" id="copyBtn">키워드 조합 복사하기</button>
+                </div>
+                
+                <div class="keywords-container" id="keywordsContainer">
+                    <div class="no-data-message">뉴스를 가져오면 키워드가 표시됩니다.</div>
                 </div>
             </div>
         </div>
@@ -484,17 +489,13 @@
         }
         
         function selectKeyword(keyword, element) {
-            // 이미 선택된 키워드인지 확인
             if (selectedKeywordsList.includes(keyword)) {
-                // 선택 해제
                 selectedKeywordsList = selectedKeywordsList.filter(k => k !== keyword);
                 element.classList.remove('selected');
             } else {
-                // 선택 추가
                 selectedKeywordsList.push(keyword);
                 element.classList.add('selected');
                 
-                // 안내 메시지 표시
                 if (!guidanceMessage.classList.contains('show')) {
                     guidanceMessage.classList.add('show');
                 }
@@ -502,7 +503,6 @@
             
             updateSelectedKeywords();
             
-            // 키워드로 필터링된 기사 표시
             if (selectedKeywordsList.length > 0) {
                 const filteredArticles = allArticles.filter(article => 
                     selectedKeywordsList.some(kw => 
@@ -555,7 +555,6 @@
             updateSelectedKeywords();
             guidanceMessage.classList.remove('show');
             
-            // 모든 키워드 선택 해제
             document.querySelectorAll('.keyword-item.selected').forEach(item => {
                 item.classList.remove('selected');
             });
