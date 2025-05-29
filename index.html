@@ -3,801 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카테고리별 RSS 키워드 & 제목 도우미</title>
+    <title>중장년을 위한 키워드 도우미</title>
     <style>
-        body {
-            font-family: sans-serif;
-            line-height: 1.6;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-        .container {
-            max-width: 950px;
-            margin: auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #1a73e8;
-            margin-bottom: 30px;
-            font-size: 2em;
-        }
-        .controls {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #e9ecef;
-            border-radius: 6px;
-            text-align: center;
-            border: 1px solid #dee2e6;
-        }
-        .controls label {
-            font-weight: bold;
-            margin-right: 8px;
-        }
-        .controls input[type="url"] {
-            width: 320px;
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.95em;
-        }
-        .controls button {
-            display: inline-block;
-            padding: 10px 18px;
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-            font-size: 0.95em;
-            transition: background-color 0.2s ease;
-        }
-        .controls button:hover {
-            background-color: #1558b0;
-        }
-        .controls button#manualOpenTitleBuilderButton {
-            background-color: #ffc107;
-            color: #212529;
-        }
-         .controls button#manualOpenTitleBuilderButton:hover {
-            background-color: #e0a800;
-        }
-
-        #results {
-            margin-top: 25px;
-        }
-        .category-section {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 6px;
-        }
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #1a73e8;
-            padding-bottom: 8px;
-        }
-        .category-title {
-            font-size: 1.6em;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-        .rss-url { display: none; }
-        .back-to-main-keywords { 
-            font-size: 0.9em;
-            padding: 4px 8px;
-            cursor: pointer;
-            background-color: #6c757d;
-            color: white;
-            border-radius: 4px;
-            display: none; 
-        }
-        .back-to-main-keywords:hover {
-            background-color: #5a6268;
-        }
-
-        .section-content {
-            display: flex;
-            gap: 20px;
-        }
-        .titles-area, .keywords-area {
-            flex: 1;
-            padding: 10px;
-            border: 1px dashed #ced4da;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-        .titles-area h4, .keywords-area h4 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 1.2em;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        .rss-data-container {
-            max-height: 220px;
-            overflow-y: auto;
-            min-height: 30px;
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
         }
-        .rss-data-container ul, .keywords-list ul {
-            list-style-type: none;
-            padding: 0; margin: 0;
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
-        .rss-data-container li {
-            padding: 7px 4px;
-            border-bottom: 1px dotted #e0e0e0;
-        }
-        .rss-data-container li:last-child { border-bottom: none; }
-        .rss-data-container li a {
-            text-decoration: none;
-            color: #212529;
-            font-size: 0.9em;
-        }
-        .rss-data-container li a:hover {
-            text-decoration: underline;
-            color: #007bff;
-        }
-
-        .keywords-list {
-             max-height: 220px;
-             overflow-y: auto;
-        }
-        .keywords-list li { 
-            background-color: #e9f5ff;
-            padding: 8px 14px;
-            margin-bottom: 8px;
-            font-size: 0.95em;
-            border-radius: 18px;
-            color: #0056b3;
-            cursor: pointer;
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            display: inline-block;
-            margin-right: 8px;
-            border: 1px solid transparent;
-        }
-        .keywords-list li:hover {
-            background-color: #cce7ff;
-        }
-        .keywords-list li.selected-keyword {
-            background-color: #ffc107;
-            color: #212529;
-            font-weight: bold;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            border: 1px solid #e0a800;
-        }
-        .keywords-list li.primary-keyword {} 
-        .keywords-list li.specific-keyword { 
-            background-color: #d1e7dd; 
-            color: #146c43;
-        }
-        .keywords-list li.specific-keyword:hover {
-            background-color: #b6d7c3;
-        }
-         .keywords-list li.specific-keyword.selected-keyword {
-            background-color: #ffc107;
-            color: #212529;
-            font-weight: bold;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            border: 1px solid #e0a800;
-        }
-
-        .keywords-list .keyword-count {
-            font-size: 0.9em;
-            color: #555;
-            margin-left: 2px;
-        }
-        .keyword-rationale {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-top: 10px;
-            text-align: right;
-        }
-        .loading-message, .error-message, .no-data-message {
-            padding: 12px;
+        
+        .header {
             text-align: center;
-            color: #6c757d;
-            font-style: italic;
+            margin-bottom: 60px;
+            color: white;
         }
-
-        /* 안내 문구 스타일 추가 */
-        .guidance-message {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 15px 0;
-            color: #856404;
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .steps {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .steps h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .step-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .category-card:hover::before {
+            left: 100%;
+        }
+        
+        .category-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .category-description {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .keyword-preview {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .keyword-tag {
+            background: #f0f4ff;
+            color: #4a5568;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .category-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
             font-size: 1.1em;
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .category-button:hover {
+            background: linear-gradient(45deg, #5a67d8, #6b46c1);
+            transform: scale(1.05);
+        }
+        
+        .footer {
             text-align: center;
-            display: none;
+            margin-top: 60px;
+            color: rgba(255,255,255,0.8);
         }
-        .guidance-message.show {
-            display: block;
-        }
-
-        #keywordFocusSection {
-            display: none; 
-            margin-top: 30px;
-            padding: 25px;
-            border: 2px solid #1a73e8;
-            border-radius: 8px;
-            background-color: #e9f5ff; 
-        }
-        #keywordFocusSection h2 {
-            text-align: center;
-            color: #1a73e8;
-            margin-bottom: 20px;
-        }
-        #keywordFocusSection .input-group {
-            margin-bottom: 20px;
-        }
-        #keywordFocusSection .input-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        #keywordFocusSection .input-group input[type="text"],
-        #keywordFocusSection .input-group textarea {
-            width: calc(100% - 22px); 
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+        
+        .footer p {
             font-size: 1em;
+            margin-bottom: 10px;
         }
-         #keywordFocusSection .input-group textarea {
-            min-height: 60px;
-        }
-        #keywordFocusSection .button-group {
-            text-align: right;
-            margin-top: 20px;
-        }
-        #keywordFocusSection .button-group button { 
-            padding: 10px 18px;
-            font-size: 0.95em;
-            margin-left: 10px;
-            background-color: #28a745; 
-            color:white;
-            border:none;
-            border-radius:4px;
-            cursor:pointer;
-        }
-        #keywordFocusSection .button-group button#closeFocusSectionButton {
-            background-color: #6c757d; 
-        }
-        #keywordFocusSection #suggestedTitleOutput {
-            background-color: #e9ecef; 
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .header p {
+                font-size: 1.1em;
+            }
+            
+            .categories {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .category-card {
+                padding: 30px 20px;
+            }
+            
+            .step-list {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>카테고리별 최신 정보 & 키워드 도우미</h1>
-
-        <div class="controls">
-            <label for="corsProxyInput">CORS 프록시 URL:</label>
-            <input type="url" id="corsProxyInput" value="https://api.allorigins.win/raw?url=">
-            <button id="fetchAllButton">모든 정보 업데이트</button>
-            <button id="manualOpenTitleBuilderButton" style="display: none;">선택 키워드로 제목 만들기</button> 
-        </div>
-
-        <div id="results" class="results">
-            <div id="travelSection" class="category-section">
-                <div class="category-header">
-                    <div class="category-title">🏖️ 여행 예약</div>
-                    <button class="back-to-main-keywords" data-sectionid="travelSection"> &laquo; 전체 키워드로 돌아가기</button>
-                </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204012688</div>
-                <div class="guidance-message" id="travelGuidance">
-                    👈 왼쪽 기사를 보고 만들고 싶은 제목을 복사해서 "제목 만들기" 버튼을 눌러보세요!
-                </div>
-                <div class="section-content">
-                    <div class="titles-area">
-                        <h4>최신 소식 제목</h4>
-                        <div id="travelData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div>
-                    </div>
-                    <div class="keywords-area">
-                        <h4>주요 키워드</h4>
-                        <div id="travelKeywords" class="keywords-list"></div>
-                         <div class="keyword-rationale">제목 빈도수 기반 추출</div>
-                    </div>
-                </div>
-            </div>
-             <div id="festivalSection" class="category-section">
-                <div class="category-header">
-                     <div class="category-title">🎪 축제</div>
-                     <button class="back-to-main-keywords" data-sectionid="festivalSection"> &laquo; 전체 키워드로 돌아가기</button>
-                </div>
-                <div class="rss-url">https://www.google.co.kr/alerts/feeds/17606266067575828344/2724755524646139218</div>
-                <div class="guidance-message" id="festivalGuidance">
-                    👈 왼쪽 기사를 보고 만들고 싶은 제목을 복사해서 "제목 만들기" 버튼을 눌러보세요!
-                </div>
-                <div class="section-content">
-                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="festivalData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
-                    <div class="keywords-area"><h4>주요 키워드</h4><div id="festivalKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
-                </div>
-            </div>
-            <div id="ticketSection" class="category-section">
-                 <div class="category-header">
-                    <div class="category-title">🎫 예매</div>
-                    <button class="back-to-main-keywords" data-sectionid="ticketSection"> &laquo; 전체 키워드로 돌아가기</button>
-                </div>
-                <div class="rss-url">https://www.google.co.kr/alerts/feeds/17606266067575828344/5566450803298381407</div>
-                <div class="guidance-message" id="ticketGuidance">
-                    👈 왼쪽 기사를 보고 만들고 싶은 제목을 복사해서 "제목 만들기" 버튼을 눌러보세요!
-                </div>
-                <div class="section-content">
-                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="ticketData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
-                    <div class="keywords-area"><h4>주요 키워드</h4><div id="ticketKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
-                </div>
-            </div>
-            <div id="restaurantSection" class="category-section">
-                <div class="category-header">
-                    <div class="category-title">🍽️ 맛집 추천</div>
-                    <button class="back-to-main-keywords" data-sectionid="restaurantSection"> &laquo; 전체 키워드로 돌아가기</button>
-                </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018</div>
-                <div class="guidance-message" id="restaurantGuidance">
-                    👈 왼쪽 기사를 보고 만들고 싶은 제목을 복사해서 "제목 만들기" 버튼을 눌러보세요!
-                </div>
-                <div class="section-content">
-                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="restaurantData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
-                    <div class="keywords-area"><h4>주요 키워드</h4><div id="restaurantKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
-                </div>
-            </div>
-            <div id="welfareSection" class="category-section">
-                 <div class="category-header">
-                    <div class="category-title">💰 지원금 신청</div>
-                    <button class="back-to-main-keywords" data-sectionid="welfareSection"> &laquo; 전체 키워드로 돌아가기</button>
-                </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041</div>
-                <div class="guidance-message" id="welfareGuidance">
-                    👈 왼쪽 기사를 보고 만들고 싶은 제목을 복사해서 "제목 만들기" 버튼을 눌러보세요!
-                </div>
-                 <div class="section-content">
-                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="welfareData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
-                    <div class="keywords-area"><h4>주요 키워드</h4><div id="welfareKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
+        <div class="header">
+            <h1>🎯 키워드 도우미</h1>
+            <p>중장년을 위한 쉽고 간단한 키워드 발굴 도구</p>
+            
+            <div class="steps">
+                <h3>📋 사용법</h3>
+                <div class="step-list">
+                    <div class="step">1️⃣ 원하는 카테고리 선택</div>
+                    <div class="step">2️⃣ 키워드 클릭해서 필터링</div>
+                    <div class="step">3️⃣ 키워드 조합 복사해서 활용</div>
                 </div>
             </div>
         </div>
-
-        <div id="keywordFocusSection">
-            <h2>키워드 활용 및 제목 만들기</h2>
-            <div class="input-group">
-                <p><strong>선택된 구체적 키워드:</strong> <span id="selectedFocusKeyword" style="color: #d9534f; font-weight:bold;"></span></p>
+        
+        <div class="categories">
+            <div class="category-card" onclick="goToCategory('travel')">
+                <div class="category-icon">🏖️</div>
+                <div class="category-title">여행 예약</div>
+                <div class="category-description">
+                    여행 예약부터 할인 정보까지<br>
+                    여행 관련 모든 키워드를 한번에!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">예약</span>
+                    <span class="keyword-tag">할인</span>
+                    <span class="keyword-tag">패키지</span>
+                    <span class="keyword-tag">호텔</span>
+                </div>
+                <a href="travel.html" class="category-button">여행 키워드 보기</a>
             </div>
-            <div class="input-group">
-                <label for="pastedContentInput"><b>1. 참고한 제목/문구 붙여넣기 (선택 사항):</b></label>
-                <textarea id="pastedContentInput" rows="2" placeholder="다른 기사에서 참고한 제목이나 주요 문구를 여기에 붙여넣으세요..."></textarea>
+            
+            <div class="category-card" onclick="goToCategory('festival')">
+                <div class="category-icon">🎪</div>
+                <div class="category-title">축제 정보</div>
+                <div class="category-description">
+                    전국 축제 일정과 예매 정보<br>
+                    놓치지 말아야 할 축제 키워드!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">축제</span>
+                    <span class="keyword-tag">개막</span>
+                    <span class="keyword-tag">일정</span>
+                    <span class="keyword-tag">체험</span>
+                </div>
+                <a href="festival.html" class="category-button">축제 키워드 보기</a>
             </div>
-            <div class="input-group">
-                <label for="secondaryKeywordsInput"><b>2. 보조 키워드 추가:</b> (쉼표로 구분하여 여러 개 입력)</label>
-                <input type="text" id="secondaryKeywordsInput" placeholder="예: 후기, 추천, 2025년, 가는 법">
+            
+            <div class="category-card" onclick="goToCategory('ticket')">
+                <div class="category-icon">🎫</div>
+                <div class="category-title">예매 정보</div>
+                <div class="category-description">
+                    공연, 전시, 이벤트 예매<br>
+                    선착순 정보와 할인 혜택까지!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">예매</span>
+                    <span class="keyword-tag">선착순</span>
+                    <span class="keyword-tag">할인</span>
+                    <span class="keyword-tag">티켓</span>
+                </div>
+                <a href="ticket.html" class="category-button">예매 키워드 보기</a>
             </div>
-            <div class="input-group">
-                <label for="suggestedTitleOutput"><b>3. 추천 제목 조합:</b></label>
-                <input type="text" id="suggestedTitleOutput" readonly placeholder="버튼을 눌러 제목 조합을 확인하세요...">
-                <button id="generateTitleButton" style="margin-top:5px;">제목 조합해보기</button>
+            
+            <div class="category-card" onclick="goToCategory('restaurant')">
+                <div class="category-icon">🍽️</div>
+                <div class="category-title">맛집 추천</div>
+                <div class="category-description">
+                    현지인 추천 맛집부터 숨은 맛집까지<br>
+                    맛집 키워드 총집합!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">맛집</span>
+                    <span class="keyword-tag">추천</span>
+                    <span class="keyword-tag">후기</span>
+                    <span class="keyword-tag">현지인</span>
+                </div>
+                <a href="restaurant.html" class="category-button">맛집 키워드 보기</a>
             </div>
-            <div class="button-group">
-                <button id="closeFocusSectionButton">닫기</button>
+            
+            <div class="category-card" onclick="goToCategory('welfare')">
+                <div class="category-icon">💰</div>
+                <div class="category-title">지원금 신청</div>
+                <div class="category-description">
+                    각종 지원금 신청 방법과 서류<br>
+                    놓치기 쉬운 혜택 정보까지!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">지원금</span>
+                    <span class="keyword-tag">신청</span>
+                    <span class="keyword-tag">서류</span>
+                    <span class="keyword-tag">혜택</span>
+                </div>
+                <a href="welfare.html" class="category-button">지원금 키워드 보기</a>
             </div>
+            
+            <div class="category-card" onclick="goToCategory('entertainment')">
+                <div class="category-icon">🎭</div>
+                <div class="category-title">연예 정보</div>
+                <div class="category-description">
+                    드라마, 예능, 트롯 가수 정보<br>
+                    연예인 근황과 방송 소식까지!
+                </div>
+                <div class="keyword-preview">
+                    <span class="keyword-tag">드라마</span>
+                    <span class="keyword-tag">예능</span>
+                    <span class="keyword-tag">트롯</span>
+                    <span class="keyword-tag">근황</span>
+                </div>
+                <a href="entertainment.html" class="category-button">연예 키워드 보기</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>💡 포스팅 메이커와 연동해서 바로 제목 생성이 가능해요!</p>
+            <p>🔄 매일 업데이트되는 최신 키워드를 확인하세요</p>
         </div>
     </div>
-
+    
     <script>
-        const corsProxyInput = document.getElementById('corsProxyInput');
-        const fetchAllButton = document.getElementById('fetchAllButton');
-        const resultsDiv = document.getElementById('results');
-        const manualOpenTitleBuilderButton = document.getElementById('manualOpenTitleBuilderButton');
-        
-        const keywordFocusSection = document.getElementById('keywordFocusSection');
-        const selectedFocusKeywordSpan = document.getElementById('selectedFocusKeyword');
-        const pastedContentInput = document.getElementById('pastedContentInput');
-        const secondaryKeywordsInput = document.getElementById('secondaryKeywordsInput');
-        const suggestedTitleOutput = document.getElementById('suggestedTitleOutput');
-        const generateTitleButton = document.getElementById('generateTitleButton');
-        const closeFocusSectionButton = document.getElementById('closeFocusSectionButton');
-
-        let categoryDataStore = {}; 
-        let activeSpecificKeywordForTitle = null;
-
-        fetchAllButton.addEventListener('click', () => {
-            keywordFocusSection.style.display = 'none';
-            manualOpenTitleBuilderButton.style.display = 'none';
-            activeSpecificKeywordForTitle = null;
+        function goToCategory(category) {
+            // 카테고리별 페이지로 이동
+            const pages = {
+                'travel': 'travel.html',
+                'festival': 'festival.html', 
+                'ticket': 'ticket.html',
+                'restaurant': 'restaurant.html',
+                'welfare': 'welfare.html',
+                'entertainment': 'entertainment.html'
+            };
             
-            // 모든 안내 문구 숨기기
-            document.querySelectorAll('.guidance-message').forEach(guide => {
-                guide.classList.remove('show');
-            });
-            
-            const sections = document.querySelectorAll('.category-section');
-            const corsProxy = corsProxyInput.value.trim();
-
-            if (!corsProxy.includes('?url=')) {
-                alert('CORS 프록시 URL 형식이 잘못되었습니다.');
-                return;
-            }
-            
-            sections.forEach(section => {
-                const sectionId = section.id;
-                const rssUrlDiv = section.querySelector('.rss-url');
-                const titlesElement = section.querySelector('.rss-data-container'); 
-                const keywordsElement = section.querySelector('.keywords-list'); 
-                const backButton = section.querySelector('.back-to-main-keywords');
-                
-                if (rssUrlDiv && titlesElement && keywordsElement) {
-                    const rssUrl = rssUrlDiv.textContent.trim();
-                    if (!rssUrl) {
-                        titlesElement.innerHTML = '<div class="no-data-message">RSS 주소 없음</div>';
-                        keywordsElement.innerHTML = '';
-                        if(backButton) backButton.style.display = 'none';
-                        return;
-                    }
-                    fetchAndDisplayInitial(rssUrl, titlesElement, keywordsElement, corsProxy, sectionId, backButton);
-                }
-            });
-        });
-
-        async function fetchAndDisplayInitial(rssUrl, titlesElement, keywordsElement, corsProxy, sectionId, backButton) {
-            titlesElement.innerHTML = '<div class="loading-message">가져오는 중...</div>';
-            keywordsElement.innerHTML = ''; 
-            if(backButton) backButton.style.display = 'none';
-
-            categoryDataStore[sectionId] = { articles: [], allTitlesText: "" }; 
-
-            try {
-                const response = await fetch(corsProxy + encodeURIComponent(rssUrl));
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status} (URL: ${rssUrl})`);
-                
-                const str = await response.text();
-                const data = new window.DOMParser().parseFromString(str, "text/xml");
-                let items = data.querySelectorAll("item");
-                if (items.length === 0 && data.querySelectorAll("entry").length > 0) items = data.querySelectorAll("entry");
-
-                if (items.length === 0) {
-                    titlesElement.innerHTML = '<div class="no-data-message">내용 없음</div>';
-                    keywordsElement.innerHTML = '<div class="no-data-message">-</div>';
-                    return;
-                }
-
-                let titlesHtml = '<ul>';
-                items.forEach(item => {
-                    const titleElement = item.querySelector("title");
-                    const linkElement = item.querySelector("link");
-                    const linkHref = linkElement ? (linkElement.getAttribute('href') || linkElement.textContent) : '#';
-
-                    if (titleElement) {
-                        const title = titleElement.textContent;
-                        titlesHtml += `<li><a href="${linkHref}" target="_blank" rel="noopener noreferrer">${title}</a></li>`;
-                        categoryDataStore[sectionId].articles.push({ title: title, link: linkHref }); 
-                        categoryDataStore[sectionId].allTitlesText += title + " "; 
-                    }
-                });
-                titlesHtml += '</ul>';
-                titlesElement.innerHTML = titlesHtml;
-                displayKeywords(categoryDataStore[sectionId].allTitlesText, keywordsElement, sectionId, 'primary-keyword', 7);
-            } catch (error) {
-                console.error(`Error for ${sectionId} (${rssUrl}):`, error);
-                titlesElement.innerHTML = `<div class="error-message">오류: ${error.message}</div>`;
-                keywordsElement.innerHTML = `<div class="error-message">오류</div>`;
+            if (pages[category]) {
+                window.location.href = pages[category];
             }
         }
         
-        function displayKeywords(textToAnalyze, keywordsElement, sectionId, keywordClass, topN) {
-            document.querySelectorAll('.keywords-list li.selected-keyword').forEach(el => el.classList.remove('selected-keyword'));
-
-            if (textToAnalyze && textToAnalyze.trim()) {
-                const keywords = extractKeywordsFromText(textToAnalyze, topN);
-                if (keywords.length > 0) {
-                    let keywordsHtmlList = '<ul>';
-                    keywords.forEach(kw => {
-                        keywordsHtmlList += `<li class="${keywordClass}" data-sectionid="${sectionId}" data-keyword="${kw.keyword.replace(/"/g, '&quot;')}">${kw.keyword} <span class="keyword-count">(${kw.count})</span></li>`;
-                    });
-                    keywordsHtmlList += '</ul>';
-                    keywordsElement.innerHTML = keywordsHtmlList;
-                } else {
-                    keywordsElement.innerHTML = '<div class="no-data-message">키워드 없음</div>';
-                }
-            } else {
-                 keywordsElement.innerHTML = '<div class="no-data-message">분석할 제목 없음</div>';
-            }
-        }
-
-        resultsDiv.addEventListener('click', function(event) {
-            const target = event.target.closest('li');
-            
-            if (target && target.parentElement.parentElement.classList.contains('keywords-list')) {
-                const currentlySelected = document.querySelector('.keywords-list li.selected-keyword');
-                if (currentlySelected) {
-                    currentlySelected.classList.remove('selected-keyword');
-                }
-                target.classList.add('selected-keyword');
-
-                const clickedKeyword = target.dataset.keyword;
-                const sectionId = target.dataset.sectionid;
-
-                if (target.classList.contains('primary-keyword')) {
-                    handlePrimaryKeywordClick(clickedKeyword, sectionId);
-                    manualOpenTitleBuilderButton.style.display = 'none';
-                    activeSpecificKeywordForTitle = null;
-                } else if (target.classList.contains('specific-keyword')) {
-                    // 2차 키워드 클릭 시: 선택된 키워드만 남기고 다른 키워드들 숨기기
-                    hideOtherKeywords(target, sectionId);
-                    activeSpecificKeywordForTitle = clickedKeyword;
-                    manualOpenTitleBuilderButton.style.display = 'inline-block';
-                    showGuidanceMessage(sectionId);
-                    keywordFocusSection.style.display = 'none';
-                }
-            } else if (event.target.matches('.back-to-main-keywords')) {
-                const sectionId = event.target.dataset.sectionid;
-                handleBackToMainKeywords(sectionId);
-            }
-        });
-
-        function hideOtherKeywords(selectedKeyword, sectionId) {
-            const section = document.getElementById(sectionId);
-            const keywordsList = section.querySelector('.keywords-list ul');
-            
-            if (keywordsList) {
-                // 모든 키워드 숨기기
-                const allKeywords = keywordsList.querySelectorAll('li');
-                allKeywords.forEach(keyword => {
-                    if (keyword !== selectedKeyword) {
-                        keyword.style.display = 'none';
-                    }
-                });
-            }
-        }
-
-        function showGuidanceMessage(sectionId) {
-            // 모든 안내 문구 먼저 숨기기
-            document.querySelectorAll('.guidance-message').forEach(guide => {
-                guide.classList.remove('show');
+        // 카드 호버 효과
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
             });
             
-            // 해당 섹션의 안내 문구만 보이기
-            const guidanceId = sectionId.replace('Section', 'Guidance');
-            const guidanceElement = document.getElementById(guidanceId);
-            if (guidanceElement) {
-                guidanceElement.classList.add('show');
-            }
-        }
-        
-        manualOpenTitleBuilderButton.addEventListener('click', () => {
-            if (activeSpecificKeywordForTitle) {
-                selectedFocusKeywordSpan.textContent = activeSpecificKeywordForTitle;
-                pastedContentInput.value = '';
-                secondaryKeywordsInput.value = ''; 
-                suggestedTitleOutput.value = ''; 
-                keywordFocusSection.style.display = 'block'; 
-                keywordFocusSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
-                alert('먼저 오른쪽 목록에서 구체적인 키워드를 하나 선택해주세요.');
-            }
-        });
-
-        function handlePrimaryKeywordClick(primaryKeyword, sectionId) {
-            const section = document.getElementById(sectionId);
-            const titlesElement = section.querySelector('.rss-data-container');
-            const keywordsElement = section.querySelector('.keywords-list');
-            const backButton = section.querySelector('.back-to-main-keywords');
-
-            // 안내 문구 숨기기
-            const guidanceId = sectionId.replace('Section', 'Guidance');
-            const guidanceElement = document.getElementById(guidanceId);
-            if (guidanceElement) {
-                guidanceElement.classList.remove('show');
-            }
-
-            const allArticlesInSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].articles : [];
-            if (allArticlesInSection.length === 0) return;
-
-            const filteredArticles = allArticlesInSection.filter(article => 
-                article.title.toLowerCase().includes(primaryKeyword.toLowerCase())
-            );
-
-            if (filteredArticles.length > 0) {
-                let filteredTitlesHtml = '<ul>';
-                let filteredTitlesText = "";
-                filteredArticles.forEach(article => {
-                    filteredTitlesHtml += `<li><a href="${article.link}" target="_blank" rel="noopener noreferrer">${article.title}</a></li>`;
-                    filteredTitlesText += article.title + " ";
-                });
-                filteredTitlesHtml += '</ul>';
-                titlesElement.innerHTML = filteredTitlesHtml;
-                displayKeywords(filteredTitlesText, keywordsElement, sectionId, 'specific-keyword', 10);
-                if(backButton) backButton.style.display = 'inline-block';
-            } else {
-                titlesElement.innerHTML = `<div class="no-data-message">'${primaryKeyword}' 포함 기사 없음.</div>`;
-                keywordsElement.innerHTML = '<div class="no-data-message">키워드 없음</div>';
-                if(backButton) backButton.style.display = 'inline-block';
-            }
-            keywordFocusSection.style.display = 'none';
-        }
-
-        function handleBackToMainKeywords(sectionId) {
-            const section = document.getElementById(sectionId);
-            const titlesElement = section.querySelector('.rss-data-container');
-            const keywordsElement = section.querySelector('.keywords-list');
-            const backButton = section.querySelector('.back-to-main-keywords');
-
-            // 안내 문구 숨기기
-            const guidanceId = sectionId.replace('Section', 'Guidance');
-            const guidanceElement = document.getElementById(guidanceId);
-            if (guidanceElement) {
-                guidanceElement.classList.remove('show');
-            }
-
-            const allArticlesInSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].articles : [];
-            if (allArticlesInSection.length > 0) {
-                let originalTitlesHtml = '<ul>';
-                allArticlesInSection.forEach(article => {
-                    originalTitlesHtml += `<li><a href="${article.link}" target="_blank" rel="noopener noreferrer">${article.title}</a></li>`;
-                });
-                originalTitlesHtml += '</ul>';
-                titlesElement.innerHTML = originalTitlesHtml;
-            } else {
-                titlesElement.innerHTML = '<div class="no-data-message">표시할 내용 없음.</div>';
-            }
-
-            const allTitlesTextForSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].allTitlesText : "";
-            displayKeywords(allTitlesTextForSection, keywordsElement, sectionId, 'primary-keyword', 7);
-            
-            if(backButton) backButton.style.display = 'none';
-            keywordFocusSection.style.display = 'none';
-            manualOpenTitleBuilderButton.style.display = 'none';
-            activeSpecificKeywordForTitle = null;
-        }
-        
-        generateTitleButton.addEventListener('click', () => {
-            const mainFocusKeyword = selectedFocusKeywordSpan.textContent.trim();
-            const pastedContent = pastedContentInput.value.trim();
-            const secondaryKwsArray = secondaryKeywordsInput.value.split(',')
-                                        .map(sk => sk.trim())
-                                        .filter(sk => sk.length > 0);
-
-            if (!mainFocusKeyword && !pastedContent) {
-                suggestedTitleOutput.value = "주요 키워드가 없거나, 붙여넣은 내용이 없습니다.";
-                return;
-            }
-
-            let suggestions = [];
-            let baseForTitle = pastedContent ? pastedContent : mainFocusKeyword;
-
-            let title1 = baseForTitle;
-            if (pastedContent && mainFocusKeyword && !pastedContent.toLowerCase().includes(mainFocusKeyword.toLowerCase())) {
-                title1 = `${pastedContent} (${mainFocusKeyword})`;
-            } else if (!pastedContent && mainFocusKeyword) {
-                title1 = mainFocusKeyword;
-            }
-
-            if (secondaryKwsArray.length > 0) {
-                title1 += ` - ${secondaryKwsArray.join('/')} 총정리`;
-            } else if (mainFocusKeyword && !pastedContent) {
-                title1 += ` 핵심 정보 A to Z`;
-            } else if (pastedContent && !mainFocusKeyword && secondaryKwsArray.length === 0) {
-                title1 += ` (놓치지 마세요!)`;
-            }
-            suggestions.push(title1);
-
-            if (mainFocusKeyword) {
-                let title2 = `${mainFocusKeyword}`;
-                if (secondaryKwsArray.length > 0) {
-                    title2 += ` ${secondaryKwsArray.join(' & ')}`;
-                }
-                title2 += ` 제대로 하는 법`;
-                if (pastedContent) {
-                    let shortPasted = pastedContent;
-                    if (pastedContent.length > 12) {
-                        shortPasted = pastedContent.split(' ').slice(0, 2).join(' ') + "...";
-                    }
-                    title2 += ` (꿀팁: ${shortPasted})`;
-                }
-                suggestions.push(title2);
-            }
-            
-            let title3 = "";
-            if (pastedContent) {
-                title3 = pastedContent.split(' ')[0];
-                if (title3.length > 10 && pastedContent.includes(' ')) {
-                     title3 = pastedContent.substring(0, Math.min(pastedContent.indexOf(' '), 10));
-                } else if (title3.length > 10) {
-                     title3 = title3.substring(0,10) + "...";
-                }
-            } else if (mainFocusKeyword) {
-                title3 = mainFocusKeyword;
-            }
-
-            if (title3) {
-                if (mainFocusKeyword && !title3.toLowerCase().includes(mainFocusKeyword.toLowerCase()) && pastedContent) {
-                     title3 += ` ${mainFocusKeyword}`;
-                }
-                if (secondaryKwsArray.length > 0) {
-                    title3 += ` ${secondaryKwsArray[0]} 핵심!`;
-                } else if (mainFocusKeyword && !pastedContent) {
-                    title3 += ` 지금 바로 확인`;
-                } else if (pastedContent && !mainFocusKeyword && secondaryKwsArray.length == 0) {
-                    title3 += ` 주목!`;
-                }
-                if (title3.length > 30) title3 = title3.substring(0, 27) + "...";
-                suggestions.push(title3);
-            }
-
-            if (suggestions.length > 0) {
-                suggestedTitleOutput.value = suggestions[0]; 
-            } else {
-                suggestedTitleOutput.value = "제목을 생성하기 위한 정보가 부족합니다.";
-            }
-        });
-
-        closeFocusSectionButton.addEventListener('click', () => {
-            keywordFocusSection.style.display = 'none';
-            manualOpenTitleBuilderButton.style.display = 'none';
-            activeSpecificKeywordForTitle = null;
-            
-            // 모든 안내 문구 숨기기
-            document.querySelectorAll('.guidance-message').forEach(guide => {
-                guide.classList.remove('show');
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
             });
-            
-            // 숨겨진 키워드들 다시 보이기
-            document.querySelectorAll('.keywords-list li').forEach(keyword => {
-                keyword.style.display = 'inline-block';
-            });
-            
-            const currentlySelected = document.querySelector('.keywords-list li.selected-keyword');
-            if (currentlySelected) {
-                currentlySelected.classList.remove('selected-keyword');
-            }
         });
-
-        function extractKeywordsFromText(text, topN = 10) {
-            const cleanedText = text.toLowerCase()
-                .replace(/[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, ' ') 
-                .replace(/\s+/g, ' ') 
-                .trim();
-            let words = cleanedText.split(/\s+/);
-            const stopwords = [ 
-                '이', '가', '을', '를', '은', '는', '에', '에서', '에게', '의', '과', '와', '도', '으로', '하다', '이다', '되다', '그', '저', '것', '수', '등', '및', '제', '더',
-                '입니다', '습니다', '합니다', '하는', '하고', '한', '요', '그리고', '그러나', '하지만', '그래서', '그러므로', '또는', '다른', '위해', '위한', '속', '앞', '뒤',
-                '그것', '이것', '저것', '여기', '저기', '거기', '때문', '정도', '관련', '통해', '바로', '지금', '오늘', '내일', '어제', '오전', '오후', '만에',
-                '년', '시', '분', '초', '항상', '보통', '자주', '가끔', '거의', '더', '덜', '가장', '좀', '잘', '못', '꼭', '수도',
-                '우리', '너희', '그들', '나', '너', '그녀', '뉴스', '속보', '헤드라인', '종합', '사진', '단독', '특징', '기자', '영상', '오늘의', '내일의', '발표', '공개', '결정', '공식', '총정리',
-                'a', 'an', 'the', 'is', 'are', 'be', 'and', 'of', 'to', 'in', 'it', 'for', 'on', 'with', 'as', 'by', 'new', 'news', 'update', ' KOR', 'kr', 'co', 'com', 'vs',
-                /^\d+$/, 
-                /^[a-zA-Z]{1,2}$/, 
-                /^[ㄱ-ㅎㅏ-ㅣ가-힣]{1}$/ 
-            ];
-            const wordFrequencies = {};
-            words.forEach(word => {
-                if (word.length < 2) return; 
-                let isStopword = false;
-                for (const stop of stopwords) {
-                    if (typeof stop === 'string' && word === stop) { isStopword = true; break; }
-                    if (stop instanceof RegExp && stop.test(word)) { isStopword = true; break; }
-                }
-                if (!isStopword) { wordFrequencies[word] = (wordFrequencies[word] || 0) + 1; }
-            });
-            const sortedKeywords = Object.entries(wordFrequencies)
-                .map(([keyword, count]) => ({ keyword, count }))
-                .sort((a, b) => b.count - a.count);
-            return sortedKeywords.slice(0, topN);
-        }
     </script>
 </body>
 </html>
