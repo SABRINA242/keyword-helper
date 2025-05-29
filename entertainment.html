@@ -27,28 +27,28 @@
         .header {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .header h1 {
             color: #e91e63;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 8px;
         }
         
         .header p {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1em;
         }
         
         .controls {
             background: white;
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 15px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
@@ -454,8 +454,21 @@
                 return;
             }
             
+            // 연예 관련 긍정적 키워드 우선 정렬
+            const positiveKeywords = ['콘서트', '공연', '컴백', '신곡', '앨범', '뮤직비디오', '예능', '드라마', '출연', '캐스팅', '주연', '음반', '차트', '1위', '데뷔', '활동', '팬미팅', '무대', '라이브', '투어'];
+            
+            const sortedArticles = [...articles].sort((a, b) => {
+                const aScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (a.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                const bScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (b.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                return bScore - aScore; // 점수 높은 순으로 정렬
+            });
+            
             let articlesHtml = '';
-            articles.forEach(article => {
+            sortedArticles.forEach(article => {
                 articlesHtml += `
                     <div class="article-item">
                         <a href="${article.link}" target="_blank" rel="noopener noreferrer">
