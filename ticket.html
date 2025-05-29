@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>맛집 추천 키워드 도우미</title>
+    <title>예매 정보 키워드 도우미</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #ff7675 0%, #fdcb6e 50%, #e17055 100%);
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 50%, #5f3dc4 100%);
             min-height: 100vh;
             color: #333;
         }
@@ -34,7 +34,7 @@
         }
         
         .header h1 {
-            color: #e17055;
+            color: #6c5ce7;
             font-size: 2em;
             margin-bottom: 8px;
         }
@@ -54,7 +54,7 @@
         }
         
         .controls button {
-            background: linear-gradient(45deg, #e17055, #ff7675);
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -68,7 +68,7 @@
         
         .controls button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
         }
         
         .main-content {
@@ -86,10 +86,10 @@
         }
         
         .articles-section h2 {
-            color: #e17055;
+            color: #6c5ce7;
             font-size: 1.8em;
             margin-bottom: 25px;
-            border-bottom: 3px solid #ff7675;
+            border-bottom: 3px solid #a29bfe;
             padding-bottom: 10px;
         }
         
@@ -109,7 +109,7 @@
         }
         
         .articles-container::-webkit-scrollbar-thumb {
-            background: #e17055;
+            background: #6c5ce7;
             border-radius: 10px;
         }
         
@@ -122,7 +122,7 @@
         }
         
         .article-item:hover {
-            background: #fff5f3;
+            background: #f5f3ff;
             transform: translateX(5px);
         }
         
@@ -139,7 +139,7 @@
         }
         
         .article-item a:hover {
-            color: #e17055;
+            color: #6c5ce7;
         }
         
         .keywords-section {
@@ -152,10 +152,10 @@
         }
         
         .keywords-section h2 {
-            color: #e17055;
+            color: #6c5ce7;
             font-size: 1.4em;
             margin-bottom: 15px;
-            border-bottom: 3px solid #ff7675;
+            border-bottom: 3px solid #a29bfe;
             padding-bottom: 8px;
             order: 1;
         }
@@ -163,14 +163,14 @@
         .copy-section {
             margin: 15px 0 10px 0;
             padding: 12px;
-            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
+            background: linear-gradient(45deg, #f3f2ff, #e8e5ff);
             border-radius: 8px;
-            border: 2px dashed #e17055;
+            border: 2px dashed #6c5ce7;
             order: 2;
         }
         
         .copy-section h3 {
-            color: #e17055;
+            color: #6c5ce7;
             margin-bottom: 8px;
             font-size: 1em;
         }
@@ -181,7 +181,7 @@
             border-radius: 8px;
             margin-bottom: 10px;
             min-height: 40px;
-            border: 1px solid #ff7675;
+            border: 1px solid #a29bfe;
             font-size: 0.9em;
         }
         
@@ -211,12 +211,12 @@
         }
         
         .keywords-container::-webkit-scrollbar-thumb {
-            background: #e17055;
+            background: #6c5ce7;
             border-radius: 10px;
         }
         
         .keyword-item {
-            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
+            background: linear-gradient(45deg, #f3f2ff, #e8e5ff);
             margin-bottom: 8px;
             padding: 10px 12px;
             border-radius: 20px;
@@ -228,15 +228,15 @@
         }
         
         .keyword-item:hover {
-            background: linear-gradient(45deg, #ff7675, #e17055);
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
             color: white;
             transform: scale(1.05);
         }
         
         .keyword-item.selected {
-            background: linear-gradient(45deg, #e17055, #ff7675);
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
             color: white;
-            border-color: #d63031;
+            border-color: #5f3dc4;
             transform: scale(1.05);
         }
         
@@ -260,8 +260,8 @@
             top: 20px;
             left: 20px;
             background: rgba(255,255,255,0.9);
-            color: #e17055;
-            border: 2px solid #e17055;
+            color: #6c5ce7;
+            border: 2px solid #6c5ce7;
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
@@ -271,7 +271,7 @@
         }
         
         .back-btn:hover {
-            background: #e17055;
+            background: #6c5ce7;
             color: white;
         }
         
@@ -342,12 +342,12 @@
     
     <div class="container">
         <div class="header">
-            <h1>🍽️ 맛집 추천 키워드</h1>
-            <p>현지인 추천부터 숨은 맛집까지! 맛집 관련 핫 키워드를 발굴하세요</p>
+            <h1>🎫 예매 정보 키워드</h1>
+            <p>공연, 전시, 이벤트 예매 정보! 선착순 할인 혜택 키워드를 발굴하세요</p>
         </div>
         
         <div class="controls">
-            <button id="fetchButton">🍕 최신 맛집 정보 가져오기</button>
+            <button id="fetchButton">🎟️ 최신 예매 정보 가져오기</button>
             <button id="resetButton" style="display: none;">🔄 전체 보기</button>
         </div>
         
@@ -357,9 +357,9 @@
         
         <div class="main-content">
             <div class="articles-section">
-                <h2>🥘 최신 맛집 정보</h2>
+                <h2>🎪 최신 예매 정보</h2>
                 <div class="articles-container" id="articlesContainer">
-                    <div class="loading-message">버튼을 눌러서 최신 맛집 정보를 가져오세요!</div>
+                    <div class="loading-message">버튼을 눌러서 최신 예매 정보를 가져오세요!</div>
                 </div>
             </div>
             
@@ -375,14 +375,14 @@
                 </div>
                 
                 <div class="keywords-container" id="keywordsContainer">
-                    <div class="no-data-message">맛집 정보를 가져오면 키워드가 표시됩니다.</div>
+                    <div class="no-data-message">예매 정보를 가져오면 키워드가 표시됩니다.</div>
                 </div>
             </div>
         </div>
     </div>
     
     <script>
-        const RSS_URL = 'https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018';
+        const RSS_URL = 'https://www.google.co.kr/alerts/feeds/17606266067575828344/5566450803298381407';
         const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
         
         const fetchButton = document.getElementById('fetchButton');
@@ -401,7 +401,7 @@
         copyBtn.addEventListener('click', copyKeywords);
         
         async function fetchNews() {
-            articlesContainer.innerHTML = '<div class="loading-message">맛집 정보를 가져오는 중...</div>';
+            articlesContainer.innerHTML = '<div class="loading-message">예매 정보를 가져오는 중...</div>';
             keywordsContainer.innerHTML = '<div class="loading-message">키워드 분석 중...</div>';
             
             try {
@@ -418,7 +418,7 @@
                 }
                 
                 if (items.length === 0) {
-                    articlesContainer.innerHTML = '<div class="no-data-message">맛집 정보를 찾을 수 없습니다.</div>';
+                    articlesContainer.innerHTML = '<div class="no-data-message">예매 정보를 찾을 수 없습니다.</div>';
                     keywordsContainer.innerHTML = '<div class="no-data-message">키워드가 없습니다.</div>';
                     return;
                 }
@@ -447,7 +447,7 @@
                 
             } catch (error) {
                 console.error('Error fetching news:', error);
-                articlesContainer.innerHTML = `<div class="error-message">맛집 정보를 가져오는 중 오류가 발생했습니다: ${error.message}</div>`;
+                articlesContainer.innerHTML = `<div class="error-message">예매 정보를 가져오는 중 오류가 발생했습니다: ${error.message}</div>`;
                 keywordsContainer.innerHTML = '<div class="error-message">키워드를 분석할 수 없습니다.</div>';
             }
         }
@@ -458,8 +458,8 @@
                 return;
             }
             
-            // 맛집 관련 긍정적 키워드 우선 정렬
-            const positiveKeywords = ['맛집', '추천', '인기', '유명', '화제', '맛있는', '맛난', '현지인', '숨은', '명소', '오픈', '신규', '새로', '후기', '리뷰', '베스트', '맛', '음식', '요리', '메뉴'];
+            // 예매 관련 긍정적 키워드 우선 정렬
+            const positiveKeywords = ['예매', '티켓', '할인', '특가', '선착순', '이벤트', '공연', '콘서트', '뮤지컬', '연극', '전시', '페스티벌', '오픈', '사전예매', '단독판매', '한정판매', '예약', '신청'];
             
             const sortedArticles = [...articles].sort((a, b) => {
                 const aScore = positiveKeywords.reduce((score, keyword) => {
@@ -540,7 +540,7 @@
             }
             
             selectedKeywordsDiv.innerHTML = selectedKeywordsList.map(keyword => 
-                `<span style="background: #e17055; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
+                `<span style="background: #6c5ce7; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
             ).join('');
         }
         
