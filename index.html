@@ -40,28 +40,36 @@
             margin-right: 8px;
         }
         .controls input[type="url"] {
-            width: 380px;
+            width: 320px; /* 너비 약간 줄임 */
             padding: 10px;
-            margin-right: 12px;
+            margin-right: 10px;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 0.95em;
         }
         .controls button {
             display: inline-block;
-            padding: 10px 22px;
+            padding: 10px 18px; /* 패딩 약간 줄임 */
             background-color: #1a73e8;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin: 0;
-            font-size: 1em;
+            margin: 5px; /* 버튼들 사이 간격 */
+            font-size: 0.95em; /* 폰트 약간 줄임 */
             transition: background-color 0.2s ease;
         }
         .controls button:hover {
             background-color: #1558b0;
         }
+        .controls button#manualOpenTitleBuilderButton { /* 새 버튼 스타일 */
+            background-color: #ffc107;
+            color: #212529;
+        }
+         .controls button#manualOpenTitleBuilderButton:hover {
+            background-color: #e0a800;
+        }
+
 
         #results {
             margin-top: 25px;
@@ -87,14 +95,14 @@
             color: #1a73e8;
         }
         .rss-url { display: none; }
-        .back-to-main-keywords { /* '뒤로가기' 버튼 스타일 */
+        .back-to-main-keywords { 
             font-size: 0.9em;
             padding: 4px 8px;
             cursor: pointer;
             background-color: #6c757d;
             color: white;
             border-radius: 4px;
-            display: none; /* 평소엔 숨김 */
+            display: none; 
         }
         .back-to-main-keywords:hover {
             background-color: #5a6268;
@@ -148,7 +156,7 @@
              max-height: 220px;
              overflow-y: auto;
         }
-        .keywords-list li { /* 키워드 알약 버튼 공통 스타일 */
+        .keywords-list li { 
             background-color: #e9f5ff;
             padding: 8px 14px;
             margin-bottom: 8px;
@@ -156,21 +164,37 @@
             border-radius: 18px;
             color: #0056b3;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease; /* 그림자 효과 추가 */
             display: inline-block;
             margin-right: 8px;
+            border: 1px solid transparent; /* 선택 시 테두리 공간 확보 */
         }
         .keywords-list li:hover {
             background-color: #cce7ff;
         }
-        .keywords-list li.primary-keyword {} /* 1차 키워드 특정 스타일 (필요시) */
-        .keywords-list li.specific-keyword { /* 2차 키워드 특정 스타일 (필요시) */
-            background-color: #d1e7dd; /* 다른 색상 예시 */
+        .keywords-list li.selected-keyword { /* 선택된 키워드 스타일 */
+            background-color: #ffc107; /* 눈에 띄는 색 */
+            color: #212529;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            border: 1px solid #e0a800;
+        }
+        .keywords-list li.primary-keyword {} 
+        .keywords-list li.specific-keyword { 
+            background-color: #d1e7dd; 
             color: #146c43;
         }
         .keywords-list li.specific-keyword:hover {
             background-color: #b6d7c3;
         }
+         .keywords-list li.specific-keyword.selected-keyword { /* 선택된 2차 키워드 */
+            background-color: #ffc107;
+            color: #212529;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            border: 1px solid #e0a800;
+        }
+
 
         .keywords-list .keyword-count {
             font-size: 0.9em;
@@ -190,47 +214,57 @@
             font-style: italic;
         }
 
-        /* --- 키워드 활용 및 제목 만들기 섹션 (일단 숨김) --- */
         #keywordFocusSection {
-            display: none; /* 평소엔 숨김 */
+            display: none; 
             margin-top: 30px;
             padding: 25px;
             border: 2px solid #1a73e8;
             border-radius: 8px;
-            background-color: #e9f5ff; /* 배경색 변경 */
+            background-color: #e9f5ff; 
         }
         #keywordFocusSection h2 {
             text-align: center;
             color: #1a73e8;
             margin-bottom: 20px;
         }
-        #keywordFocusSection p, #keywordFocusSection label {
-            margin-bottom: 8px;
+        #keywordFocusSection .input-group { /* 입력 그룹 스타일 */
+            margin-bottom: 20px;
         }
-        #keywordFocusSection input[type="text"] {
-            width: calc(100% - 20px); /* padding 고려 */
+        #keywordFocusSection .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        #keywordFocusSection .input-group input[type="text"],
+        #keywordFocusSection .input-group textarea { /* textarea 추가 고려 */
+            width: calc(100% - 22px); 
             padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 1em;
         }
-        #keywordFocusSection button { /* 제목조합, 닫기 버튼 */
+         #keywordFocusSection .input-group textarea {
+            min-height: 60px; /* 여러 줄 입력 가능하도록 */
+        }
+        #keywordFocusSection .button-group { /* 버튼 그룹 스타일 */
+            text-align: right; /* 버튼 오른쪽 정렬 */
+            margin-top: 20px;
+        }
+        #keywordFocusSection .button-group button { 
             padding: 10px 18px;
             font-size: 0.95em;
-            margin-right: 10px;
-            background-color: #28a745; /* 초록색 */
+            margin-left: 10px; /* 버튼 간 간격 */
+            background-color: #28a745; 
             color:white;
             border:none;
             border-radius:4px;
             cursor:pointer;
         }
-        #keywordFocusSection button#closeFocusSectionButton {
-            background-color: #6c757d; /* 회색 */
+        #keywordFocusSection .button-group button#closeFocusSectionButton {
+            background-color: #6c757d; 
         }
         #keywordFocusSection #suggestedTitleOutput {
-            background-color: #e9ecef; /* 읽기전용 느낌 */
+            background-color: #e9ecef; 
         }
     </style>
 </head>
@@ -242,12 +276,14 @@
             <label for="corsProxyInput">CORS 프록시 URL:</label>
             <input type="url" id="corsProxyInput" value="https://api.allorigins.win/raw?url=">
             <button id="fetchAllButton">모든 정보 업데이트</button>
+            <button id="manualOpenTitleBuilderButton" style="display: none;">선택 키워드로 제목 만들기</button> 
         </div>
 
         <div id="results" class="results">
             <div id="travelSection" class="category-section">
                 <div class="category-header">
-                    <div class="category-title">🏖️ 여행 예약</div> <button class="back-to-main-keywords" data-sectionid="travelSection"> &laquo; 전체 키워드로 돌아가기</button>
+                    <div class="category-title">🏖️ 여행 예약</div>
+                    <button class="back-to-main-keywords" data-sectionid="travelSection"> &laquo; 전체 키워드로 돌아가기</button>
                 </div>
                 <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204012688</div>
                 <div class="section-content">
@@ -262,125 +298,103 @@
                     </div>
                 </div>
             </div>
-            
-            <div id="festivalSection" class="category-section">
+             <div id="festivalSection" class="category-section">
                 <div class="category-header">
-                     <div class="category-title">🎪 축제</div> <button class="back-to-main-keywords" data-sectionid="festivalSection"> &laquo; 전체 키워드로 돌아가기</button>
+                     <div class="category-title">🎪 축제</div>
+                     <button class="back-to-main-keywords" data-sectionid="festivalSection"> &laquo; 전체 키워드로 돌아가기</button>
                 </div>
-                <div class="rss-url">https://www.google.co.kr/alerts/feeds/17606266067575828344/2724755524646139218</div> <div class="section-content">
-                    <div class="titles-area">
-                        <h4>최신 소식 제목</h4>
-                        <div id="festivalData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div>
-                    </div>
-                    <div class="keywords-area">
-                        <h4>주요 키워드</h4>
-                        <div id="festivalKeywords" class="keywords-list"></div>
-                         <div class="keyword-rationale">제목 빈도수 기반 추출</div>
-                    </div>
+                <div class="rss-url">https://www.google.co.kr/alerts/feeds/17606266067575828344/2724755524646139218</div>
+                <div class="section-content">
+                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="festivalData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
+                    <div class="keywords-area"><h4>주요 키워드</h4><div id="festivalKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
                 </div>
             </div>
-            
             <div id="ticketSection" class="category-section">
                  <div class="category-header">
-                    <div class="category-title">🎫 예매</div> <button class="back-to-main-keywords" data-sectionid="ticketSection"> &laquo; 전체 키워드로 돌아가기</button>
+                    <div class="category-title">🎫 예매</div>
+                    <button class="back-to-main-keywords" data-sectionid="ticketSection"> &laquo; 전체 키워드로 돌아가기</button>
                 </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/5566450803298381407</div> <div class="section-content">
-                    <div class="titles-area">
-                        <h4>최신 소식 제목</h4>
-                        <div id="ticketData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div>
-                    </div>
-                    <div class="keywords-area">
-                        <h4>주요 키워드</h4>
-                        <div id="ticketKeywords" class="keywords-list"></div>
-                         <div class="keyword-rationale">제목 빈도수 기반 추출</div>
-                    </div>
+                <div class="rss-url">https://www.google.co.kr/alerts/feeds/17606266067575828344/5566450803298381407</div>
+                <div class="section-content">
+                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="ticketData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
+                    <div class="keywords-area"><h4>주요 키워드</h4><div id="ticketKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
                 </div>
             </div>
-            
             <div id="restaurantSection" class="category-section">
                 <div class="category-header">
-                    <div class="category-title">🍽️ 맛집 추천</div> <button class="back-to-main-keywords" data-sectionid="restaurantSection"> &laquo; 전체 키워드로 돌아가기</button>
+                    <div class="category-title">🍽️ 맛집 추천</div>
+                    <button class="back-to-main-keywords" data-sectionid="restaurantSection"> &laquo; 전체 키워드로 돌아가기</button>
                 </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018</div> <div class="section-content">
-                    <div class="titles-area">
-                        <h4>최신 소식 제목</h4>
-                        <div id="restaurantData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div>
-                    </div>
-                    <div class="keywords-area">
-                        <h4>주요 키워드</h4>
-                        <div id="restaurantKeywords" class="keywords-list"></div>
-                         <div class="keyword-rationale">제목 빈도수 기반 추출</div>
-                    </div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018</div>
+                <div class="section-content">
+                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="restaurantData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
+                    <div class="keywords-area"><h4>주요 키워드</h4><div id="restaurantKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
                 </div>
             </div>
-            
             <div id="welfareSection" class="category-section">
                  <div class="category-header">
-                    <div class="category-title">💰 지원금 신청</div> <button class="back-to-main-keywords" data-sectionid="welfareSection"> &laquo; 전체 키워드로 돌아가기</button>
+                    <div class="category-title">💰 지원금 신청</div>
+                    <button class="back-to-main-keywords" data-sectionid="welfareSection"> &laquo; 전체 키워드로 돌아가기</button>
                 </div>
-                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041</div> <div class="section-content">
-                    <div class="titles-area">
-                        <h4>최신 소식 제목</h4>
-                        <div id="welfareData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div>
-                    </div>
-                    <div class="keywords-area">
-                        <h4>주요 키워드</h4>
-                        <div id="welfareKeywords" class="keywords-list"></div>
-                         <div class="keyword-rationale">제목 빈도수 기반 추출</div>
-                    </div>
+                <div class="rss-url">https://www.google.com/alerts/feeds/17606266067575828344/4177095888204010041</div>
+                 <div class="section-content">
+                    <div class="titles-area"><h4>최신 소식 제목</h4><div id="welfareData" class="rss-data-container"><div class="loading-message">버튼을 눌러 정보를 가져오세요.</div></div></div>
+                    <div class="keywords-area"><h4>주요 키워드</h4><div id="welfareKeywords" class="keywords-list"></div><div class="keyword-rationale">제목 빈도수 기반 추출</div></div>
                 </div>
             </div>
         </div>
 
         <div id="keywordFocusSection">
-            <h2 id="focusSectionTitle">키워드 활용 및 제목 만들기</h2>
-            <p><strong>선택된 주요 키워드:</strong> <span id="selectedPrimaryKeyword"></span></p>
-            
-            <div>
-                <label for="secondaryKeywordsInput"><b>1. 보조 키워드 추가:</b> (쉼표로 구분하여 여러 개 입력 가능)</label><br>
+            <h2>키워드 활용 및 제목 만들기</h2>
+            <div class="input-group">
+                <p><strong>선택된 구체적 키워드:</strong> <span id="selectedFocusKeyword" style="color: #d9534f; font-weight:bold;"></span></p>
+            </div>
+            <div class="input-group">
+                <label for="pastedContentInput"><b>1. 참고한 제목/문구 붙여넣기 (선택 사항):</b></label>
+                <textarea id="pastedContentInput" rows="2" placeholder="다른 기사에서 참고한 제목이나 주요 문구를 여기에 붙여넣으세요..."></textarea>
+            </div>
+            <div class="input-group">
+                <label for="secondaryKeywordsInput"><b>2. 보조 키워드 추가:</b> (쉼표로 구분하여 여러 개 입력)</label>
                 <input type="text" id="secondaryKeywordsInput" placeholder="예: 후기, 추천, 2025년, 가는 법">
             </div>
-            
-            <div>
-                <label for="suggestedTitleOutput"><b>2. 추천 제목 조합:</b></label><br>
-                <input type="text" id="suggestedTitleOutput" readonly>
-                <button id="generateTitleButton">제목 조합해보기</button>
+            <div class="input-group">
+                <label for="suggestedTitleOutput"><b>3. 추천 제목 조합:</b></label>
+                <input type="text" id="suggestedTitleOutput" readonly placeholder="버튼을 눌러 제목 조합을 확인하세요...">
+                <button id="generateTitleButton" style="margin-top:5px;">제목 조합해보기</button>
             </div>
-            
-            <div style="margin-top: 15px;">
-                 <label><b>설명:</b></label>
-                 <p style="font-size:0.9em; color:#555;">선택된 주요 키워드와 직접 입력한 보조 키워드를 바탕으로 블로그 제목을 자동으로 조합해봅니다. <br>조합된 제목을 참고하여 더 좋은 제목으로 다듬어보세요!</p>
+            <div class="button-group">
+                <button id="closeFocusSectionButton">닫기</button>
             </div>
-            <button id="closeFocusSectionButton">닫기</button>
         </div>
-
     </div>
 
     <script>
         const corsProxyInput = document.getElementById('corsProxyInput');
         const fetchAllButton = document.getElementById('fetchAllButton');
-        const resultsDiv = document.getElementById('results'); // 이벤트 위임용
+        const resultsDiv = document.getElementById('results');
+        const manualOpenTitleBuilderButton = document.getElementById('manualOpenTitleBuilderButton');
         
-        // 키워드 포커스 섹션 관련 요소
         const keywordFocusSection = document.getElementById('keywordFocusSection');
-        const selectedPrimaryKeywordSpan = document.getElementById('selectedPrimaryKeyword');
+        const selectedFocusKeywordSpan = document.getElementById('selectedFocusKeyword'); // 이름 변경 selectedPrimaryKeyword -> selectedFocusKeyword
+        const pastedContentInput = document.getElementById('pastedContentInput');
         const secondaryKeywordsInput = document.getElementById('secondaryKeywordsInput');
         const suggestedTitleOutput = document.getElementById('suggestedTitleOutput');
         const generateTitleButton = document.getElementById('generateTitleButton');
         const closeFocusSectionButton = document.getElementById('closeFocusSectionButton');
 
-        // 각 섹션별로 가져온 기사 전체 목록을 저장할 객체
         let categoryDataStore = {}; 
+        let activeSpecificKeywordForTitle = null; // 현재 제목 만들기에 사용될 최종 선택된 구체적 키워드
 
         fetchAllButton.addEventListener('click', () => {
-            // 키워드 포커스 섹션 숨기기 (새로고침 시)
             keywordFocusSection.style.display = 'none';
+            manualOpenTitleBuilderButton.style.display = 'none'; // 버튼도 숨김
+            activeSpecificKeywordForTitle = null; // 초기화
             
             const sections = document.querySelectorAll('.category-section');
             const corsProxy = corsProxyInput.value.trim();
 
             if (!corsProxy.includes('?url=')) {
-                alert('CORS 프록시 URL 형식이 잘못되었습니다. 주소에 "?url="이 포함되어야 합니다.');
+                alert('CORS 프록시 URL 형식이 잘못되었습니다.');
                 return;
             }
             
@@ -393,8 +407,8 @@
                 
                 if (rssUrlDiv && titlesElement && keywordsElement) {
                     const rssUrl = rssUrlDiv.textContent.trim();
-                    if (!rssUrl) { // RSS URL이 비어있으면 스킵
-                        titlesElement.innerHTML = '<div class="no-data-message">RSS 주소가 설정되지 않았습니다.</div>';
+                    if (!rssUrl) {
+                        titlesElement.innerHTML = '<div class="no-data-message">RSS 주소 없음</div>';
                         keywordsElement.innerHTML = '';
                         if(backButton) backButton.style.display = 'none';
                         return;
@@ -407,13 +421,13 @@
         async function fetchAndDisplayInitial(rssUrl, titlesElement, keywordsElement, corsProxy, sectionId, backButton) {
             titlesElement.innerHTML = '<div class="loading-message">가져오는 중...</div>';
             keywordsElement.innerHTML = ''; 
-            if(backButton) backButton.style.display = 'none'; // 초기에는 뒤로가기 버튼 숨김
+            if(backButton) backButton.style.display = 'none';
 
-            categoryDataStore[sectionId] = { articles: [], allTitlesText: "" }; // 데이터 저장소 초기화
+            categoryDataStore[sectionId] = { articles: [], allTitlesText: "" }; 
 
             try {
                 const response = await fetch(corsProxy + encodeURIComponent(rssUrl));
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status} for ${rssUrl}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status} (URL: ${rssUrl})`);
                 
                 const str = await response.text();
                 const data = new window.DOMParser().parseFromString(str, "text/xml");
@@ -421,7 +435,7 @@
                 if (items.length === 0 && data.querySelectorAll("entry").length > 0) items = data.querySelectorAll("entry");
 
                 if (items.length === 0) {
-                    titlesElement.innerHTML = '<div class="no-data-message">표시할 내용이 없거나 피드를 가져올 수 없습니다.</div>';
+                    titlesElement.innerHTML = '<div class="no-data-message">내용 없음</div>';
                     keywordsElement.innerHTML = '<div class="no-data-message">-</div>';
                     return;
                 }
@@ -435,26 +449,25 @@
                     if (titleElement) {
                         const title = titleElement.textContent;
                         titlesHtml += `<li><a href="${linkHref}" target="_blank" rel="noopener noreferrer">${title}</a></li>`;
-                        categoryDataStore[sectionId].articles.push({ title: title, link: linkHref }); // 개별 기사 저장
+                        categoryDataStore[sectionId].articles.push({ title: title, link: linkHref }); 
                         categoryDataStore[sectionId].allTitlesText += title + " "; 
                     }
                 });
                 titlesHtml += '</ul>';
                 titlesElement.innerHTML = titlesHtml;
-
-                // 1차 주요 키워드 추출 및 표시
                 displayKeywords(categoryDataStore[sectionId].allTitlesText, keywordsElement, sectionId, 'primary-keyword', 7);
-
             } catch (error) {
-                console.error(`Error fetching initial RSS for ${sectionId} (${rssUrl}):`, error);
+                console.error(`Error for ${sectionId} (${rssUrl}):`, error);
                 titlesElement.innerHTML = `<div class="error-message">오류: ${error.message}</div>`;
                 keywordsElement.innerHTML = `<div class="error-message">오류</div>`;
             }
         }
         
-        // 키워드 목록을 화면에 표시하는 함수
         function displayKeywords(textToAnalyze, keywordsElement, sectionId, keywordClass, topN) {
-            if (textToAnalyze.trim()) {
+            // 모든 키워드에서 'selected-keyword' 클래스 먼저 제거
+            document.querySelectorAll('.keywords-list li.selected-keyword').forEach(el => el.classList.remove('selected-keyword'));
+
+            if (textToAnalyze && textToAnalyze.trim()) {
                 const keywords = extractKeywordsFromText(textToAnalyze, topN);
                 if (keywords.length > 0) {
                     let keywordsHtmlList = '<ul>';
@@ -471,28 +484,51 @@
             }
         }
 
-        // 이벤트 위임: #results 안의 클릭 처리
         resultsDiv.addEventListener('click', function(event) {
-            const target = event.target;
+            const target = event.target.closest('li'); // li 또는 li 내부의 span 클릭 모두 li로 감지
             
-            // 1차 주요 키워드 클릭 시 (class="primary-keyword")
-            if (target.matches('.keywords-list li.primary-keyword')) {
+            if (target && target.parentElement.parentElement.classList.contains('keywords-list')) { // 키워드 리스트의 아이템인지 확인
+                 // 이전에 선택된 키워드가 있다면 선택 해제
+                const currentlySelected = document.querySelector('.keywords-list li.selected-keyword');
+                if (currentlySelected) {
+                    currentlySelected.classList.remove('selected-keyword');
+                }
+                // 새로 클릭된 키워드 선택 표시
+                target.classList.add('selected-keyword');
+
                 const clickedKeyword = target.dataset.keyword;
                 const sectionId = target.dataset.sectionid;
-                handlePrimaryKeywordClick(clickedKeyword, sectionId);
-            } 
-            // 2차 구체적 키워드 클릭 시 (class="specific-keyword") - 다음 단계에서 구현
-            else if (target.matches('.keywords-list li.specific-keyword')) {
-                const clickedKeyword = target.dataset.keyword;
-                const sectionId = target.dataset.sectionid; // 필요 없을 수도 있지만 일단 전달
-                handleSpecificKeywordClick(clickedKeyword, sectionId);
-            }
-            // '뒤로가기' 버튼 클릭 시
-            else if (target.matches('.back-to-main-keywords')) {
-                const sectionId = target.dataset.sectionid;
+
+                if (target.classList.contains('primary-keyword')) {
+                    handlePrimaryKeywordClick(clickedKeyword, sectionId);
+                    manualOpenTitleBuilderButton.style.display = 'none'; // 1차 키워드 클릭 시 제목만들기 버튼 숨김
+                    activeSpecificKeywordForTitle = null; // 1차 클릭 시 제목만들기 대상 키워드 초기화
+                } else if (target.classList.contains('specific-keyword')) {
+                    // 2차 구체적 키워드 클릭 시: activeSpecificKeywordForTitle 업데이트하고, "제목 만들기" 버튼 표시
+                    activeSpecificKeywordForTitle = clickedKeyword;
+                    manualOpenTitleBuilderButton.style.display = 'inline-block'; // 2차 키워드 선택 시 버튼 보이기
+                    keywordFocusSection.style.display = 'none'; // 2차 클릭 시 제목창 바로 안 띄움
+                }
+            } else if (event.target.matches('.back-to-main-keywords')) { // 뒤로가기 버튼
+                const sectionId = event.target.dataset.sectionid;
                 handleBackToMainKeywords(sectionId);
             }
         });
+        
+        // "선택 키워드로 제목 만들기" 버튼 클릭 이벤트
+        manualOpenTitleBuilderButton.addEventListener('click', () => {
+            if (activeSpecificKeywordForTitle) {
+                selectedFocusKeywordSpan.textContent = activeSpecificKeywordForTitle;
+                pastedContentInput.value = ''; // 초기화
+                secondaryKeywordsInput.value = ''; 
+                suggestedTitleOutput.value = ''; 
+                keywordFocusSection.style.display = 'block'; 
+                keywordFocusSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                alert('먼저 오른쪽 목록에서 구체적인 키워드를 하나 선택해주세요.');
+            }
+        });
+
 
         function handlePrimaryKeywordClick(primaryKeyword, sectionId) {
             const section = document.getElementById(sectionId);
@@ -500,16 +536,13 @@
             const keywordsElement = section.querySelector('.keywords-list');
             const backButton = section.querySelector('.back-to-main-keywords');
 
-            // 1. 해당 섹션의 저장된 전체 기사 목록 가져오기
             const allArticlesInSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].articles : [];
             if (allArticlesInSection.length === 0) return;
 
-            // 2. 클릭된 primaryKeyword를 포함하는 기사들만 필터링
             const filteredArticles = allArticlesInSection.filter(article => 
                 article.title.toLowerCase().includes(primaryKeyword.toLowerCase())
             );
 
-            // 3. 필터링된 기사 제목들을 titlesElement에 표시
             if (filteredArticles.length > 0) {
                 let filteredTitlesHtml = '<ul>';
                 let filteredTitlesText = "";
@@ -519,16 +552,13 @@
                 });
                 filteredTitlesHtml += '</ul>';
                 titlesElement.innerHTML = filteredTitlesHtml;
-
-                // 4. 필터링된 제목들에서 2차 구체적 키워드 추출 및 keywordsElement에 표시
-                displayKeywords(filteredTitlesText, keywordsElement, sectionId, 'specific-keyword', 10); // 2차는 10개
-                if(backButton) backButton.style.display = 'inline-block'; // 뒤로가기 버튼 표시
+                displayKeywords(filteredTitlesText, keywordsElement, sectionId, 'specific-keyword', 10);
+                if(backButton) backButton.style.display = 'inline-block';
             } else {
                 titlesElement.innerHTML = `<div class="no-data-message">'${primaryKeyword}' 포함 기사 없음.</div>`;
-                keywordsElement.innerHTML = '';
+                keywordsElement.innerHTML = '<div class="no-data-message">키워드 없음</div>';
                 if(backButton) backButton.style.display = 'inline-block';
             }
-             // 키워드 포커스 섹션(제목 만들기)은 아직 안 보이게
             keywordFocusSection.style.display = 'none';
         }
 
@@ -538,7 +568,6 @@
             const keywordsElement = section.querySelector('.keywords-list');
             const backButton = section.querySelector('.back-to-main-keywords');
 
-            // 1. 저장된 전체 기사 목록 다시 표시
             const allArticlesInSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].articles : [];
             if (allArticlesInSection.length > 0) {
                 let originalTitlesHtml = '<ul>';
@@ -548,58 +577,64 @@
                 originalTitlesHtml += '</ul>';
                 titlesElement.innerHTML = originalTitlesHtml;
             } else {
-                titlesElement.innerHTML = '<div class="no-data-message">표시할 내용이 없습니다.</div>';
+                titlesElement.innerHTML = '<div class="no-data-message">표시할 내용 없음.</div>';
             }
 
-            // 2. 1차 주요 키워드 다시 표시
             const allTitlesTextForSection = categoryDataStore[sectionId] ? categoryDataStore[sectionId].allTitlesText : "";
             displayKeywords(allTitlesTextForSection, keywordsElement, sectionId, 'primary-keyword', 7);
             
-            if(backButton) backButton.style.display = 'none'; // 뒤로가기 버튼 숨김
-            keywordFocusSection.style.display = 'none'; // 제목만들기 창도 숨김
+            if(backButton) backButton.style.display = 'none';
+            keywordFocusSection.style.display = 'none';
+            manualOpenTitleBuilderButton.style.display = 'none';
+            activeSpecificKeywordForTitle = null;
         }
         
-        // 2차 구체적 키워드 클릭 시 -> 제목 만들기 창으로!
-        function handleSpecificKeywordClick(specificKeyword, sectionId) {
-            selectedPrimaryKeywordSpan.textContent = specificKeyword; // 여기서는 specificKeyword가 메인 키워드가 됨
-            secondaryKeywordsInput.value = ''; // 보조 키워드 입력창 초기화
-            suggestedTitleOutput.value = ''; // 추천 제목 출력창 초기화
-            keywordFocusSection.style.display = 'block'; // 제목 만들기 섹션 보이기
-            
-            // 부드럽게 스크롤 (만약 요소가 화면 밖에 있다면)
-            keywordFocusSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        // 제목 조합 버튼 클릭
         generateTitleButton.addEventListener('click', () => {
-            const mainKeyword = selectedPrimaryKeywordSpan.textContent;
-            const secondaryKeywords = secondaryKeywordsInput.value.split(',')
+            const mainKeyword = selectedFocusKeywordSpan.textContent;
+            const pastedContent = pastedContentInput.value.trim();
+            const secondaryKws = secondaryKeywordsInput.value.split(',')
                                         .map(sk => sk.trim())
                                         .filter(sk => sk.length > 0);
             
             if (!mainKeyword) {
-                alert('주요 키워드가 선택되지 않았습니다.');
+                alert('선택된 주요 키워드가 없습니다. 먼저 키워드를 선택해주세요.');
                 return;
             }
 
-            // 간단한 제목 조합 로직 (예시)
-            let title = mainKeyword;
-            if (secondaryKeywords.length > 0) {
-                title += " | " + secondaryKeywords.join(', ');
+            let titleParts = [mainKeyword];
+            if (pastedContent) { // 붙여넣은 내용이 있으면, 여기서 키워드를 더 뽑거나, 주요 구문을 활용 (여기선 간단히 추가)
+                // titleParts.unshift(pastedContent); // 앞에 붙이기
+                 // 간단하게는, 붙여넣은 내용에서 핵심 명사 몇 개를 뽑아서 보조키워드에 추가하는 로직도 가능
             }
-            // 더 많은 조합 시도 가능:
-            // 예1: [보조키워드1] [주요키워드] 완벽 정리 (+보조키워드2)
-            // 예2: [주요키워드] 핵심 정보: [보조키워드1]부터 [보조키워드2]까지
-            suggestedTitleOutput.value = title + " (블로그 포스팅 제목 예시)";
+            titleParts = titleParts.concat(secondaryKws);
+            
+            // 다양한 제목 조합 (예시들)
+            let suggestedTitles = [];
+            suggestedTitles.push(`"${mainKeyword}" 완벽정리: ${secondaryKws.join(', ')} 포함 (최신정보)`);
+            suggestedTitles.push(`[블로그팁] ${mainKeyword} 핵심 파헤치기 (${secondaryKws.length > 0 ? secondaryKws[0] : '보조키워드1'})`);
+            if (pastedContent) {
+                 suggestedTitles.push(`뉴스 PICK: "${pastedContent}" 속 ${mainKeyword} 활용법은?`);
+            }
+            suggestedTitles.push(`${secondaryKws.length > 0 ? secondaryKws[0] : '꿀팁'} 대방출! ${mainKeyword} 블로그 포스팅 A to Z`);
+
+            // 일단 첫번째 제안 제목만 보여주기
+            suggestedTitleOutput.value = suggestedTitles[0] || mainKeyword + (secondaryKws.length > 0 ? " - " + secondaryKws.join(', ') : "") + " 완벽 가이드";
+            
+            // 여러개 보여주고 싶다면 suggestedTitleOutput을 textarea로 바꾸거나, 다른 div에 목록으로 표시
+            // 예: globalKeywordResults.innerHTML = "<ul>" + suggestedTitles.map(t => `<li>${t}</li>`).join("") + "</ul>";
         });
 
-        // 닫기 버튼 클릭
         closeFocusSectionButton.addEventListener('click', () => {
             keywordFocusSection.style.display = 'none';
+            manualOpenTitleBuilderButton.style.display = 'none';
+            activeSpecificKeywordForTitle = null;
+            // 현재 선택된 키워드 표시도 해제
+            const currentlySelected = document.querySelector('.keywords-list li.selected-keyword');
+            if (currentlySelected) {
+                currentlySelected.classList.remove('selected-keyword');
+            }
         });
 
-
-        // --- 키워드 추출 함수 (extractKeywordsFromText) ---
         function extractKeywordsFromText(text, topN = 10) {
             const cleanedText = text.toLowerCase()
                 .replace(/[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, ' ') 
