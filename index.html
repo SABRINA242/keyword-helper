@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>카테고리별 RSS 키워드 도우미</title>
     <style>
+        /* style.css 파일의 내용 시작 */
         body {
             font-family: sans-serif;
             line-height: 1.6;
@@ -104,7 +105,8 @@
             margin-top: 0;
             margin-bottom: 10px;
             color: #333;
-            font-size: 1.1em;
+            /* --- 수정된 부분 --- */
+            font-size: 1.2em; /* 기존 1.1em에서 약간 크게 */
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
@@ -139,27 +141,34 @@
         }
         .keywords-list li {
             background-color: #e9f5ff; /* 키워드 배경색 */
-            padding: 6px 10px;
-            margin-bottom: 6px;
-            border-radius: 15px; /* 둥근 알약 모양 */
-            font-size: 0.85em;
+            /* --- 수정된 부분 --- */
+            padding: 8px 14px;     /* 기존 6px 10px 에서 약간 크게 */
+            margin-bottom: 8px;    /* 기존 6px 에서 약간 크게 */
+            font-size: 0.95em;     /* 기존 0.85em 에서 약간 크게 */
+            /* --- 아래는 기존과 동일 --- */
+            border-radius: 18px; /* 둥근 알약 모양, 조금 더 둥글게 */
             color: #0056b3;
-            cursor: pointer; /* 다음 단계를 위해 커서 변경 */
+            cursor: pointer; 
             transition: background-color 0.2s ease;
-            display: inline-block; /* 옆으로 나열되도록 */
-            margin-right: 6px;
+            display: inline-block; 
+            margin-right: 8px;     /* 기존 6px 에서 약간 크게 */
         }
         .keywords-list li:hover {
             background-color: #cce7ff; /* 호버 시 배경색 */
         }
         .keywords-list .keyword-count {
-            font-size: 0.8em;
+            /* --- 수정된 부분 --- */
+            font-size: 0.9em;      /* 기존 0.8em 에서 약간 크게 (li의 font-size 기준) */
+            /* --- 아래는 기존과 동일 --- */
             color: #555;
+            margin-left: 2px; /* 키워드와 간격 */
         }
         .keyword-rationale { /* 키워드 선정 이유 설명 */
-            font-size: 0.8em;
+            /* --- 수정된 부분 --- */
+            font-size: 0.9em;      /* 기존 0.8em 에서 약간 크게 */
+            /* --- 아래는 기존과 동일 --- */
             color: #6c757d;
-            margin-top: 8px;
+            margin-top: 10px;      /* 기존 8px 에서 약간 크게 */
             text-align: right;
         }
 
