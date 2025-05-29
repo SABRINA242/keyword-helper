@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예매 정보 키워드 도우미</title>
+    <title>맛집 추천 키워드 도우미</title>
     <style>
         * {
             margin: 0;
@@ -13,13 +13,13 @@
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 50%, #5f3dc4 100%);
+            background: linear-gradient(135deg, #ff7675 0%, #fdcb6e 50%, #e17055 100%);
             min-height: 100vh;
             color: #333;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -27,34 +27,34 @@
         .header {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .header h1 {
-            color: #6c5ce7;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: #e17055;
+            font-size: 2em;
+            margin-bottom: 8px;
         }
         
         .header p {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1em;
         }
         
         .controls {
             background: white;
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 15px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .controls button {
-            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            background: linear-gradient(45deg, #e17055, #ff7675);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -68,29 +68,29 @@
         
         .controls button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
         }
         
         .main-content {
             display: grid;
-            grid-template-columns: 1000px 200px;
-            gap: 20px;
+            grid-template-columns: 700px 300px;
+            gap: 0;
             min-height: 600px;
             justify-content: center;
         }
         
         .articles-section {
             background: white;
-            border-radius: 15px;
+            border-radius: 15px 0 0 15px;
             padding: 30px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
         .articles-section h2 {
-            color: #6c5ce7;
+            color: #e17055;
             font-size: 1.8em;
             margin-bottom: 25px;
-            border-bottom: 3px solid #a29bfe;
+            border-bottom: 3px solid #ff7675;
             padding-bottom: 10px;
         }
         
@@ -110,7 +110,7 @@
         }
         
         .articles-container::-webkit-scrollbar-thumb {
-            background: #6c5ce7;
+            background: #e17055;
             border-radius: 10px;
         }
         
@@ -123,7 +123,7 @@
         }
         
         .article-item:hover {
-            background: #f5f3ff;
+            background: #fff5f3;
             transform: translateX(5px);
         }
         
@@ -140,28 +140,71 @@
         }
         
         .article-item a:hover {
-            color: #6c5ce7;
+            color: #e17055;
         }
         
         .keywords-section {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 0 15px 15px 0;
+            padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .keywords-section h2 {
-            color: #6c5ce7;
-            font-size: 1.8em;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #a29bfe;
-            padding-bottom: 10px;
+            color: #e17055;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #ff7675;
+            padding-bottom: 8px;
+            order: 1;
+        }
+        
+        .copy-section {
+            margin: 15px 0 10px 0;
+            padding: 12px;
+            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
+            border-radius: 8px;
+            border: 2px dashed #e17055;
+            order: 2;
+        }
+        
+        .copy-section h3 {
+            color: #e17055;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .selected-keywords {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            min-height: 40px;
+            border: 1px solid #ff7675;
+            font-size: 0.9em;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
         }
         
         .keywords-container {
-            max-height: 500px;
+            max-height: 300px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 8px;
+            order: 3;
+            flex-grow: 1;
         }
         
         .keywords-container::-webkit-scrollbar {
@@ -169,32 +212,32 @@
         }
         
         .keywords-container::-webkit-scrollbar-thumb {
-            background: #6c5ce7;
+            background: #e17055;
             border-radius: 10px;
         }
         
         .keyword-item {
-            background: linear-gradient(45deg, #f3f2ff, #e8e5ff);
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-radius: 25px;
+            background: linear-gradient(45deg, #fff5f3, #ffeaa7);
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            font-size: 1.1em;
+            font-size: 0.95em;
             font-weight: 500;
         }
         
         .keyword-item:hover {
-            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            background: linear-gradient(45deg, #ff7675, #e17055);
             color: white;
             transform: scale(1.05);
         }
         
         .keyword-item.selected {
-            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            background: linear-gradient(45deg, #e17055, #ff7675);
             color: white;
-            border-color: #5f3dc4;
+            border-color: #d63031;
             transform: scale(1.05);
         }
         
@@ -208,41 +251,6 @@
             color: rgba(255,255,255,0.8);
         }
         
-        .copy-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(45deg, #f3f2ff, #e8e5ff);
-            border-radius: 10px;
-            border: 2px dashed #6c5ce7;
-        }
-        
-        .copy-section h3 {
-            color: #6c5ce7;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-        
-        .selected-keywords {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            min-height: 50px;
-            border: 1px solid #a29bfe;
-        }
-        
-        .copy-btn {
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
         .copy-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
@@ -253,8 +261,8 @@
             top: 20px;
             left: 20px;
             background: rgba(255,255,255,0.9);
-            color: #6c5ce7;
-            border: 2px solid #6c5ce7;
+            color: #e17055;
+            border: 2px solid #e17055;
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
@@ -264,7 +272,7 @@
         }
         
         .back-btn:hover {
-            background: #6c5ce7;
+            background: #e17055;
             color: white;
         }
         
@@ -320,6 +328,7 @@
             
             .articles-section, .keywords-section {
                 padding: 20px;
+                border-radius: 15px;
             }
         }
     </style>
@@ -329,12 +338,12 @@
     
     <div class="container">
         <div class="header">
-            <h1>🎫 예매 정보 키워드</h1>
-            <p>공연, 전시, 이벤트 예매 정보! 선착순 할인 혜택 키워드를 발굴하세요</p>
+            <h1>🍽️ 맛집 추천 키워드</h1>
+            <p>현지인 추천부터 숨은 맛집까지! 맛집 관련 핫 키워드를 발굴하세요</p>
         </div>
         
         <div class="controls">
-            <button id="fetchButton">🎟️ 최신 예매 정보 가져오기</button>
+            <button id="fetchButton">🍕 최신 맛집 정보 가져오기</button>
             <button id="resetButton" style="display: none;">🔄 전체 보기</button>
         </div>
         
@@ -344,17 +353,14 @@
         
         <div class="main-content">
             <div class="articles-section">
-                <h2>🎪 최신 예매 정보</h2>
+                <h2>🥘 최신 맛집 정보</h2>
                 <div class="articles-container" id="articlesContainer">
-                    <div class="loading-message">버튼을 눌러서 최신 예매 정보를 가져오세요!</div>
+                    <div class="loading-message">버튼을 눌러서 최신 맛집 정보를 가져오세요!</div>
                 </div>
             </div>
             
             <div class="keywords-section">
                 <h2>🎯 인기 키워드</h2>
-                <div class="keywords-container" id="keywordsContainer">
-                    <div class="no-data-message">예매 정보를 가져오면 키워드가 표시됩니다.</div>
-                </div>
                 
                 <div class="copy-section">
                     <h3>📋 선택된 키워드 조합</h3>
@@ -363,12 +369,16 @@
                     </div>
                     <button class="copy-btn" id="copyBtn">키워드 조합 복사하기</button>
                 </div>
+                
+                <div class="keywords-container" id="keywordsContainer">
+                    <div class="no-data-message">맛집 정보를 가져오면 키워드가 표시됩니다.</div>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
-        const RSS_URL = 'https://www.google.co.kr/alerts/feeds/17606266067575828344/5566450803298381407';
+        const RSS_URL = 'https://www.google.com/alerts/feeds/17606266067575828344/17230442263613006018';
         const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
         
         const fetchButton = document.getElementById('fetchButton');
@@ -387,7 +397,7 @@
         copyBtn.addEventListener('click', copyKeywords);
         
         async function fetchNews() {
-            articlesContainer.innerHTML = '<div class="loading-message">예매 정보를 가져오는 중...</div>';
+            articlesContainer.innerHTML = '<div class="loading-message">맛집 정보를 가져오는 중...</div>';
             keywordsContainer.innerHTML = '<div class="loading-message">키워드 분석 중...</div>';
             
             try {
@@ -404,7 +414,7 @@
                 }
                 
                 if (items.length === 0) {
-                    articlesContainer.innerHTML = '<div class="no-data-message">예매 정보를 찾을 수 없습니다.</div>';
+                    articlesContainer.innerHTML = '<div class="no-data-message">맛집 정보를 찾을 수 없습니다.</div>';
                     keywordsContainer.innerHTML = '<div class="no-data-message">키워드가 없습니다.</div>';
                     return;
                 }
@@ -433,7 +443,7 @@
                 
             } catch (error) {
                 console.error('Error fetching news:', error);
-                articlesContainer.innerHTML = `<div class="error-message">예매 정보를 가져오는 중 오류가 발생했습니다: ${error.message}</div>`;
+                articlesContainer.innerHTML = `<div class="error-message">맛집 정보를 가져오는 중 오류가 발생했습니다: ${error.message}</div>`;
                 keywordsContainer.innerHTML = '<div class="error-message">키워드를 분석할 수 없습니다.</div>';
             }
         }
@@ -444,8 +454,21 @@
                 return;
             }
             
+            // 맛집 관련 긍정적 키워드 우선 정렬
+            const positiveKeywords = ['맛집', '추천', '인기', '유명', '화제', '맛있는', '맛난', '현지인', '숨은', '명소', '오픈', '신규', '새로', '후기', '리뷰', '베스트', '맛', '음식', '요리', '메뉴'];
+            
+            const sortedArticles = [...articles].sort((a, b) => {
+                const aScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (a.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                const bScore = positiveKeywords.reduce((score, keyword) => {
+                    return score + (b.title.includes(keyword) ? 1 : 0);
+                }, 0);
+                return bScore - aScore;
+            });
+            
             let articlesHtml = '';
-            articles.forEach(article => {
+            sortedArticles.forEach(article => {
                 articlesHtml += `
                     <div class="article-item">
                         <a href="${article.link}" target="_blank" rel="noopener noreferrer">
@@ -513,7 +536,7 @@
             }
             
             selectedKeywordsDiv.innerHTML = selectedKeywordsList.map(keyword => 
-                `<span style="background: #6c5ce7; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
+                `<span style="background: #e17055; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
             ).join('');
         }
         
