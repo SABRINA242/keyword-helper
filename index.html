@@ -589,12 +589,105 @@
             activeSpecificKeywordForTitle = null;
         }
         
+        // generateTitleButton 클릭 이벤트 리스너 (새로운 로직)
         generateTitleButton.addEventListener('click', () => {
-            const mainKeyword = selectedFocusKeywordSpan.textContent;
+            const mainFocusKeyword = selectedFocusKeywordSpan.textContent.trim(); // 예: "예약"
             const pastedContent = pastedContentInput.value.trim();
-            const secondaryKws = secondaryKeywordsInput.value.split(',')
+            const secondaryKwsArray = secondaryKeywordsInput.value.split(',')
                                         .map(sk => sk.trim())
                                         .filter(sk => sk.length > 0);
+
+            if (!mainFocusKeyword && !pastedContent) {
+                suggestedTitleOutput.value = "주요 키워드가 없거나, 붙여넣은 내용이 없습니다.";
+                return;
+            }
+
+            let suggestions = [];
+            let baseForTitle = pastedContent ? pastedContent : mainFocusKeyword; // 붙여넣은 내용을 우선 사용
+
+            // --- 제목 생성 패턴 예시 ---
+
+            // 패턴 1: [붙여넣은 내용/주요키워드] + (주요키워드가 없다면 추가) + [보조키워드1]/[보조키워드2] 완벽 가이드
+            let title1 = baseForTitle;
+            if (pastedContent && mainFocusKeyword && !pastedContent.toLowerCase().includes(mainFocusKeyword.toLowerCase())) {
+                title1 = `${pastedContent} (${mainFocusKeyword})`; // 붙여넣은 내용에 주요 키워드가 없으면 괄호로 추가
+            } else if (!pastedContent && mainFocusKeyword) {
+                title1 = mainFocusKeyword; // 붙여넣은 내용 없으면 주요키워드가 기본
+            }
+
+            if (secondaryKwsArray.length > 0) {
+                title1 += ` - ${secondaryKwsArray.join('/')} 총정리`;
+            } else if (mainFocusKeyword && !pastedContent) { // 붙여넣은 내용 없고, 주요키워드만 있을 때
+                 title1 += ` 핵심 정보 A to Z`;
+            } else if (pastedContent && !mainFocusKeyword && secondaryKwsArray.length === 0) { // 붙여넣은 내용만 있을 때
+                 title1 += ` (놓치지 마세요!)`;
+            }
+            suggestions.push(title1);
+
+
+            // 패턴 2: [주요키워드] + [보조키워드] + 핵심팁 + (짧은 붙여넣은 내용 언급)
+            if (mainFocusKeyword) {
+                let title2 = `${mainFocusKeyword}`;
+                if (secondaryKwsArray.length > 0) {
+                    title2 += ` ${secondaryKwsArray.join(' & ')}`; // 보조 키워드 연결 방식 변경
+                }
+                title2 += ` 제대로 하는 법`;
+                if (pastedContent) {
+                    let shortPasted = pastedContent;
+                    if (pastedContent.length > 12) { // 붙여넣은 내용이 길면 앞부분만 사용
+                        shortPasted = pastedContent.split(' ').slice(0, 2).join(' ') + "...";
+                    }
+                    title2 += ` (꿀팁: ${shortPasted})`;
+                }
+                suggestions.push(title2);
+            }
+            
+            // 패턴 3: 짧은 제목 시도 (20-30자 이내 목표)
+            let title3 = "";
+            if (pastedContent) { // 붙여넣은 내용이 있다면 그것의 첫 단어/구를 활용
+                title3 = pastedContent.split(' ')[0]; // 첫 단어
+                if (title3.length > 10 && pastedContent.includes(' ')) { // 첫 단어가 너무 길면 자르기
+                     title3 = pastedContent.substring(0, Math.min(pastedContent.indexOf(' '), 10));
+                } else if (title3.length > 10) {
+                     title3 = title3.substring(0,10) + "...";
+                }
+            } else if (mainFocusKeyword) { // 붙여넣은 내용 없으면 주요 키워드 사용
+                title3 = mainFocusKeyword;
+            }
+
+            if (title3) { // title3 베이스가 있다면
+                if (mainFocusKeyword && !title3.toLowerCase().includes(mainFocusKeyword.toLowerCase()) && pastedContent) {
+                     // title3에 mainFocusKeyword가 없고, pastedContent가 사용된 경우 -> mainFocusKeyword 추가
+                     title3 += ` ${mainFocusKeyword}`;
+                }
+                if (secondaryKwsArray.length > 0) {
+                    title3 += ` ${secondaryKwsArray[0]} 핵심!`; // 첫번째 보조키워드만 사용
+                } else if (mainFocusKeyword && !pastedContent) { // 주요키워드만 있고 보조키워드 없을 때
+                    title3 += ` 지금 바로 확인`;
+                } else if (pastedContent && !mainFocusKeyword && secondaryKwsArray.length == 0) {
+                    title3 += ` 주목!`;
+                }
+                 // 길이 너무 길어지면 자르기 (간단한 방식)
+                if (title3.length > 30) title3 = title3.substring(0, 27) + "...";
+                suggestions.push(title3);
+            }
+
+
+            if (suggestions.length > 0) {
+                // 현재는 첫 번째 제안된 제목만 입력창에 보여줍니다.
+                // 여러 개를 다 보여주고 싶다면, suggestedTitleOutput을 <input> 대신 <div>로 바꾸고
+                // 그 안에 <ul><li> 목록으로 suggestions 배열 내용을 채워 넣어야 합니다.
+                suggestedTitleOutput.value = suggestions[0]; 
+                
+                // 만약 여러 개를 보여주고 싶다면 (HTML의 suggestedTitleOutput을 div로 바꾸고 아래 코드 사용)
+                // let outputHTML = "<h4>추천 제목 목록:</h4><ul>";
+                // suggestions.filter(s => s.trim()).forEach(s => outputHTML += `<li>${s}</li>`); // 빈 제목 제외
+                // outputHTML += "</ul>";
+                // document.getElementById('suggestedTitleOutputContainer').innerHTML = outputHTML; // 별도 div 필요
+            } else {
+                suggestedTitleOutput.value = "제목을 생성하기 위한 정보가 부족합니다.";
+            }
+        });
             
             if (!mainKeyword) {
                 alert('선택된 주요 키워드가 없습니다. 먼저 키워드를 선택해주세요.');
