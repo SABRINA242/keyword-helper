@@ -73,9 +73,10 @@
         
         .main-content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1000px 200px;
+            gap: 20px;
             min-height: 600px;
+            justify-content: center;
         }
         
         .articles-section {
@@ -145,16 +146,16 @@
         .keywords-section {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
         .keywords-section h2 {
             color: #0984e3;
-            font-size: 1.8em;
-            margin-bottom: 25px;
+            font-size: 1.4em;
+            margin-bottom: 20px;
             border-bottom: 3px solid #74b9ff;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
         
         .keywords-container {
@@ -302,6 +303,7 @@
             .main-content {
                 grid-template-columns: 1fr;
                 gap: 20px;
+                justify-content: stretch;
             }
             
             .container {
@@ -511,7 +513,7 @@
             }
             
             selectedKeywordsDiv.innerHTML = selectedKeywordsList.map(keyword => 
-                `<span style="background: #0984e3; color: white; padding: 5px 12px; border-radius: 15px; margin: 3px; display: inline-block;">${keyword}</span>`
+                `<span style="background: #0984e3; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
             ).join('');
         }
         

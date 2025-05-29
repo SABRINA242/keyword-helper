@@ -73,9 +73,10 @@
         
         .main-content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1000px 200px;
+            gap: 20px;
             min-height: 600px;
+            justify-content: center;
         }
         
         .articles-section {
@@ -302,6 +303,7 @@
             .main-content {
                 grid-template-columns: 1fr;
                 gap: 20px;
+                justify-content: stretch;
             }
             
             .container {
@@ -511,7 +513,7 @@
             }
             
             selectedKeywordsDiv.innerHTML = selectedKeywordsList.map(keyword => 
-                `<span style="background: #e17055; color: white; padding: 5px 12px; border-radius: 15px; margin: 3px; display: inline-block;">${keyword}</span>`
+                `<span style="background: #e17055; color: white; padding: 3px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.8em;">${keyword}</span>`
             ).join('');
         }
         

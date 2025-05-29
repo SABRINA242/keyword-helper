@@ -20,9 +20,9 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
         
         .header {
@@ -77,17 +77,17 @@
         
         .categories {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
         }
         
         .category-card {
             background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
+            border-radius: 15px;
+            padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
@@ -115,22 +115,22 @@
         }
         
         .category-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 15px;
         }
         
         .category-title {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: #333;
         }
         
         .category-description {
-            font-size: 1.1em;
+            font-size: 1em;
             color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
         
         .keyword-preview {
@@ -154,9 +154,9 @@
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1.1em;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -182,24 +182,24 @@
         
         @media (max-width: 768px) {
             .container {
-                padding: 20px 15px;
+                padding: 15px 10px;
             }
             
             .header h1 {
-                font-size: 2.2em;
+                font-size: 1.8em;
             }
             
             .header p {
-                font-size: 1.1em;
+                font-size: 0.95em;
             }
             
             .categories {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 15px;
             }
             
             .category-card {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
             
             .step-list {
