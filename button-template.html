@@ -176,13 +176,17 @@
 
     <script>
         function copyTemplate() {
-            // 복사 버튼을 제외한 나머지 내용만 복사
+            // 복사 버튼과 색상 정보창을 제외한 나머지 내용만 복사
             const copyBtn = document.querySelector('.copy-template-btn');
-            copyBtn.style.display = 'none'; // 임시로 숨김
+            const colorInfo = document.querySelector('.color-info');
+            
+            copyBtn.style.display = 'none'; // 복사 버튼 숨김
+            colorInfo.style.display = 'none'; // 색상 정보창 숨김
             
             const htmlContent = document.documentElement.outerHTML;
             
-            copyBtn.style.display = 'block'; // 다시 보이게 함
+            copyBtn.style.display = 'block'; // 복사 버튼 다시 보이게
+            colorInfo.style.display = 'block'; // 색상 정보창 다시 보이게
             
             navigator.clipboard.writeText(htmlContent).then(() => {
                 const btn = document.querySelector('.copy-template-btn');
