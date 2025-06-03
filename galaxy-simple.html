@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 갤럭시드림 간단 편집기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+            min-height: 100vh;
+            padding: 10px 20px;
+        }
+
+        .container {
+            max-width: 90%;
+            width: 90%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 85vh;
+        }
+
+        .edit-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-right: 2px solid rgba(116, 185, 255, 0.3);
+        }
+
+        .preview-section {
+            padding: 30px;
+            background: white;
+        }
+
+        .code-editor {
+            width: 100%;
+            height: 100%;
+            min-height: 550px;
+            padding: 20px;
+            padding-bottom: 40px;
+            border: 2px solid rgba(116, 185, 255, 0.3);
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: white;
+            resize: vertical;
+            outline: none;
+        }
+
+        .preview-content {
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+            border: 2px solid rgba(116, 185, 255, 0.3);
+            border-radius: 15px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tool-btn {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+            transform: translateY(-2px);
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 갤럭시드림 간단 편집기</h1>
+            <p>왼쪽에 HTML 코드 입력 → 오른쪽에 실시간 미리보기</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 왼쪽: 코드 입력 -->
+            <div class="edit-section">
+                <div class="toolbar">
+                    <button class="tool-btn" onclick="loadTemplate()">🌌 기본 템플릿</button>
+                    <button class="tool-btn" onclick="clearCode()">🗑️ 지우기</button>
+                    <button class="tool-btn" onclick="copySource()">📋 소스 복사</button>
+                    <button class="tool-btn" onclick="openButtonMaker()">🔧 버튼메이커</button>
+                </div>
+
+                <textarea 
+                    id="codeEditor" 
+                    class="code-editor"
+                    placeholder="여기에 HTML 코드를 입력하세요!
+
+예시:
+<style>
+  .my-button {
+    background: #4caf50;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+
+<div style='text-align: center; padding: 20px;'>
+  <button class='my-button'>내 버튼</button>
+</div>"
+                    oninput="updatePreview()"
+                ></textarea>
+            </div>
+
+            <!-- 오른쪽: 미리보기 -->
+            <div class="preview-section">
+                <h3>👀 실시간 미리보기</h3>
+                <div id="previewContent" class="preview-content">
+                    <div style="color: white; text-align: center; padding: 100px 20px;">
+                        <h2>🌌 미리보기 영역</h2>
+                        <p>왼쪽에 HTML 코드를 입력하면<br>여기에 실시간으로 나타납니다!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" onclick="goBack()">🏠 메인으로</button>
+
+    <script>
+        const codeEditor = document.getElementById('codeEditor');
+        const previewContent = document.getElementById('previewContent');
+
+        // 기본 템플릿 로드
+        function loadTemplate() {
+            const template = `<style>
+    body {
+        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+        padding: 20px;
+        margin: 0;
+        min-height: 100vh;
+    }
+    
+    .page-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .header-text {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 25px 40px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+        color: #333;
+    }
+
+    .button-area {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+        min-height: 200px;
+        text-align: center;
+    }
+</style>
+
+<div class="page-container">
+    <div class="header-text">
+        🌌 갤럭시드림 버튼 페이지
+    </div>
+
+    <div class="button-area">
+        <!-- 여기에 당신의 버튼 HTML을 넣으세요 -->
+        
+    </div>
+</div>`;
+            
+            codeEditor.value = template;
+            updatePreview();
+        }
+
+        // 실시간 미리보기 업데이트
+        function updatePreview() {
+            const code = codeEditor.value.trim();
+            if (code === '') {
+                previewContent.innerHTML = `
+                    <div style="color: #333; text-align: center; padding: 100px 20px;">
+                        <h2>🌌 미리보기 영역</h2>
+                        <p>왼쪽에 HTML 코드를 입력하면<br>여기에 실시간으로 나타납니다!</p>
+                    </div>
+                `;
+            } else {
+                // iframe을 사용해서 완전한 HTML 렌더링
+                const fullHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+            min-height: 100vh;
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        ${code}
+    </div>
+</body>
+</html>`;
+
+                // iframe 생성해서 완전한 렌더링
+                previewContent.innerHTML = `<iframe srcdoc="${fullHTML.replace(/"/g, '&quot;')}" style="width: 100%; height: 100%; min-height: 500px; border: none; border-radius: 10px;"></iframe>`;
+            }
+        }
+
+        // 코드 지우기
+        function clearCode() {
+            if (confirm('정말로 코드를 지우시겠습니까?')) {
+                codeEditor.value = '';
+                updatePreview();
+            }
+        }
+
+        // 소스 복사
+        function copySource() {
+            const code = codeEditor.value;
+            if (code.trim() === '') {
+                alert('복사할 코드가 없습니다!');
+                return;
+            }
+
+            // 완전한 HTML 문서로 만들어서 복사
+            const fullHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>갤럭시드림 페이지</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+            min-height: 100vh;
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        ${code}
+    </div>
+</body>
+</html>`;
+
+            // 클립보드에 복사
+            navigator.clipboard.writeText(fullHTML).then(() => {
+                alert('📋 완전한 HTML 페이지가 복사되었습니다!');
+            }).catch(() => {
+                // 구버전 브라우저용 백업 방법
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = fullHTML;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                alert('📋 완전한 HTML 페이지가 복사되었습니다!');
+            });
+        }
+
+        // 메인으로 돌아가기
+        function goBack() {
+            window.close();
+            setTimeout(() => {
+                if (!window.closed) {
+                    window.history.back();
+                }
+            }, 100);
+        }
+
+        // 버튼메이커 열기
+        function openButtonMaker() {
+            window.open('https://best2.middleage-life.com/', '_blank');
+        }
+
+        // 페이지 로드시 기본 템플릿 로드
+        window.addEventListener('load', function() {
+            loadTemplate();
+        });
+    </script>
+</body>
+</html> 

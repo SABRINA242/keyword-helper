@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 심플 버튼 페이지 편집기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 나눔폰트 추가 */
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 90vw;
+            width: 90vw;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 600px 1fr;
+            height: 80vh;
+        }
+
+        .toolbar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .tool-group {
+            margin-bottom: 25px;
+        }
+
+        .tool-group h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .tool-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .edit-area {
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .edit-area[contenteditable="true"] {
+            outline: none;
+        }
+
+        .preview-area {
+            padding: 30px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .emoji-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .selected-button {
+            outline: 3px solid #007bff !important;
+            outline-offset: 2px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #28a745;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .toolbar {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+        }
+
+        .nav-button {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 14px 28px;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .nav-button:hover {
+            background: #e17055 !important;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+            text-decoration: none !important;
+        }
+
+        .title-button:hover {
+            background: #e17055 !important;
+            color: white !important;
+            box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+        }
+
+        .button-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+            width: 100%;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .button-box:focus {
+            outline: 2px solid rgba(255,255,255,0.8);
+            border-color: rgba(255,255,255,0.8);
+        }
+
+        .button-row {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin: 20px 0;
+          min-height: 50px;
+          padding: 10px;
+          border: 2px dashed transparent;
+          border-radius: 10px;
+          transition: all 0.3s ease;
+        }
+        .button-row:hover {
+          border-color: #e0e0e0;
+          background: rgba(224, 224, 224, 0.1);
+        }
+        .button-row:empty:before {
+          content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
+          color: #999;
+          font-style: italic;
+          text-align: center;
+          width: 100%;
+          padding: 20px;
+          display: block;
+        }
+        .button-row .link-button {
+          flex: 1 !important;
+          min-width: 180px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 심플 버튼 페이지 편집기</h1>
+            <p>템플릿 선택 → 버튼 편집 → 코드 저장</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 도구모음 -->
+            <div class="toolbar">
+                <div class="tool-group">
+                    <h3>🎨 템플릿</h3>
+                    <button class="tool-btn" onclick="applyTemplate(1)">🎨 모던스타일1</button>
+                    <button class="tool-btn" onclick="applyTemplate(2)">✨ 모던스타일2</button>
+                    <button class="tool-btn" onclick="openGalaxyTemplate()">🌌 갤럭시드림 3버튼</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>🔘 버튼 편집</h3>
+                    <button class="tool-btn" onclick="deleteSelectedButton()">🗑️ 버튼 삭제</button>
+                    <button class="tool-btn" onclick="addNewButton()">➕ 버튼 추가</button>
+                    <button class="tool-btn" onclick="changeButtonColor()">🎨 색상 변경</button>
+                    <button class="tool-btn" onclick="resizeButton()">📏 크기 조절</button>
+                    <button class="tool-btn" onclick="editButtonLink()">🔗 링크 편집</button>
+                    <button class="tool-btn" onclick="alignButtonText()">📍 버튼 텍스트 위치</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>🔄 네비게이션</h3>
+                    <button class="tool-btn" onclick="addNavButton()">➕ 네비 추가</button>
+                    <button class="tool-btn" onclick="removeNavButton()">➖ 네비 제거</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>📝 텍스트 편집</h3>
+                    <button class="tool-btn" onclick="changeFontSize()">📏 글자 크기</button>
+                    <button class="tool-btn" onclick="changeTextColor()">🎨 글자 색</button>
+                    <button class="tool-btn" onclick="toggleBold()">💪 굵게</button>
+                    <button class="tool-btn" onclick="applyNanumFont()">🖋️ 나눔폰트</button>
+                    <button class="tool-btn" onclick="alignCenter()">⬇️ 중앙 정렬</button>
+                    <button class="tool-btn" onclick="alignLeft()">⬅️ 좌측 정렬</button>
+                    <button class="tool-btn" onclick="alignRight()">➡️ 우측 정렬</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>🎭 이모지</h3>
+                    <div class="emoji-grid">
+                        <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🎯')">🎯</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🚀')">🚀</button>
+                        <button class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
+                        <button class="emoji-btn" onclick="insertEmoji('💎')">💎</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🌟')">🌟</button>
+                        <button class="emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+                        <button class="emoji-btn" onclick="insertEmoji('💡')">💡</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🎨')">🎨</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👑')">👑</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
+                    </div>
+                    <button class="tool-btn" onclick="openEmojiPage()" style="margin-top: 15px; background: #ff6b6b;">🎭 더 많은 이모지</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>💾 저장</h3>
+                    <button class="tool-btn" onclick="saveHTML()">💾 HTML 저장</button>
+                    <button class="tool-btn" onclick="clearAll()">🗑️ 모두 지우기</button>
+                </div>
+            </div>
+
+            <!-- 편집 영역 -->
+            <div class="edit-area" id="editArea" contenteditable="true">
+                <div style="padding: 40px; text-align: center; color: #666;">
+                    <h2>👈 왼쪽에서 템플릿을 선택해주세요!</h2>
+                    <p>템플릿 선택 후 버튼들을 클릭해서 편집할 수 있어요.</p>
+                    <p>엔터를 눌러서 자유롭게 텍스트도 입력 가능합니다!</p>
+                </div>
+            </div>
+
+            <!-- 미리보기 영역 -->
+            <div class="preview-area">
+                <h3>👀 미리보기</h3>
+                <div id="previewContent" style="border: 1px solid #ddd; background: white; border-radius: 10px; padding: 20px; min-height: 400px;">
+                    <div style="padding: 40px; text-align: center; color: #666;">
+                        <h2>👈 왼쪽에서 템플릿을 선택해주세요!</h2>
+                        <p>템플릿 선택 후 버튼들을 클릭해서 편집할 수 있어요.</p>
+                        <p>엔터를 눌러서 자유롭게 텍스트도 입력 가능합니다!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editArea = document.getElementById('editArea');
+        let previewContent = document.getElementById('previewContent');
+        let selectedButton = null;
+
+        // 템플릿 데이터
+        const templates = {
+            1: `<!-- 템플릿 1: 모던스타일 1 -->
+<div style="background: white; max-width: 1000px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+  
+  <style>
+.nav-button {
+  background: white;
+  border: 2px solid #e17055;
+  border-radius: 25px;
+  color: #e17055;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 28px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-button:hover {
+  background: #e17055 !important;
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+  text-decoration: none !important;
+}
+.title-button {
+  background: white;
+  border: 2px solid #e17055;
+  border-radius: 10px;
+  color: #e17055;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 40px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(225, 112, 85, 0.3);
+}
+.title-button:hover {
+  background: #e17055 !important;
+  color: white !important;
+  box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+}
+.link-button { 
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+.link-button:hover { 
+  transform: translateY(-8px) scale(1.02); 
+}
+.button-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin: 20px 0;
+  min-height: 50px;
+  padding: 10px;
+  border: 2px dashed transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.button-row:hover {
+  border-color: #e0e0e0;
+  background: rgba(224, 224, 224, 0.1);
+}
+.button-row:empty:before {
+  content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  display: block;
+}
+/* 첫번째 버튼 호버 효과 */
+.link-button:nth-child(1):hover {
+  background: #6c5ce7 !important;
+  color: white !important;
+  box-shadow: 0 12px 25px rgba(108, 92, 231, 0.4) !important;
+}
+/* 두번째 버튼 호버 효과 */  
+.link-button:nth-child(2):hover {
+  background: #e84393 !important;
+  color: white !important;
+  box-shadow: 0 12px 25px rgba(232, 67, 147, 0.4) !important;
+}
+/* 세번째 버튼 호버 효과 */
+.link-button:nth-child(3):hover {
+  background: #00b894 !important;
+  color: white !important;
+  box-shadow: 0 12px 25px rgba(0, 184, 148, 0.4) !important;
+}
+  </style>   
+
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
+    <a href="#네비1" class="nav-button" onclick="selectButton(event)">네비1</a>
+    <a href="#네비2" class="nav-button" onclick="selectButton(event)">네비2</a>
+    <a href="#네비3" class="nav-button" onclick="selectButton(event)">네비3</a>
+  </div>
+
+  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
+    <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
+      <p style="color: #999;">✍️ 여기에 텍스트를 입력하세요...</p>
+    </div>
+    
+    <div class="button-row">
+      <a class="link-button" href="/p/button1.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(108, 92, 231, 0.2) 0px 4px 8px; color: #6c5ce7; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #6c5ce7;">Button 1</a>
+      <a class="link-button" href="/p/button2.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(232, 67, 147, 0.2) 0px 4px 8px; color: #e84393; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #e84393;">Button 2</a>
+      <a class="link-button" href="/p/button3.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(0, 184, 148, 0.2) 0px 4px 8px; color: #00b894; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #00b894;">Button 3</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin: 20px 0;">
+    <button onclick="addNewFrame()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">📦 새 프레임 추가</button>
+  </div>
+</div>`,
+
+            2: `<!-- 템플릿 2: 모던스타일 2 -->
+<div style="background: white; max-width: 1000px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+  
+  <style>
+.nav-button {
+  background: white;
+  border: 2px solid #e17055;
+  border-radius: 25px;
+  color: #e17055;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 28px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-button:hover {
+  background: #e17055 !important;
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+  text-decoration: none !important;
+}
+.title-button {
+  background: white;
+  border: 2px solid #e17055;
+  border-radius: 10px;
+  color: #e17055;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 40px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(225, 112, 85, 0.3);
+}
+.title-button:hover {
+  background: #e17055 !important;
+  color: white !important;
+  border: 2px solid #667eea !important;
+  box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+}
+.link-button { 
+  transition: all 0.4s ease; 
+}
+.link-button:hover { 
+  transform: translateY(-8px) scale(1.02);
+  background: white !important;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2) !important;
+}
+.button-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin: 20px 0;
+  min-height: 50px;
+  padding: 10px;
+  border: 2px dashed transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.button-row:hover {
+  border-color: #e0e0e0;
+  background: rgba(224, 224, 224, 0.1);
+}
+.button-row:empty:before {
+  content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  display: block;
+}
+/* 첫번째 버튼 호버 효과 */
+.link-button:nth-child(1):hover {
+  color: #6c5ce7 !important;
+  border-color: #6c5ce7 !important;
+}
+/* 두번째 버튼 호버 효과 */  
+.link-button:nth-child(2):hover {
+  color: #e84393 !important;
+  border-color: #e84393 !important;
+}
+/* 세번째 버튼 호버 효과 */
+.link-button:nth-child(3):hover {
+  color: #00b894 !important;
+  border-color: #00b894 !important;
+}
+  </style>   
+
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
+    <a href="#화이트1" class="nav-button" onclick="selectButton(event)">네비1</a>
+    <a href="#화이트2" class="nav-button" onclick="selectButton(event)">네비2</a>
+    <a href="#화이트3" class="nav-button" onclick="selectButton(event)">네비3</a>
+  </div>
+
+  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
+    <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
+      <p style="color: #999;">✍️ 여기에 텍스트를 입력하세요...</p>
+    </div>
+    
+    <div class="button-row">
+      <a class="link-button" href="/p/white1.html" onclick="selectButton(event)" style="align-items: center; background: #6c5ce7; border: 2px solid #6c5ce7; border-radius: 15px; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 180px; padding: 20px; text-decoration: none;">White Button 1</a>
+      <a class="link-button" href="/p/white2.html" onclick="selectButton(event)" style="align-items: center; background: #e84393; border: 2px solid #e84393; border-radius: 15px; box-shadow: 0 8px 20px rgba(232, 67, 147, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 180px; padding: 20px; text-decoration: none;">White Button 2</a>
+      <a class="link-button" href="/p/white3.html" onclick="selectButton(event)" style="align-items: center; background: #00b894; border: 2px solid #00b894; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 180px; padding: 20px; text-decoration: none;">White Button 3</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin: 20px 0;">
+    <button onclick="addNewFrame()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">📦 새 프레임 추가</button>
+  </div>
+</div>`,
+
+            3: `<!-- 템플릿 3: 갤럭시드림 3버튼 -->
+<div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%); max-width: 1000px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <style>
+    .header-text {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 25px 40px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+        width: 100%;
+    }
+
+    .button-box {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+        width: 100%;
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        resize: vertical;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .button-box:focus {
+        outline: 2px solid rgba(255,255,255,0.8);
+        border-color: rgba(255,255,255,0.8);
+    }
+
+    .button-box .custom-button,
+    .button-box a[class*="button"],
+    .button-box button {
+        margin: 10px 5px !important;
+        border-radius: 15px !important;
+        backdrop-filter: blur(5px) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .button-box .custom-button:hover,
+    .button-box a[class*="button"]:hover,
+    .button-box button:hover {
+        transform: translateY(-3px) scale(1.02) !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+    }
+  </style>
+
+  <div class="header-text" contenteditable="true">
+      🌌 버튼 페이지에 버튼을 만들어 넣으세요!
+  </div>
+  
+  <textarea class="button-box" placeholder="🎨 버튼 메이커에서 만든 HTML 코드를 여기에 붙여넣으세요!
+
+예시:
+<style>
+  .my-button { ... }
+</style>
+<div>
+  <button>버튼 텍스트</button>
+</div>
+
+또는 직접 텍스트를 입력하세요."></textarea>
+</div>`
+        };
+
+        // 템플릿 적용
+        function applyTemplate(num) {
+            editArea.innerHTML = templates[num];
+            updatePreview();
+            setupButtonEvents();
+            setupAllTextAreas();
+            showNotification(`✨ 템플릿 ${num}이 적용되었습니다!`);
+        }
+
+        // 버튼 선택
+        function selectButton(event) {
+            event.preventDefault();
+            
+            // 이전 선택 해제
+            if (selectedButton) {
+                selectedButton.classList.remove('selected-button');
+            }
+            
+            // 새 버튼 선택
+            selectedButton = event.target;
+            selectedButton.classList.add('selected-button');
+            
+            showNotification('🎯 버튼이 선택되었습니다!');
+        }
+
+        // 버튼 이벤트 설정
+        function setupButtonEvents() {
+            const buttons = editArea.querySelectorAll('a[href], button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', selectButton);
+            });
+        }
+
+        // 버튼 삭제
+        function deleteSelectedButton() {
+            if (!selectedButton) {
+                alert('❌ 먼저 삭제할 버튼을 클릭해서 선택해주세요!');
+                return;
+            }
+            
+            if (confirm('선택된 버튼을 삭제하시겠습니까?')) {
+                selectedButton.remove();
+                selectedButton = null;
+                updatePreview();
+                showNotification('🗑️ 버튼이 삭제되었습니다!');
+            }
+        }
+
+        // 새 버튼 추가 (현재 줄에)
+        function addNewButton() {
+            // 현재 선택된 버튼이 있으면 그 줄에, 없으면 마지막 줄에 추가
+            let targetRow = null;
+            
+            if (selectedButton) {
+                targetRow = selectedButton.closest('.button-row');
+            } else {
+                const allRows = editArea.querySelectorAll('.button-row');
+                targetRow = allRows[allRows.length - 1];
+            }
+            
+            if (!targetRow) {
+                alert('❌ 먼저 템플릿을 선택해주세요!');
+                return;
+            }
+            
+            // 현재 줄의 기존 버튼들
+            const existingButtons = targetRow.querySelectorAll('.link-button');
+            
+            if (existingButtons.length === 0) {
+                alert('❌ 먼저 템플릿을 선택해주세요!');
+                return;
+            }
+            
+            // 버튼 개수 선택
+            const countOptions = "이 줄에 추가할 버튼 개수를 선택하세요:\n\n1 = 🔘 버튼 1개\n2 = 🔘🔘 버튼 2개\n3 = 🔘🔘🔘 버튼 3개\n4 = 🔘🔘🔘🔘 버튼 4개\n\n번호를 입력하세요:";
+            const buttonCount = prompt(countOptions, '1');
+            
+            if (!buttonCount || !['1', '2', '3', '4'].includes(buttonCount)) {
+                if (buttonCount !== null) {
+                    showNotification('❌ 1~4 중에서 선택해주세요!');
+                }
+                return;
+            }
+            
+            const count = parseInt(buttonCount);
+            const firstButton = existingButtons[0];
+            
+            // 선택한 개수만큼 버튼 생성
+            for (let i = 0; i < count; i++) {
+                const text = prompt(`${i + 1}번째 버튼의 텍스트를 입력하세요:`, `New Button ${existingButtons.length + i + 1}`);
+                const link = prompt(`${i + 1}번째 버튼의 링크를 입력하세요:`, '#');
+                
+                if (text) {
+                    const newBtn = firstButton.cloneNode(true);
+                    newBtn.textContent = text;
+                    newBtn.href = link || '#';
+                    newBtn.onclick = selectButton;
+                    
+                    // 색상 선택 (첫 번째 버튼만)
+                    if (i === 0) {
+                        showColorPicker(newBtn, firstButton, count, targetRow);
+                        return; // 색상 선택 후 나머지는 selectColor에서 처리
+                    }
+                } else {
+                    // 취소된 경우 중단
+                    showNotification('❌ 버튼 추가가 취소되었습니다.');
+                    return;
+                }
+            }
+        }
+        
+        // 새로운 버튼 줄 추가
+        function addNewButtonRow() {
+            const allRows = editArea.querySelectorAll('.button-row');
+            if (allRows.length === 0) {
+                alert('❌ 먼저 템플릿을 선택해주세요!');
+                return;
+            }
+            
+            // 마지막 버튼 줄 찾기
+            const lastRow = allRows[allRows.length - 1];
+            
+            // 새로운 버튼 줄 생성
+            const newRow = document.createElement('div');
+            newRow.className = 'button-row';
+            
+            // 마지막 줄 다음에 새 줄 추가
+            const textArea = editArea.querySelector('div[style*="자유롭게 텍스트"]');
+            if (textArea) {
+                textArea.parentElement.insertBefore(newRow, textArea);
+            } else {
+                lastRow.parentElement.appendChild(newRow);
+            }
+            
+            updatePreview();
+            showNotification('✨ 새로운 버튼 줄이 추가되었습니다! 버튼 추가를 눌러서 버튼을 넣어보세요.');
+        }
+
+        // 색상 선택기 표시
+        function showColorPicker(newBtn, templateBtn, count = 1, buttonContainer = null) {
+            // 템플릿 타입 감지 - 더 정확한 방법으로 수정
+            const templateContainer = editArea.querySelector('div[style*="background: white"]');
+            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
+            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
+            
+            let colorOptions = '';
+            
+            if (isTemplate1) {
+                // 템플릿 1: 보더 스타일 색상들
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
+                `;
+            } else if (isTemplate2) {
+                // 템플릿 2: 색상 배경 (호버시 흰색)
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.3)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.3)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.3)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.3)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.3)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.3)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.3)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.3)">🔴 레드</option>
+                    <option value="#00cec9,rgba(0, 206, 201, 0.3)">🌊 시안</option>
+                    <option value="#e17055,rgba(225, 112, 85, 0.3)">🧡 코랄</option>
+                `;
+            } else {
+                // 기본값으로 템플릿 1 스타일 사용
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
+                `;
+            }
+            
+            // 색상 선택 다이얼로그 생성
+            const colorDialog = document.createElement('div');
+            colorDialog.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; text-align: center;">
+                        <h3 style="margin-bottom: 20px;">🎨 버튼 색상 선택</h3>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                            ${colorOptions.split('<option').slice(1).map((option, index) => {
+                                const value = option.match(/value="([^"]+)"/)?.[1] || '';
+                                const text = option.match(/>([^<]+)</)?.[1] || '';
+                                const colors = value.split(',');
+                                const mainColor = colors[0];
+                                
+                                return `<div onclick="selectColor('${value}')" style="
+                                    padding: 15px 10px; 
+                                    background: ${mainColor}; 
+                                    color: white; 
+                                    border-radius: 8px; 
+                                    cursor: pointer; 
+                                    font-weight: bold;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                    transition: transform 0.2s ease;
+                                    font-size: 12px;
+                                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">${text}</div>`;
+                            }).join('')}
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="cancelColorSelection()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold;">취소</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(colorDialog);
+            
+            // 전역 변수로 버튼 정보 저장
+            window.currentNewBtn = newBtn;
+            window.currentTemplateBtn = templateBtn;
+            window.currentColorDialog = colorDialog;
+            window.currentButtonCount = count;
+            window.currentButtonContainer = buttonContainer;
+        }
+
+        // 색상 적용
+        function selectColor(selectedValue) {
+            const newBtn = window.currentNewBtn;
+            const templateBtn = window.currentTemplateBtn;
+            const count = window.currentButtonCount || 1;
+            const buttonContainer = window.currentButtonContainer;
+            
+            if (newBtn && templateBtn) {
+                // 첫 번째 버튼 추가
+                applyColorToButton(newBtn, selectedValue, templateBtn);
+                buttonContainer.appendChild(newBtn);
+                
+                // 나머지 버튼들 추가 (count > 1인 경우)
+                if (count > 1) {
+                    const existingButtons = editArea.querySelectorAll('.link-button');
+                    for (let i = 1; i < count; i++) {
+                        const additionalBtn = templateBtn.cloneNode(true);
+                        additionalBtn.textContent = `New Button ${existingButtons.length + i}`;
+                        additionalBtn.href = '#';
+                        additionalBtn.onclick = selectButton;
+                        
+                        // 같은 색상 적용
+                        applyColorToButton(additionalBtn, selectedValue, templateBtn);
+                        buttonContainer.appendChild(additionalBtn);
+                    }
+                }
+                
+                document.body.removeChild(window.currentColorDialog);
+                showNotification(`🎨 ${count}개의 새로운 버튼이 추가되었습니다!`);
+            } else if (window.currentExistingBtn) {
+                // 기존 버튼 색상 변경용
+                applyColorToButton(window.currentExistingBtn, selectedValue);
+                document.body.removeChild(window.currentExistingColorDialog);
+                showNotification('🎨 버튼 색상이 변경되었습니다!');
+            }
+            
+            updatePreview();
+        }
+
+        // 버튼에 색상 적용하는 공통 함수
+        function applyColorToButton(button, selectedValue, templateBtn = null) {
+            // 템플릿별 색상 적용 - 더 정확한 방법으로 수정
+            const templateContainer = editArea.querySelector('div[style*="background: white"]');
+            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
+            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
+            
+            if (isTemplate1) {
+                // 템플릿 1: 색상, 그림자, 호버 색상 분리
+                const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
+                
+                button.style.color = borderColor;
+                button.style.borderColor = borderColor;
+                button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+                
+            } else if (isTemplate2) {
+                // 템플릿 2: 색상 배경 (호버시 흰색)
+                const [bgColor, shadowColor] = selectedValue.split(',');
+                
+                button.style.background = bgColor;
+                button.style.borderColor = bgColor;
+                button.style.boxShadow = `0 8px 20px ${shadowColor}`;
+                button.style.color = 'white';
+                
+            } else {
+                // 기본값으로 템플릿 1 스타일 사용
+                const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
+                
+                button.style.color = borderColor;
+                button.style.borderColor = borderColor;
+                button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+            }
+        }
+
+        function applySelectedColor() {
+            // 이전 함수는 제거되고 selectColor로 대체됨
+        }
+
+        function applyExistingButtonColor() {
+            // 이전 함수는 제거되고 selectColor로 대체됨
+        }
+
+        // 색상 선택 취소
+        function cancelColorSelection() {
+            document.body.removeChild(window.currentColorDialog);
+            showNotification('❌ 버튼 추가가 취소되었습니다.');
+        }
+
+        // 버튼 크기 조절
+        function resizeButton() {
+            if (!selectedButton) {
+                alert('❌ 먼저 크기를 조절할 버튼을 클릭해서 선택해주세요!');
+                return;
+            }
+            
+            const height = prompt('버튼 세로 크기를 입력하세요 (예: 50px, 80px, 120px):', '60px');
+            
+            if (height) {
+                // 가로는 자동 반응형, 세로만 조절
+                selectedButton.style.width = '90%';
+                selectedButton.style.maxWidth = '400px';
+                selectedButton.style.height = height;
+                selectedButton.style.minHeight = height;
+                
+                updatePreview();
+                showNotification(`📏 버튼 세로 크기가 ${height}로 조절되었습니다!`);
+            }
+        }
+
+        // 버튼 색상 변경
+        function changeButtonColor() {
+            if (!selectedButton) {
+                alert('❌ 먼저 색상을 변경할 버튼을 클릭해서 선택해주세요!');
+                return;
+            }
+            
+            // 선택된 버튼이 link-button 클래스를 가지고 있는지 확인
+            if (!selectedButton.classList.contains('link-button')) {
+                alert('❌ 메인 버튼들만 색상 변경이 가능합니다!');
+                return;
+            }
+            
+            showColorPickerForExisting(selectedButton);
+        }
+
+        // 기존 버튼용 색상 선택기
+        function showColorPickerForExisting(button) {
+            // 템플릿 타입 감지 - 더 정확한 방법으로 수정
+            const templateContainer = editArea.querySelector('div[style*="background: white"]');
+            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
+            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
+            
+            let colorOptions = '';
+            
+            if (isTemplate1) {
+                // 템플릿 1: 보더 스타일 색상들
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
+                `;
+            } else if (isTemplate2) {
+                // 템플릿 2: 색상 배경 (호버시 흰색)
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.3)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.3)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.3)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.3)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.3)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.3)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.3)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.3)">🔴 레드</option>
+                    <option value="#00cec9,rgba(0, 206, 201, 0.3)">🌊 시안</option>
+                    <option value="#e17055,rgba(225, 112, 85, 0.3)">🧡 코랄</option>
+                `;
+            } else {
+                // 기본값으로 템플릿 1 스타일 사용
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
+                `;
+            }
+            
+            // 색상 선택 다이얼로그 생성
+            const colorDialog = document.createElement('div');
+            colorDialog.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; text-align: center;">
+                        <h3 style="margin-bottom: 20px;">🎨 버튼 색상 선택</h3>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                            ${colorOptions.split('<option').slice(1).map((option, index) => {
+                                const value = option.match(/value="([^"]+)"/)?.[1] || '';
+                                const text = option.match(/>([^<]+)</)?.[1] || '';
+                                const colors = value.split(',');
+                                const mainColor = colors[0];
+                                
+                                return `<div onclick="selectColor('${value}')" style="
+                                    padding: 15px 10px; 
+                                    background: ${mainColor}; 
+                                    color: white; 
+                                    border-radius: 8px; 
+                                    cursor: pointer; 
+                                    font-weight: bold;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                    transition: transform 0.2s ease;
+                                    font-size: 12px;
+                                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">${text}</div>`;
+                            }).join('')}
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="cancelColorSelection()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold;">취소</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(colorDialog);
+            
+            // 전역 변수로 버튼 정보 저장
+            window.currentExistingBtn = button;
+            window.currentExistingColorDialog = colorDialog;
+        }
+
+        // 기존 버튼 색상 적용
+        function applyExistingButtonColor() {
+            const colorSelect = document.getElementById('existingColorSelect');
+            const selectedValue = colorSelect.value;
+            const button = window.currentExistingBtn;
+            
+            // 템플릿별 색상 적용
+            const templateContainer = editArea.querySelector('div[style*="background: white"]');
+            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('Honeybee Tips');
+            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('호버 화이트');
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시 드림');
+            
+            if (isTemplate1) {
+                // 템플릿 1: 색상, 그림자, 호버 색상 분리
+                const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
+                
+                button.style.color = borderColor;
+                button.style.borderColor = borderColor;
+                button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+                
+            } else if (isTemplate2) {
+                // 템플릿 2: 색상 배경 (호버시 흰색)
+                const [bgColor, shadowColor] = selectedValue.split(',');
+                
+                button.style.background = bgColor;
+                button.style.borderColor = bgColor;
+                button.style.boxShadow = `0 8px 20px ${shadowColor}`;
+                button.style.color = 'white';
+                
+            } else if (isTemplate3) {
+                // 템플릿 3: glassmorphism 효과
+                const [bgColor, borderColor] = selectedValue.split(',');
+                button.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${bgColor.replace('0.2', '0.05')} 100%)`;
+                button.style.borderColor = borderColor;
+            }
+            
+            // 다이얼로그 제거
+            document.body.removeChild(window.currentExistingColorDialog);
+            
+            updatePreview();
+            showNotification('🎨 버튼 색상이 변경되었습니다!');
+        }
+
+        // 기존 버튼 색상 선택 취소
+        function cancelExistingColorSelection() {
+            document.body.removeChild(window.currentExistingColorDialog);
+            showNotification('❌ 색상 변경이 취소되었습니다.');
+        }
+
+        // 버튼 링크 편집
+        function editButtonLink() {
+            if (!selectedButton) {
+                alert('❌ 먼저 편집할 버튼을 클릭해서 선택해주세요!');
+                return;
+            }
+            
+            const newLink = prompt('새 링크 주소:', selectedButton.href || '#');
+            const newText = prompt('버튼 텍스트:', selectedButton.textContent || '');
+            
+            if (newLink !== null) selectedButton.href = newLink;
+            if (newText !== null) selectedButton.textContent = newText;
+            
+            updatePreview();
+            showNotification('🔗 버튼이 수정되었습니다!');
+        }
+
+        // 네비게이션 추가/제거
+        function addNavButton() {
+            const navContainer = editArea.querySelector('.nav-button')?.parentElement;
+            if (!navContainer) {
+                alert('현재 템플릿에 네비게이션이 없습니다!');
+                return;
+            }
+            
+            const text = prompt('네비게이션 버튼 텍스트:', '새 메뉴');
+            const link = prompt('링크 주소:', '#새메뉴');
+            
+            if (text) {
+                const newNav = document.createElement('a');
+                newNav.href = link || '#';
+                newNav.className = 'nav-button';
+                newNav.textContent = text;
+                newNav.onclick = selectButton;
+                
+                navContainer.appendChild(newNav);
+                updatePreview();
+                showNotification('🔄 네비게이션이 추가되었습니다!');
+            }
+        }
+
+        function removeNavButton() {
+            const navButtons = editArea.querySelectorAll('.nav-button');
+            if (navButtons.length > 0) {
+                navButtons[navButtons.length - 1].remove();
+                updatePreview();
+                showNotification('🗑️ 마지막 네비게이션이 제거되었습니다!');
+            } else {
+                alert('제거할 네비게이션이 없습니다!');
+            }
+        }
+
+        // 이모지 삽입
+        function insertEmoji(emoji) {
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(emoji));
+            range.collapse(false);
+            
+            updatePreview();
+            showNotification(`${emoji} 이모지가 추가되었습니다!`);
+        }
+
+        // 이모지 페이지 열기
+        function openEmojiPage() {
+            window.open('emoji-page.html', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            showNotification('🎭 이모지 페이지가 열렸습니다!');
+        }
+
+        // 갤럭시드림 템플릿 페이지 열기
+        function openGalaxyTemplate() {
+            window.open('galaxy-template.html', '_blank', 'width=1400,height=900,scrollbars=yes,resizable=yes');
+            showNotification('🌌 갤럭시드림 전용 편집기가 열렸습니다!');
+        }
+
+        // HTML 저장
+        function saveHTML() {
+            // DOM을 복사해서 안전하게 처리
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = editArea.innerHTML;
+            
+            // DOM 방식으로 안전하게 편집용 속성만 제거
+            const allElements = tempDiv.querySelectorAll('*');
+            allElements.forEach(element => {
+                // 편집용 속성들만 제거
+                element.removeAttribute('contenteditable');
+                element.removeAttribute('placeholder');
+                
+                // onclick 이벤트만 제거
+                if (element.getAttribute('onclick')) {
+                    element.removeAttribute('onclick');
+                }
+                
+                // 편집용 클래스만 제거
+                if (element.classList.contains('selected-button')) {
+                    element.classList.remove('selected-button');
+                }
+                if (element.classList.contains('content-frame')) {
+                    element.classList.remove('content-frame');
+                }
+                if (element.classList.contains('text-area')) {
+                    element.classList.remove('text-area');
+                }
+                
+                // 점선 스타일만 제거
+                if (element.style.border && element.style.border.includes('dashed')) {
+                    element.style.border = '';
+                }
+                if (element.style.background && element.style.background.includes('rgba(248, 249, 250')) {
+                    element.style.background = '';
+                }
+            });
+            
+            // 새 프레임 추가 버튼만 제거
+            const frameButtons = tempDiv.querySelectorAll('button');
+            frameButtons.forEach(btn => {
+                if (btn.textContent.includes('📦 새 프레임 추가')) {
+                    btn.parentElement.remove();
+                }
+            });
+            
+            // 깨끗한 HTML 얻기
+            const cleanHTML = tempDiv.innerHTML;
+            
+            // 완전한 HTML 문서로 만들기
+            const fullHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>버튼 페이지</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+        .button-row .link-button {
+            flex: 1 !important;
+            min-width: 180px !important;
+        }
+    </style>
+</head>
+<body>
+    ${cleanHTML}
+</body>
+</html>`;
+            
+            navigator.clipboard.writeText(fullHTML).then(() => {
+                showNotification('💾 HTML이 클립보드에 복사되었습니다!');
+            }).catch(() => {
+                showNotification('❌ 복사 실패! 수동으로 복사해주세요.');
+            });
+        }
+
+        // 모두 지우기
+        function clearAll() {
+            if (confirm('정말로 모든 내용을 지우시겠습니까?')) {
+                editArea.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;"><h2>👈 왼쪽에서 템플릿을 선택해주세요!</h2></div>';
+                selectedButton = null;
+                updatePreview();
+                showNotification('🗑️ 모든 내용이 삭제되었습니다!');
+            }
+        }
+
+        // 미리보기 업데이트
+        function updatePreview() {
+            if (previewContent && editArea) {
+                let previewHTML = editArea.innerHTML;
+                
+                // 3번 템플릿의 textarea 내용을 HTML로 렌더링
+                const textareas = editArea.querySelectorAll('textarea.button-box');
+                textareas.forEach(textarea => {
+                    const textareaHTML = textarea.value || '';
+                    const renderedHTML = `<div class="button-box-preview" style="
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 20px;
+                        padding: 30px;
+                        box-shadow: 0 8px 25px rgba(31, 38, 135, 0.15);
+                        width: 100%;
+                        min-height: 300px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                        align-items: center;
+                    ">${textareaHTML}</div>`;
+                    
+                    previewHTML = previewHTML.replace(textarea.outerHTML, renderedHTML);
+                });
+                
+                previewContent.innerHTML = previewHTML;
+            }
+        }
+
+        // 알림 표시
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // 초기화
+        editArea.addEventListener('input', updatePreview);
+        editArea.addEventListener('keyup', updatePreview);
+        
+        // 붙여넣기 처리
+        editArea.addEventListener('paste', function(e) {
+            e.preventDefault();
+            
+            const clipboardData = e.clipboardData || window.clipboardData;
+            const pastedData = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
+            
+            // HTML 코드인지 확인
+            if (pastedData.includes('<style>') && pastedData.includes('</style>')) {
+                // HTML 코드 붙여넣기
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                
+                // 임시 div에 HTML 파싱
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = pastedData;
+                
+                // 파싱된 내용을 현재 위치에 삽입
+                const fragment = document.createDocumentFragment();
+                while (tempDiv.firstChild) {
+                    fragment.appendChild(tempDiv.firstChild);
+                }
+                
+                range.deleteContents();
+                range.insertNode(fragment);
+                
+                // 커서를 삽입된 내용 뒤로 이동
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                updatePreview();
+                showNotification('🎨 HTML 코드가 버튼으로 변환되어 붙여넣어졌습니다!');
+            } else {
+                // 일반 텍스트 붙여넣기
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(pastedData));
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                updatePreview();
+            }
+        });
+        
+        // 키보드 이벤트 처리 (버튼 복사 방지)
+        editArea.addEventListener('keydown', function(e) {
+            // Delete/Backspace 키 처리 - 버튼 보호
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const container = range.commonAncestorContainer;
+                    
+                    // 버튼 요소 내부에서 텍스트 삭제 시 버튼 자체는 보호
+                    let buttonElement = null;
+                    if (container.nodeType === Node.TEXT_NODE) {
+                        buttonElement = container.parentElement;
+                    } else {
+                        buttonElement = container;
+                    }
+                    
+                    // 버튼이나 링크 요소인 경우 텍스트만 지우고 요소는 보존
+                    if (buttonElement && (buttonElement.tagName === 'A' || buttonElement.tagName === 'BUTTON')) {
+                        e.preventDefault();
+                        
+                        // 선택된 텍스트가 있으면 그것만 삭제
+                        if (!selection.isCollapsed) {
+                            range.deleteContents();
+                        } else {
+                            // 커서 위치에서 한 글자만 삭제
+                            if (e.key === 'Backspace' && range.startOffset > 0) {
+                                range.setStart(range.startContainer, range.startOffset - 1);
+                                range.deleteContents();
+                            } else if (e.key === 'Delete' && range.startOffset < range.startContainer.textContent.length) {
+                                range.setEnd(range.endContainer, range.endOffset + 1);
+                                range.deleteContents();
+                            }
+                        }
+                        
+                        // 텍스트가 완전히 비어있으면 기본 텍스트 추가
+                        if (buttonElement.textContent.trim() === '') {
+                            buttonElement.textContent = '버튼 텍스트';
+                        }
+                        
+                        updatePreview();
+                        return;
+                    }
+                }
+            }
+            
+            // 엔터키 처리
+            if (e.key === 'Enter') {
+                // 현재 선택된 요소가 버튼인 경우
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const container = range.commonAncestorContainer;
+                    
+                    // 버튼 안에 커서가 있으면 버튼 밖으로 이동
+                    if (container.nodeType === Node.TEXT_NODE) {
+                        const parentElement = container.parentElement;
+                        if (parentElement && (parentElement.tagName === 'A' || parentElement.tagName === 'BUTTON')) {
+                            e.preventDefault();
+                            
+                            // 새로운 div 요소 생성해서 버튼 다음에 추가
+                            const newDiv = document.createElement('div');
+                            newDiv.innerHTML = '<br>';
+                            parentElement.parentElement.insertBefore(newDiv, parentElement.nextSibling);
+                            
+                            // 커서를 새 div로 이동
+                            const newRange = document.createRange();
+                            newRange.setStart(newDiv, 0);
+                            newRange.collapse(true);
+                            selection.removeAllRanges();
+                            selection.addRange(newRange);
+                            
+                            updatePreview();
+                            return;
+                        }
+                    }
+                    
+                    // 버튼 요소가 선택된 경우
+                    if (container.tagName === 'A' || container.tagName === 'BUTTON') {
+                        e.preventDefault();
+                        
+                        const newDiv = document.createElement('div');
+                        newDiv.innerHTML = '<br>';
+                        container.parentElement.insertBefore(newDiv, container.nextSibling);
+                        
+                        const newRange = document.createRange();
+                        newRange.setStart(newDiv, 0);
+                        newRange.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
+                        
+                        updatePreview();
+                        return;
+                    }
+                }
+            }
+            
+            // 일반 텍스트 입력 시 버튼 내부가 아닌 곳에 입력되도록 처리
+            if (e.key.length === 1 && !e.ctrlKey && !e.altKey) {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const container = range.commonAncestorContainer;
+                    
+                    // 버튼 안에서 텍스트 입력하려는 경우 - 버튼 텍스트 편집은 허용
+                    if (container.nodeType === Node.TEXT_NODE) {
+                        const parentElement = container.parentElement;
+                        if (parentElement && (parentElement.tagName === 'A' || parentElement.tagName === 'BUTTON')) {
+                            // 버튼 내부 텍스트 수정은 허용 (버튼 텍스트 편집용)
+                            return;
+                        }
+                    }
+                    
+                    if (container.tagName === 'A' || container.tagName === 'BUTTON') {
+                        e.preventDefault();
+                        
+                        // 버튼 다음에 텍스트 노드 추가
+                        const textNode = document.createTextNode(e.key);
+                        container.parentElement.insertBefore(textNode, container.nextSibling);
+                        
+                        // 커서를 텍스트 노드 끝으로 이동
+                        const newRange = document.createRange();
+                        newRange.setStart(textNode, 1);
+                        newRange.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
+                        
+                        updatePreview();
+                        return;
+                    }
+                }
+            }
+        });
+        
+        updatePreview();
+        
+        showNotification('🎉 심플 버튼 페이지 편집기가 준비되었습니다!');
+
+        // 글자 크기 변경
+        function changeFontSize() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const size = prompt('글자 크기를 입력하세요:\n\n12px = 작은 글씨\n16px = 보통 글씨\n20px = 큰 글씨\n24px = 제목 글씨\n32px = 대제목\n48px = 메인 제목', '20px');
+                
+                if (size) {
+                    const range = selection.getRangeAt(0);
+                    const span = document.createElement('span');
+                    span.style.fontSize = size;
+                    
+                    try {
+                        range.surroundContents(span);
+                        updatePreview();
+                        showNotification(`📏 글자 크기가 ${size}로 변경되었습니다!`);
+                    } catch (e) {
+                        showNotification('❌ 텍스트를 선택해주세요!');
+                    }
+                }
+            } else {
+                showNotification('❌ 먼저 크기를 변경할 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 글자 색상 변경
+        function changeTextColor() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const colorOptions = `글자 색상을 선택하세요:
+
+1 = 🔴 빨강 (#ff6b6b)
+2 = 🟡 노랑 (#ffd93d)
+3 = 🟢 초록 (#6bcf7f)
+4 = 🔵 파랑 (#4dabf7)
+5 = 🟣 보라 (#a29bfe)
+6 = 🩷 핑크 (#fd79a8)
+7 = 🧡 주황 (#ff9f43)
+8 = 🤎 갈색 (#d63031)
+9 = ⚫ 검정 (#2d3436)
+10 = 🔵 진파랑 (#0984e3)
+11 = 🟢 진초록 (#00b894)
+12 = 🟣 진보라 (#6c5ce7)
+13 = 🩷 진핑크 (#e84393)
+14 = 🧡 진주황 (#e17055)
+
+번호를 입력하세요:`;
+
+                const choice = prompt(colorOptions, '1');
+                const colors = {
+                    '1': '#ff6b6b', '2': '#ffd93d', '3': '#6bcf7f', '4': '#4dabf7',
+                    '5': '#a29bfe', '6': '#fd79a8', '7': '#ff9f43', '8': '#d63031',
+                    '9': '#2d3436', '10': '#0984e3', '11': '#00b894', '12': '#6c5ce7',
+                    '13': '#e84393', '14': '#e17055'
+                };
+                
+                const selectedColor = colors[choice];
+                if (selectedColor) {
+                    const range = selection.getRangeAt(0);
+                    const span = document.createElement('span');
+                    span.style.color = selectedColor;
+                    
+                    try {
+                        range.surroundContents(span);
+                        updatePreview();
+                        showNotification(`🎨 글자 색상이 변경되었습니다!`);
+                    } catch (e) {
+                        showNotification('❌ 텍스트를 선택해주세요!');
+                    }
+                } else if (choice !== null) {
+                    showNotification('❌ 올바른 번호를 입력해주세요! (1-14)');
+                }
+            } else {
+                showNotification('❌ 먼저 색상을 변경할 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 굵게 토글
+        function toggleBold() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                span.style.fontWeight = 'bold';
+                
+                try {
+                    range.surroundContents(span);
+                    updatePreview();
+                    showNotification('💪 텍스트가 굵게 변경되었습니다!');
+                } catch (e) {
+                    showNotification('❌ 텍스트를 선택해주세요!');
+                }
+            } else {
+                showNotification('❌ 먼저 굵게 만들 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 나눔폰트 적용
+        function applyNanumFont() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                span.style.fontFamily = "'Nanum Gothic', sans-serif";
+                
+                try {
+                    range.surroundContents(span);
+                    updatePreview();
+                    showNotification('🖋️ 나눔폰트가 적용되었습니다!');
+                } catch (e) {
+                    showNotification('❌ 텍스트를 선택해주세요!');
+                }
+            } else {
+                showNotification('❌ 먼저 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 중앙 정렬
+        function alignCenter() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const container = range.commonAncestorContainer;
+                
+                // 버튼 안의 텍스트인지 확인
+                let parentElement = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+                while (parentElement && parentElement !== editArea) {
+                    if (parentElement.tagName === 'A' || parentElement.tagName === 'BUTTON' || parentElement.classList.contains('link-button')) {
+                        showNotification('❌ 버튼 안 텍스트는 📍 버튼 텍스트 위치 기능을 사용하세요!');
+                        return;
+                    }
+                    parentElement = parentElement.parentElement;
+                }
+                
+                const span = document.createElement('span');
+                span.style.cssText = `
+                    display: block;
+                    text-align: center;
+                    margin: 20px auto;
+                    padding: 10px;
+                `;
+                
+                try {
+                    range.surroundContents(span);
+                    updatePreview();
+                    showNotification('⬇️ 텍스트가 중앙 정렬되었습니다!');
+                } catch (e) {
+                    showNotification('❌ 텍스트를 선택해주세요!');
+                }
+            } else {
+                showNotification('❌ 먼저 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 좌측 정렬
+        function alignLeft() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const container = range.commonAncestorContainer;
+                
+                // 버튼 안의 텍스트인지 확인
+                let parentElement = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+                while (parentElement && parentElement !== editArea) {
+                    if (parentElement.tagName === 'A' || parentElement.tagName === 'BUTTON' || parentElement.classList.contains('link-button')) {
+                        showNotification('❌ 버튼 안 텍스트는 📍 버튼 텍스트 위치 기능을 사용하세요!');
+                        return;
+                    }
+                    parentElement = parentElement.parentElement;
+                }
+                
+                const span = document.createElement('span');
+                span.style.cssText = `
+                    display: block;
+                    text-align: left;
+                    margin: 10px 0;
+                    padding: 5px 0;
+                `;
+                
+                try {
+                    range.surroundContents(span);
+                    updatePreview();
+                    showNotification('⬅️ 텍스트가 좌측 정렬되었습니다!');
+                } catch (e) {
+                    showNotification('❌ 텍스트를 선택해주세요!');
+                }
+            } else {
+                showNotification('❌ 먼저 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 우측 정렬
+        function alignRight() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const container = range.commonAncestorContainer;
+                
+                // 버튼 안의 텍스트인지 확인
+                let parentElement = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+                while (parentElement && parentElement !== editArea) {
+                    if (parentElement.tagName === 'A' || parentElement.tagName === 'BUTTON' || parentElement.classList.contains('link-button')) {
+                        showNotification('❌ 버튼 안 텍스트는 📍 버튼 텍스트 위치 기능을 사용하세요!');
+                        return;
+                    }
+                    parentElement = parentElement.parentElement;
+                }
+                
+                const span = document.createElement('span');
+                span.style.cssText = `
+                    display: block;
+                    text-align: right;
+                    margin: 10px 0;
+                    padding: 5px 0;
+                `;
+                
+                try {
+                    range.surroundContents(span);
+                    updatePreview();
+                    showNotification('➡️ 텍스트가 우측 정렬되었습니다!');
+                } catch (e) {
+                    showNotification('❌ 텍스트를 선택해주세요!');
+                }
+            } else {
+                showNotification('❌ 먼저 텍스트를 선택해주세요!');
+            }
+        }
+
+        // 버튼 텍스트 위치 정렬
+        function alignButtonText() {
+            if (!selectedButton) {
+                alert('❌ 먼저 텍스트를 정렬할 버튼을 선택해주세요!');
+                return;
+            }
+            
+            const positionOptions = "버튼 내부 텍스트 위치를 선택하세요:\n\n1 = ↖️ 좌측 상단\n2 = ⬆️ 중앙 상단\n3 = ↗️ 우측 상단\n4 = ⬅️ 좌측 중앙\n5 = ⬇️ 중앙 (기본)\n6 = ➡️ 우측 중앙\n7 = ↙️ 좌측 하단\n8 = ⬇️ 중앙 하단\n9 = ↘️ 우측 하단\n\n번호를 입력하세요:";
+            
+            const choice = prompt(positionOptions, '5');
+            
+            const alignments = {
+                '1': { align: 'left', vertical: 'flex-start', padding: '10px 15px' },
+                '2': { align: 'center', vertical: 'flex-start', padding: '10px 15px' },
+                '3': { align: 'right', vertical: 'flex-start', padding: '10px 15px' },
+                '4': { align: 'left', vertical: 'center', padding: '15px' },
+                '5': { align: 'center', vertical: 'center', padding: '15px' },
+                '6': { align: 'right', vertical: 'center', padding: '15px' },
+                '7': { align: 'left', vertical: 'flex-end', padding: '10px 15px' },
+                '8': { align: 'center', vertical: 'flex-end', padding: '10px 15px' },
+                '9': { align: 'right', vertical: 'flex-end', padding: '10px 15px' }
+            };
+            
+            const selectedAlign = alignments[choice];
+            if (selectedAlign) {
+                selectedButton.style.display = 'flex';
+                selectedButton.style.alignItems = selectedAlign.vertical;
+                selectedButton.style.justifyContent = selectedAlign.align;
+                selectedButton.style.textAlign = selectedAlign.align;
+                selectedButton.style.padding = selectedAlign.padding;
+                
+                updatePreview();
+                showNotification('📍 버튼 텍스트 위치가 변경되었습니다!');
+            } else if (choice !== null) {
+                showNotification('❌ 올바른 번호를 입력해주세요! (1-9)');
+            }
+        }
+
+        // contenteditable로 인한 HTML 정리
+        function cleanupContentEditableHTML(html) {
+            let cleaned = html;
+            
+            // 프레임 점선과 관련 스타일들 제거
+            cleaned = cleaned.replace(/border: 2px dashed #e0e0e0;/g, '');
+            cleaned = cleaned.replace(/background: rgba\(248, 249, 250, 0\.5\);/g, '');
+            cleaned = cleaned.replace(/class="content-frame"/g, '');
+            
+            // 먼저 실제 HTML 코드 영역을 보호
+            const protectedSections = [];
+            let protectionIndex = 0;
+            
+            // <style> 태그 보호
+            cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, function(match) {
+                const placeholder = `__PROTECTED_STYLE_${protectionIndex}__`;
+                protectedSections[protectionIndex] = match;
+                protectionIndex++;
+                return placeholder;
+            });
+            
+            // <div> 컨테이너와 버튼 구조 보호
+            cleaned = cleaned.replace(/<div[^>]*style="margin-top:[^"]*"[^>]*>[\s\S]*?<\/div>/gi, function(match) {
+                const placeholder = `__PROTECTED_BUTTON_${protectionIndex}__`;
+                protectedSections[protectionIndex] = match;
+                protectionIndex++;
+                return placeholder;
+            });
+            
+            // HTML 주석 보호
+            cleaned = cleaned.replace(/<!--[\s\S]*?-->/gi, function(match) {
+                const placeholder = `__PROTECTED_COMMENT_${protectionIndex}__`;
+                protectedSections[protectionIndex] = match;
+                protectionIndex++;
+                return placeholder;
+            });
+            
+            // 이제 불필요한 contenteditable 부산물들만 제거
+            // font 태그 제거 (보호된 영역 외부에서만)
+            cleaned = cleaned.replace(/<\/?font[^>]*>/gi, '');
+            
+            // contenteditable로 생긴 불필요한 i 태그 제거
+            cleaned = cleaned.replace(/<i>/gi, '').replace(/<\/i>/gi, '');
+            
+            // 빈 p 태그들 제거
+            cleaned = cleaned.replace(/<p[^>]*><\/p>/gi, '');
+            
+            // 단순한 텍스트만 있는 p 태그들 정리
+            cleaned = cleaned.replace(/<p[^>]*style="[^"]*margin-bottom: 20px; text-align: center;"[^>]*>([^<]*)<\/p>/gi, '$1');
+            
+            // HTML 엔티티 복원 (보호된 영역에서)
+            protectedSections.forEach((section, index) => {
+                protectedSections[index] = section
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&amp;/g, '&');
+            });
+            
+            // 보호된 섹션들 복원
+            protectedSections.forEach((section, index) => {
+                cleaned = cleaned.replace(`__PROTECTED_STYLE_${index}__`, section);
+                cleaned = cleaned.replace(`__PROTECTED_BUTTON_${index}__`, section);
+                cleaned = cleaned.replace(`__PROTECTED_COMMENT_${index}__`, section);
+            });
+            
+            // 연속된 <br> 태그 정리
+            cleaned = cleaned.replace(/(<br\s*\/?>){3,}/gi, '<br><br>');
+            
+            // 빈 줄들 정리
+            cleaned = cleaned.replace(/\n\s*\n\s*\n/g, '\n\n');
+            
+            return cleaned;
+        }
+
+        // 새로운 프레임 추가
+        function addNewFrame() {
+            // 기존 프레임에서 버튼 스타일 복사하기 위해 첫 번째 프레임 찾기
+            const existingFrame = editArea.querySelector('.content-frame');
+            if (!existingFrame) {
+                alert('❌ 먼저 템플릿을 선택해주세요!');
+                return;
+            }
+            
+            // 기존 버튼 스타일 가져오기
+            const existingButton = existingFrame.querySelector('.link-button');
+            if (!existingButton) {
+                alert('❌ 템플릿의 버튼을 먼저 확인해주세요!');
+                return;
+            }
+            
+            // 새 프레임 생성
+            const newFrame = document.createElement('div');
+            newFrame.className = 'content-frame';
+            newFrame.style.cssText = 'border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);';
+            
+            newFrame.innerHTML = `
+                <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
+                    <p style="color: #999;">✍️ 여기에 텍스트를 입력하세요...</p>
+                </div>
+                
+                <div class="button-row">
+                </div>
+            `;
+            
+            // 기본 버튼 추가 (기존 스타일 복사)
+            const defaultButton = existingButton.cloneNode(true);
+            defaultButton.textContent = '새 버튼';
+            defaultButton.href = '#';
+            defaultButton.onclick = selectButton;
+            
+            const buttonRow = newFrame.querySelector('.button-row');
+            buttonRow.appendChild(defaultButton);
+            
+            // 새 프레임 추가 버튼 찾아서 그 바로 앞에 추가
+            const addButton = editArea.querySelector('button[onclick="addNewFrame()"]');
+            if (addButton) {
+                const buttonContainer = addButton.parentElement;
+                buttonContainer.parentElement.insertBefore(newFrame, buttonContainer);
+            } else {
+                editArea.appendChild(newFrame);
+            }
+            
+            // 새 텍스트 영역에 이벤트 추가
+            setupTextAreaEvents(newFrame.querySelector('.text-area'));
+            
+            updatePreview();
+            showNotification('📦 새로운 프레임이 추가되었습니다! (기본 버튼 1개 포함)');
+        }
+        
+        // 텍스트 영역 이벤트 설정
+        function setupTextAreaEvents(textArea) {
+            // 포커스 시 플레이스홀더 제거
+            textArea.addEventListener('focus', function() {
+                if (this.innerHTML.includes('여기에 텍스트를 입력하세요')) {
+                    this.innerHTML = '';
+                    this.style.fontStyle = 'normal'; // 기울임꼴 해제
+                    this.style.color = '#333'; // 정상 글자색
+                }
+            });
+            
+            // 포커스 아웃 시 빈 내용이면 플레이스홀더 복원
+            textArea.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.innerHTML = '<p style="color: #999; font-style: italic;">✍️ 여기에 텍스트를 입력하세요...</p>';
+                    this.style.fontStyle = 'italic'; // 플레이스홀더용 기울임꼴
+                    this.style.color = '#999'; // 플레이스홀더용 회색
+                }
+            });
+            
+            // 내용 변경 시 미리보기 업데이트
+            textArea.addEventListener('input', updatePreview);
+        }
+        
+        // 초기 텍스트 영역들에 이벤트 설정
+        function setupAllTextAreas() {
+            const textAreas = editArea.querySelectorAll('.text-area');
+            textAreas.forEach(setupTextAreaEvents);
+        }
+    </script>
+</body>
+</html> 
