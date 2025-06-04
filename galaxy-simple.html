@@ -138,6 +138,9 @@
                     <button class="tool-btn" onclick="clearCode()">🗑️ 지우기</button>
                     <button class="tool-btn" onclick="copySource()">📋 소스 복사</button>
                     <button class="tool-btn" onclick="openButtonMaker()">🔧 버튼메이커</button>
+                    <button class="tool-btn" onclick="toggleBackground()">🌌 배경 변경</button>
+                    <button class="tool-btn" onclick="changeHeaderColor()">🎨 텍스트 색상</button>
+                    <button class="tool-btn" onclick="openEmojiSelector()">🎭 이모지 선택</button>
                 </div>
 
                 <textarea 
@@ -354,6 +357,119 @@
         // 버튼메이커 열기
         function openButtonMaker() {
             window.open('https://best2.middleage-life.com/', '_blank');
+        }
+
+        // 배경 토글
+        let isBlueBackground = false;
+        function toggleBackground() {
+            const codeValue = codeEditor.value;
+            
+            if (isBlueBackground) {
+                // 흰색 배경으로 변경
+                const newTemplate = codeValue.replace(
+                    /background: linear-gradient\(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%\);/g,
+                    'background: white;'
+                );
+                codeEditor.value = newTemplate;
+                isBlueBackground = false;
+                alert('🤍 배경이 흰색으로 변경되었습니다!');
+            } else {
+                // 파란 그라데이션 배경으로 변경
+                const newTemplate = codeValue.replace(
+                    /background: white;/g,
+                    'background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);'
+                );
+                codeEditor.value = newTemplate;
+                isBlueBackground = true;
+                alert('💙 배경이 파란 그라데이션으로 변경되었습니다!');
+            }
+            
+            updatePreview();
+        }
+
+        // 선택된 텍스트 색상 변경
+        function changeHeaderColor() {
+            // 코드 에디터에서 선택된 텍스트 가져오기
+            const textArea = document.getElementById('codeEditor');
+            const start = textArea.selectionStart;
+            const end = textArea.selectionEnd;
+            const selectedText = textArea.value.substring(start, end);
+            
+            if (!selectedText || selectedText.trim() === '') {
+                alert('❌ 먼저 색상을 변경할 텍스트를 드래그로 선택해주세요!');
+                return;
+            }
+            
+            const colorOptions = `선택한 텍스트 색상을 선택하세요:
+
+1 = 🔴 빨강
+2 = 🟡 노랑  
+3 = 🟢 초록
+4 = 🔵 파랑
+5 = 🟣 보라
+6 = 🩷 핑크
+7 = 🧡 주황
+8 = 🤎 갈색
+9 = ⚫ 검정
+10 = 🤍 흰색
+
+번호를 입력하세요:`;
+
+            const choice = prompt(colorOptions, '1');
+            const colors = {
+                '1': '#ff6b6b', '2': '#ffd93d', '3': '#6bcf7f', '4': '#4dabf7',
+                '5': '#a29bfe', '6': '#fd79a8', '7': '#ff9f43', '8': '#d63031',
+                '9': '#2d3436', '10': '#ffffff'
+            };
+            
+            const selectedColor = colors[choice];
+            if (selectedColor) {
+                // 선택된 텍스트를 span으로 감싸기
+                const coloredText = `<span style="color: ${selectedColor};">${selectedText}</span>`;
+                
+                // 텍스트 교체
+                const beforeText = textArea.value.substring(0, start);
+                const afterText = textArea.value.substring(end);
+                textArea.value = beforeText + coloredText + afterText;
+                
+                // 커서 위치 조정
+                const newPosition = start + coloredText.length;
+                textArea.setSelectionRange(newPosition, newPosition);
+                
+                updatePreview();
+                alert(`🎨 선택한 텍스트의 색상이 변경되었습니다!`);
+            } else if (choice !== null) {
+                alert('❌ 올바른 번호를 입력해주세요! (1-10)');
+            }
+        }
+
+        // 이모지 선택 창 열기
+        function openEmojiSelector() {
+            // 현재 커서 위치 저장
+            const textArea = document.getElementById('codeEditor');
+            window.currentCursorPosition = textArea.selectionStart;
+            
+            // 이모지 페이지 열기
+            window.open('emoji-page.html', 'emojiSelector', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            alert('🎭 이모지를 선택하면 현재 커서 위치에 삽입됩니다!');
+        }
+
+        // 이모지 삽입 (이모지 페이지에서 호출)
+        function insertEmoji(emoji) {
+            const textArea = document.getElementById('codeEditor');
+            const cursorPos = window.currentCursorPosition || textArea.selectionStart;
+            
+            // 커서 위치에 이모지 삽입
+            const beforeText = textArea.value.substring(0, cursorPos);
+            const afterText = textArea.value.substring(cursorPos);
+            textArea.value = beforeText + emoji + afterText;
+            
+            // 커서를 이모지 뒤로 이동
+            const newPosition = cursorPos + emoji.length;
+            textArea.setSelectionRange(newPosition, newPosition);
+            textArea.focus();
+            
+            updatePreview();
         }
 
         // 페이지 로드시 기본 템플릿 로드
