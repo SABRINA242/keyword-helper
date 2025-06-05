@@ -241,9 +241,92 @@
           flex: 1 !important;
           min-width: 180px !important;
         }
+
+        /* 실행 취소 버튼 스타일 */
+        .undo-btn {
+            background: #e17055;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 5px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .undo-btn:hover {
+            background: #d15f44;
+            transform: translateY(-2px);
+        }
+
+        .undo-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 이모지 모달 스타일 */
+        .emoji-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .emoji-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .emoji-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .emoji-modal-close:hover {
+            background: #c0392b;
+        }
     </style>
 </head>
 <body>
+    <!-- 이모지 모달 -->
+    <div class="emoji-modal" id="emojiModal">
+        <div class="emoji-modal-content">
+            <button class="emoji-modal-close" onclick="closeEmojiModal()">×</button>
+            <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🎨 심플 버튼 페이지 편집기</h1>
@@ -268,6 +351,7 @@
                     <button class="tool-btn" onclick="resizeButton()">📏 크기 조절</button>
                     <button class="tool-btn" onclick="editButtonLink()">🔗 링크 편집</button>
                     <button class="tool-btn" onclick="alignButtonText()">📍 버튼 텍스트 위치</button>
+                    <button class="undo-btn" onclick="undoLastChange()" id="undoButton" disabled>↩️ 실행 취소</button>
                 </div>
 
                 <div class="tool-group">
@@ -692,6 +776,8 @@
             const buttons = editArea.querySelectorAll('a[href], button');
             buttons.forEach(btn => {
                 btn.addEventListener('click', selectButton);
+                // 버튼 변경 이벤트 리스너 추가
+                btn.addEventListener('change', saveToHistory);
             });
         }
 
@@ -1979,6 +2065,76 @@
             const textAreas = editArea.querySelectorAll('.text-area');
             textAreas.forEach(setupTextAreaEvents);
         }
+
+        // 히스토리 관리
+        let editHistory = [];
+        let currentHistoryIndex = -1;
+        const maxHistoryLength = 20;
+
+        // 히스토리에 현재 상태 저장
+        function saveToHistory() {
+            // 현재 상태 저장
+            const currentState = editArea.innerHTML;
+            
+            // 현재 인덱스 이후의 히스토리 제거
+            editHistory = editHistory.slice(0, currentHistoryIndex + 1);
+            
+            // 새 상태 추가
+            editHistory.push(currentState);
+            
+            // 최대 길이 제한
+            if (editHistory.length > maxHistoryLength) {
+                editHistory.shift();
+            }
+            
+            currentHistoryIndex = editHistory.length - 1;
+            
+            // 실행 취소 버튼 상태 업데이트
+            updateUndoButtonState();
+        }
+
+        // 실행 취소 버튼 상태 업데이트
+        function updateUndoButtonState() {
+            const undoButton = document.getElementById('undoButton');
+            undoButton.disabled = currentHistoryIndex <= 0;
+        }
+
+        // 실행 취소
+        function undoLastChange() {
+            if (currentHistoryIndex > 0) {
+                currentHistoryIndex--;
+                editArea.innerHTML = editHistory[currentHistoryIndex];
+                updatePreview();
+                updateUndoButtonState();
+                showNotification('↩️ 이전 상태로 되돌렸습니다!');
+            }
+        }
+
+        // 초기 상태 저장
+        document.addEventListener('DOMContentLoaded', function() {
+            saveToHistory();
+        });
+
+        // 버튼 변경 시 히스토리 저장
+        function setupButtonEvents() {
+            const buttons = editArea.querySelectorAll('a[href], button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', selectButton);
+                // 버튼 변경 이벤트 리스너 추가
+                btn.addEventListener('change', saveToHistory);
+            });
+        }
+
+        // 기존 함수들에 히스토리 저장 추가
+        const originalUpdatePreview = updatePreview;
+        updatePreview = function() {
+            originalUpdatePreview();
+            saveToHistory();
+        };
+
+        function updateButtonEmoji(emoji) {
+            if (selectedButton) {
+                const buttonText = selectedButton.textContent;
     </script>
 </body>
 </html> 

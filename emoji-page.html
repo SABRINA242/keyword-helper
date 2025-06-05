@@ -363,18 +363,29 @@
     <script>
         // 이모지 복사 기능
         function copyEmoji(emoji) {
-            navigator.clipboard.writeText(emoji).then(() => {
-                showNotification(`${emoji} 복사됨!`);
-            }).catch(() => {
-                // 클립보드 API 실패시 fallback
-                const textArea = document.createElement('textarea');
-                textArea.value = emoji;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification(`${emoji} 복사됨!`);
-            });
+            // 부모 창이 있는지 확인 (galaxy-simple.html에서 열린 경우)
+            if (window.opener && window.opener.insertEmoji) {
+                // 부모 창의 insertEmoji 함수 호출
+                window.opener.insertEmoji(emoji);
+                showNotification(`${emoji} 삽입됨!`);
+                
+                // 즉시 창 닫기
+                window.close();
+            } else {
+                // 일반적인 클립보드 복사 (독립적으로 열린 경우)
+                navigator.clipboard.writeText(emoji).then(() => {
+                    showNotification(`${emoji} 복사됨!`);
+                }).catch(() => {
+                    // 클립보드 API 실패시 fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = emoji;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification(`${emoji} 복사됨!`);
+                });
+            }
         }
 
         // 알림 표시
@@ -408,7 +419,17 @@
 
         // 뒤로가기
         function goBack() {
-            window.history.back();
+            // 새 창으로 열린 경우 (opener가 있으면)
+            if (window.opener) {
+                // 부모 창으로 포커스 이동 후 창 닫기
+                window.opener.focus();
+                setTimeout(() => {
+                    window.close();
+                }, 100);
+            } else {
+                // 일반적인 페이지 이동인 경우
+                window.history.back();
+            }
         }
 
         // 키보드 단축키
