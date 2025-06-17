@@ -1036,17 +1036,23 @@
             // 고정된 호버 클래스 제거
             button.classList.remove('button-blue', 'button-pink', 'button-green', 'button-blue-m2', 'button-pink-m2', 'button-green-m2');
             
+            // 기존 인라인 스타일도 초기화
+            button.style.background = '';
+            button.style.borderColor = '';
+            button.style.boxShadow = '';
+            button.style.color = '';
+            
             // 고유한 ID 생성
             const buttonId = 'custom-button-m2-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
             button.id = buttonId;
             
-            // 모던2 스타일 적용: 컬러 배경 + 흰 글씨
+            // 모던2 스타일 적용: 새로운 컬러 배경 + 흰 글씨
             button.style.background = bgColor;
             button.style.borderColor = bgColor;
             button.style.boxShadow = `0 8px 20px ${shadowColor}`;
             button.style.color = 'white';
             
-            // 모던2 전용 호버 스타일 추가: 흰 배경 + 컬러 글씨
+            // 모던2 전용 호버 스타일 추가: 항상 흰 배경 + 컬러 글씨
             addHoverStyleModern2(buttonId, bgColor);
             
             // 다이얼로그 제거
@@ -1062,7 +1068,7 @@
             showNotification('❌ 모던2 색상 변경이 취소되었습니다.');
         }
 
-        // 모던2 전용 호버 스타일 함수 (간단 버전)
+        // 모던2 전용 호버 스타일 함수 (강화 버전)
         function addHoverStyleModern2(buttonId, bgColor) {
             // 기존 스타일 제거
             const existingStyle = document.getElementById(`style-${buttonId}`);
@@ -1070,12 +1076,13 @@
                 existingStyle.remove();
             }
             
-            // 모던2 호버 스타일: 흰 배경 + 컬러 글씨/테두리
+            // 모던2 호버 스타일: 항상 흰 배경 + 컬러 글씨/테두리
             const styleTag = document.createElement('style');
             styleTag.id = `style-${buttonId}`;
             styleTag.innerHTML = `
                 #${buttonId}:hover {
                     background: white !important;
+                    background-color: white !important;
                     color: ${bgColor} !important;
                     border-color: ${bgColor} !important;
                     box-shadow: 0 12px 25px rgba(0,0,0,0.2) !important;
