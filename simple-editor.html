@@ -198,9 +198,9 @@
 
         .nav-button {
             background: white;
-            border: 2px solid #667eea;
-            border-radius: 25px;
-            color: #667eea;
+            color: #74b9ff;
+            border: 2px solid #74b9ff;
+            box-shadow: rgba(116, 185, 255, 0.2) 0px 4px 8px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
@@ -208,13 +208,11 @@
             text-decoration: none !important;
             transition: all 0.3s ease;
             display: inline-block;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
         .nav-button:hover {
-            background: #e17055 !important;
-            color: white !important;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+            background: #74b9ff;
+            color: white;
+            box-shadow: rgba(116, 185, 255, 0.4) 0px 8px 16px;
             text-decoration: none !important;
         }
 
@@ -317,7 +315,8 @@
                     <h3>🔘 버튼 편집</h3>
                     <button class="tool-btn" onclick="deleteSelectedButton()">🗑️ 버튼 삭제</button>
                     <button class="tool-btn" onclick="addNewButton()">➕ 버튼 추가</button>
-                    <button class="tool-btn" onclick="changeButtonColor()">🎨 색상 변경</button>
+                    <button class="tool-btn" onclick="changeButtonColorModern1()" style="background: #6c5ce7;">🎨 모던1 색상변경</button>
+                    <button class="tool-btn" onclick="changeButtonColorModern2()" style="background: #e84393;">🎨 모던2 색상변경</button>
                     <button class="tool-btn" onclick="resizeButton()">📏 크기 조절</button>
                     <button class="tool-btn" onclick="editButtonLink()">🔗 링크 편집</button>
                     <button class="tool-btn" onclick="alignButtonText()">📍 버튼 텍스트 위치</button>
@@ -325,9 +324,9 @@
                 </div>
 
                 <div class="tool-group">
-                    <h3>🔄 네비게이션</h3>
-                    <button class="tool-btn" onclick="addNavButton()">➕ 네비 추가</button>
-                    <button class="tool-btn" onclick="removeNavButton()">➖ 네비 제거</button>
+                    <h3>📍 네비게이션</h3>
+                    <button class="tool-btn" onclick="addNavButtonWithColor()">📍 네비 추가</button>
+                    <button class="tool-btn" onclick="deleteSelectedNav()">🗑️ 네비 제거</button>
                 </div>
 
                 <div class="tool-group">
@@ -342,22 +341,22 @@
                 </div>
 
                 <div class="tool-group">
-                    <h3>🎭 이모지</h3>
+                    <h3>📝 이모지</h3>
                     <div class="emoji-grid">
-                        <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🎯')">🎯</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🚀')">🚀</button>
-                        <button class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
-                        <button class="emoji-btn" onclick="insertEmoji('💎')">💎</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🌟')">🌟</button>
-                        <button class="emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+                        <button class="emoji-btn" onclick="insertEmoji('1️⃣')">1️⃣</button>
+                        <button class="emoji-btn" onclick="insertEmoji('2️⃣')">2️⃣</button>
+                        <button class="emoji-btn" onclick="insertEmoji('3️⃣')">3️⃣</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👆')">👆</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👇')">👇</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👉')">👉</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👈')">👈</button>
+                        <button class="emoji-btn" onclick="insertEmoji('👍')">👍</button>
                         <button class="emoji-btn" onclick="insertEmoji('💡')">💡</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🎨')">🎨</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
-                        <button class="emoji-btn" onclick="insertEmoji('👑')">👑</button>
-                        <button class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
+                        <button class="emoji-btn" onclick="insertEmoji('✅')">✅</button>
+                        <button class="emoji-btn" onclick="insertEmoji('🍕')">🍕</button>
+                        <button class="emoji-btn" onclick="insertEmoji('☕')">☕</button>
                     </div>
-                    <button class="tool-btn" onclick="openEmojiPage()" style="margin-top: 15px; background: #ff6b6b;">🎭 더 많은 이모지</button>
+                    <button class="tool-btn" onclick="openEmojiPage()" style="margin-top: 15px; background: #ff6b6b;">📝 더 많은 이모지</button>
                 </div>
 
                 <div class="tool-group">
@@ -404,9 +403,9 @@
   <style>
 .nav-button {
   background: white;
-  border: 2px solid #e17055;
+  border: 2px solid #74b9ff;
   border-radius: 25px;
-  color: #e17055;
+  color: #74b9ff;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -416,11 +415,35 @@
   display: inline-block;
 }
 .nav-button:hover {
-  background: #e17055 !important;
+  background: #74b9ff !important;
   color: white !important;
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3);
   text-decoration: none !important;
+}
+.nav-button:nth-child(1) {
+  border-color: #74b9ff;
+  color: #74b9ff;
+}
+.nav-button:nth-child(1):hover {
+  background: #74b9ff !important;
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3);
+}
+.nav-button:nth-child(2) {
+  border-color: #e84393;
+  color: #e84393;
+}
+.nav-button:nth-child(2):hover {
+  background: #e84393 !important;
+  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3);
+}
+.nav-button:nth-child(3) {
+  border-color: #00b894;
+  color: #00b894;
+}
+.nav-button:nth-child(3):hover {
+  background: #00b894 !important;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3);
 }
 .title-button {
   background: white;
@@ -475,30 +498,55 @@
   padding: 20px;
   display: block;
 }
-/* 첫번째 버튼 호버 효과 */
-.link-button:nth-child(1):hover {
-  background: #6c5ce7 !important;
+/* 파란 버튼 호버 효과 */
+.button-blue:hover {
+  background: #74b9ff !important;
   color: white !important;
-  box-shadow: 0 12px 25px rgba(108, 92, 231, 0.4) !important;
+  box-shadow: 0 12px 25px rgba(116, 185, 255, 0.4) !important;
 }
-/* 두번째 버튼 호버 효과 */  
-.link-button:nth-child(2):hover {
+/* 핑크 버튼 호버 효과 */  
+.button-pink:hover {
   background: #e84393 !important;
   color: white !important;
   box-shadow: 0 12px 25px rgba(232, 67, 147, 0.4) !important;
 }
-/* 세번째 버튼 호버 효과 */
-.link-button:nth-child(3):hover {
+/* 초록 버튼 호버 효과 */
+.button-green:hover {
   background: #00b894 !important;
   color: white !important;
   box-shadow: 0 12px 25px rgba(0, 184, 148, 0.4) !important;
 }
+/* 네비게이션 버튼 색상 클래스 */
+.nav-button-blue {
+  border-color: #74b9ff !important;
+  color: #74b9ff !important;
+}
+.nav-button-blue:hover {
+  background: #74b9ff !important;
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3) !important;
+}
+.nav-button-pink {
+  border-color: #e84393 !important;
+  color: #e84393 !important;
+}
+.nav-button-pink:hover {
+  background: #e84393 !important;
+  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3) !important;
+}
+.nav-button-green {
+  border-color: #00b894 !important;
+  color: #00b894 !important;
+}
+.nav-button-green:hover {
+  background: #00b894 !important;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
+}
   </style>   
 
   <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
-    <a href="#네비1" class="nav-button" onclick="selectButton(event)">네비1</a>
-    <a href="#네비2" class="nav-button" onclick="selectButton(event)">네비2</a>
-    <a href="#네비3" class="nav-button" onclick="selectButton(event)">네비3</a>
+    <a href="#네비1" class="nav-button nav-button-blue" onclick="selectButton(event)">네비1</a>
+    <a href="#네비2" class="nav-button nav-button-pink" onclick="selectButton(event)">네비2</a>
+    <a href="#네비3" class="nav-button nav-button-green" onclick="selectButton(event)">네비3</a>
   </div>
 
   <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
@@ -507,9 +555,9 @@
     </div>
     
     <div class="button-row">
-      <a class="link-button" href="/p/button1.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(108, 92, 231, 0.2) 0px 4px 8px; color: #6c5ce7; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #6c5ce7;">Button 1</a>
-      <a class="link-button" href="/p/button2.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(232, 67, 147, 0.2) 0px 4px 8px; color: #e84393; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #e84393;">Button 2</a>
-      <a class="link-button" href="/p/button3.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(0, 184, 148, 0.2) 0px 4px 8px; color: #00b894; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #00b894;">Button 3</a>
+      <a class="link-button button-blue" href="/p/button1.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(116, 185, 255, 0.2) 0px 4px 8px; color: #74b9ff; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #74b9ff;">Button 1</a>
+      <a class="link-button button-pink" href="/p/button2.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(232, 67, 147, 0.2) 0px 4px 8px; color: #e84393; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #e84393;">Button 2</a>
+      <a class="link-button button-green" href="/p/button3.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(0, 184, 148, 0.2) 0px 4px 8px; color: #00b894; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #00b894;">Button 3</a>
     </div>
   </div>
   
@@ -524,9 +572,9 @@
   <style>
 .nav-button {
   background: white;
-  border: 2px solid #e17055;
+  border: 2px solid #74b9ff;
   border-radius: 25px;
-  color: #e17055;
+  color: #74b9ff;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -536,11 +584,35 @@
   display: inline-block;
 }
 .nav-button:hover {
-  background: #e17055 !important;
+  background: #74b9ff !important;
   color: white !important;
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(225, 112, 85, 0.3);
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3);
   text-decoration: none !important;
+}
+.nav-button:nth-child(1) {
+  border-color: #74b9ff;
+  color: #74b9ff;
+}
+.nav-button:nth-child(1):hover {
+  background: #74b9ff !important;
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3);
+}
+.nav-button:nth-child(2) {
+  border-color: #e84393;
+  color: #e84393;
+}
+.nav-button:nth-child(2):hover {
+  background: #e84393 !important;
+  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3);
+}
+.nav-button:nth-child(3) {
+  border-color: #00b894;
+  color: #00b894;
+}
+.nav-button:nth-child(3):hover {
+  background: #00b894 !important;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3);
 }
 .title-button {
   background: white;
@@ -598,27 +670,55 @@
   padding: 20px;
   display: block;
 }
-/* 첫번째 버튼 호버 효과 */
-.link-button:nth-child(1):hover {
+/* 파란 버튼 호버 효과 (모던2) */
+.button-blue-m2:hover {
   color: #6c5ce7 !important;
   border-color: #6c5ce7 !important;
+  background: white !important;
 }
-/* 두번째 버튼 호버 효과 */  
-.link-button:nth-child(2):hover {
+/* 핑크 버튼 호버 효과 (모던2) */  
+.button-pink-m2:hover {
   color: #e84393 !important;
   border-color: #e84393 !important;
+  background: white !important;
 }
-/* 세번째 버튼 호버 효과 */
-.link-button:nth-child(3):hover {
+/* 초록 버튼 호버 효과 (모던2) */
+.button-green-m2:hover {
   color: #00b894 !important;
   border-color: #00b894 !important;
+  background: white !important;
+}
+/* 네비게이션 버튼 색상 클래스 */
+.nav-button-blue {
+  border-color: #74b9ff !important;
+  color: #74b9ff !important;
+}
+.nav-button-blue:hover {
+  background: #74b9ff !important;
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3) !important;
+}
+.nav-button-pink {
+  border-color: #e84393 !important;
+  color: #e84393 !important;
+}
+.nav-button-pink:hover {
+  background: #e84393 !important;
+  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3) !important;
+}
+.nav-button-green {
+  border-color: #00b894 !important;
+  color: #00b894 !important;
+}
+.nav-button-green:hover {
+  background: #00b894 !important;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
 }
   </style>   
 
   <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
-    <a href="#화이트1" class="nav-button" onclick="selectButton(event)">네비1</a>
-    <a href="#화이트2" class="nav-button" onclick="selectButton(event)">네비2</a>
-    <a href="#화이트3" class="nav-button" onclick="selectButton(event)">네비3</a>
+    <a href="#화이트1" class="nav-button nav-button-blue" onclick="selectButton(event)">네비1</a>
+    <a href="#화이트2" class="nav-button nav-button-pink" onclick="selectButton(event)">네비2</a>
+    <a href="#화이트3" class="nav-button nav-button-green" onclick="selectButton(event)">네비3</a>
   </div>
 
   <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
@@ -627,9 +727,9 @@
     </div>
     
     <div class="button-row">
-      <a class="link-button" href="/p/white1.html" onclick="selectButton(event)" style="align-items: center; background: #6c5ce7; border: 2px solid #6c5ce7; border-radius: 15px; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 1</a>
-      <a class="link-button" href="/p/white2.html" onclick="selectButton(event)" style="align-items: center; background: #e84393; border: 2px solid #e84393; border-radius: 15px; box-shadow: 0 8px 20px rgba(232, 67, 147, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 2</a>
-      <a class="link-button" href="/p/white3.html" onclick="selectButton(event)" style="align-items: center; background: #00b894; border: 2px solid #00b894; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 3</a>
+      <a class="link-button button-blue-m2" href="/p/white1.html" onclick="selectButton(event)" style="align-items: center; background: #74b9ff; border: 2px solid #74b9ff; border-radius: 15px; box-shadow: 0 8px 20px rgba(116, 185, 255, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 1</a>
+      <a class="link-button button-pink-m2" href="/p/white2.html" onclick="selectButton(event)" style="align-items: center; background: #e84393; border: 2px solid #e84393; border-radius: 15px; box-shadow: 0 8px 20px rgba(232, 67, 147, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 2</a>
+      <a class="link-button button-green-m2" href="/p/white3.html" onclick="selectButton(event)" style="align-items: center; background: #00b894; border: 2px solid #00b894; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3); color: white; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 20px; text-decoration: none;">White Button 3</a>
     </div>
   </div>
   
@@ -948,7 +1048,64 @@
             window.currentButtonContainer = buttonContainer;
         }
 
-        // 색상 적용
+        // 모던2 색상 적용
+        function selectColorModern2(selectedValue) {
+            const button = window.currentExistingBtn;
+            const [bgColor, shadowColor] = selectedValue.split(',');
+            
+            // 고정된 호버 클래스 제거
+            button.classList.remove('button-blue', 'button-pink', 'button-green', 'button-blue-m2', 'button-pink-m2', 'button-green-m2');
+            
+            // 고유한 ID 생성
+            const buttonId = 'custom-button-m2-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+            button.id = buttonId;
+            
+            // 모던2 스타일 적용: 컬러 배경 + 흰 글씨
+            button.style.background = bgColor;
+            button.style.borderColor = bgColor;
+            button.style.boxShadow = `0 8px 20px ${shadowColor}`;
+            button.style.color = 'white';
+            
+            // 모던2 전용 호버 스타일 추가: 흰 배경 + 컬러 글씨
+            addHoverStyleModern2(buttonId, bgColor);
+            
+            // 다이얼로그 제거
+            document.body.removeChild(window.currentExistingColorDialog);
+            
+            updatePreview();
+            showNotification('🎨 모던2 버튼 색상이 변경되었습니다!');
+        }
+
+        // 모던2 취소 함수
+        function cancelColorSelectionModern2() {
+            document.body.removeChild(window.currentExistingColorDialog);
+            showNotification('❌ 모던2 색상 변경이 취소되었습니다.');
+        }
+
+        // 모던2 전용 호버 스타일 함수 (간단 버전)
+        function addHoverStyleModern2(buttonId, bgColor) {
+            // 기존 스타일 제거
+            const existingStyle = document.getElementById(`style-${buttonId}`);
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // 모던2 호버 스타일: 흰 배경 + 컬러 글씨/테두리
+            const styleTag = document.createElement('style');
+            styleTag.id = `style-${buttonId}`;
+            styleTag.innerHTML = `
+                #${buttonId}:hover {
+                    background: white !important;
+                    color: ${bgColor} !important;
+                    border-color: ${bgColor} !important;
+                    box-shadow: 0 12px 25px rgba(0,0,0,0.2) !important;
+                    transform: translateY(-8px) scale(1.02) !important;
+                }
+            `;
+            document.head.appendChild(styleTag);
+        }
+
+        // 모던1 색상 적용 (기존 selectColor 함수 수정)
         function selectColor(selectedValue) {
             const newBtn = window.currentNewBtn;
             const templateBtn = window.currentTemplateBtn;
@@ -991,9 +1148,16 @@
         function applyColorToButton(button, selectedValue, templateBtn = null) {
             // 템플릿별 색상 적용 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
-            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate1 = templateContainer && (templateContainer.innerHTML.includes('Button 1') || templateContainer.innerHTML.includes('button-blue'));
+            let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
             let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
+            
+            // 고정된 호버 클래스 제거 (모던1과 모던2 모두)
+            button.classList.remove('button-blue', 'button-pink', 'button-green', 'button-blue-m2', 'button-pink-m2', 'button-green-m2');
+            
+            // 고유한 ID 생성하여 동적 호버 스타일 적용
+            const buttonId = 'custom-button-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+            button.id = buttonId;
             
             if (isTemplate1) {
                 // 템플릿 1: 색상, 그림자, 호버 색상 분리
@@ -1002,6 +1166,9 @@
                 button.style.color = borderColor;
                 button.style.borderColor = borderColor;
                 button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+                
+                // 동적 호버 스타일 추가
+                addHoverStyle(buttonId, borderColor, hoverShadow);
                 
             } else if (isTemplate2) {
                 // 템플릿 2: 색상 배경 (호버시 흰색)
@@ -1012,6 +1179,9 @@
                 button.style.boxShadow = `0 8px 20px ${shadowColor}`;
                 button.style.color = 'white';
                 
+                // 동적 호버 스타일 추가 (템플릿2는 호버시 흰 배경)
+                addHoverStyleTemplate2(buttonId, bgColor);
+                
             } else {
                 // 기본값으로 템플릿 1 스타일 사용
                 const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
@@ -1019,7 +1189,55 @@
                 button.style.color = borderColor;
                 button.style.borderColor = borderColor;
                 button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+                
+                // 동적 호버 스타일 추가
+                addHoverStyle(buttonId, borderColor, hoverShadow);
             }
+        }
+
+        // 동적 호버 스타일 추가 함수 (템플릿1용)
+        function addHoverStyle(buttonId, borderColor, hoverShadow) {
+            // 기존 스타일 제거 (같은 버튼의 이전 스타일)
+            const existingStyle = document.getElementById(`style-${buttonId}`);
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // 새로운 호버 스타일 추가
+            const styleTag = document.createElement('style');
+            styleTag.id = `style-${buttonId}`;
+            styleTag.innerHTML = `
+                #${buttonId}:hover {
+                    background: ${borderColor} !important;
+                    color: white !important;
+                    box-shadow: 0 12px 25px ${hoverShadow} !important;
+                    transform: translateY(-8px) scale(1.02) !important;
+                }
+            `;
+            document.head.appendChild(styleTag);
+        }
+
+        // 동적 호버 스타일 추가 함수 (템플릿2용)
+        function addHoverStyleTemplate2(buttonId, bgColor) {
+            // 기존 스타일 제거 (같은 버튼의 이전 스타일)
+            const existingStyle = document.getElementById(`style-${buttonId}`);
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // 새로운 호버 스타일 추가
+            const styleTag = document.createElement('style');
+            styleTag.id = `style-${buttonId}`;
+            styleTag.innerHTML = `
+                #${buttonId}:hover {
+                    background: white !important;
+                    color: ${bgColor} !important;
+                    border-color: ${bgColor} !important;
+                    box-shadow: 0 12px 25px rgba(0,0,0,0.2) !important;
+                    transform: translateY(-8px) scale(1.02) !important;
+                }
+            `;
+            document.head.appendChild(styleTag);
         }
 
         function applySelectedColor() {
@@ -1055,8 +1273,8 @@
             }
         }
 
-        // 버튼 색상 변경
-        function changeButtonColor() {
+        // 모던1 버튼 색상 변경
+        function changeButtonColorModern1() {
             if (!selectedButton) {
                 alert('❌ 먼저 색상을 변경할 버튼을 클릭해서 선택해주세요!');
                 return;
@@ -1068,15 +1286,31 @@
                 return;
             }
             
-            showColorPickerForExisting(selectedButton);
+            showColorPickerForModern1(selectedButton);
         }
 
-        // 기존 버튼용 색상 선택기
-        function showColorPickerForExisting(button) {
+        // 모던2 버튼 색상 변경
+        function changeButtonColorModern2() {
+            if (!selectedButton) {
+                alert('❌ 먼저 색상을 변경할 버튼을 클릭해서 선택해주세요!');
+                return;
+            }
+            
+            // 선택된 버튼이 link-button 클래스를 가지고 있는지 확인
+            if (!selectedButton.classList.contains('link-button')) {
+                alert('❌ 메인 버튼들만 색상 변경이 가능합니다!');
+                return;
+            }
+            
+            showColorPickerForModern2(selectedButton);
+        }
+
+        // 모던1 버튼용 색상 선택기
+        function showColorPickerForModern1(button) {
             // 템플릿 타입 감지 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
-            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate1 = templateContainer && (templateContainer.innerHTML.includes('Button 1') || templateContainer.innerHTML.includes('button-blue'));
+            let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
             let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
             
             let colorOptions = '';
@@ -1159,6 +1393,65 @@
             // 전역 변수로 버튼 정보 저장
             window.currentExistingBtn = button;
             window.currentExistingColorDialog = colorDialog;
+            window.currentTemplateType = 'modern1';
+        }
+
+        // 모던2 버튼용 색상 선택기
+        function showColorPickerForModern2(button) {
+            // 모던2 전용 색상 옵션 (컬러 배경 → 흰 배경 호버)
+            const colorOptions = `
+                <option value="#6c5ce7,rgba(108, 92, 231, 0.3)">🟣 퍼플</option>
+                <option value="#e84393,rgba(232, 67, 147, 0.3)">🩷 핑크</option>
+                <option value="#00b894,rgba(0, 184, 148, 0.3)">🟢 그린</option>
+                <option value="#fd79a8,rgba(253, 121, 168, 0.3)">💗 라이트핑크</option>
+                <option value="#fdcb6e,rgba(253, 203, 110, 0.3)">🟡 옐로우</option>
+                <option value="#74b9ff,rgba(116, 185, 255, 0.3)">🔵 블루</option>
+                <option value="#a29bfe,rgba(162, 155, 254, 0.3)">🟣 라벤더</option>
+                <option value="#ff7675,rgba(255, 118, 117, 0.3)">🔴 레드</option>
+                <option value="#00cec9,rgba(0, 206, 201, 0.3)">🌊 시안</option>
+                <option value="#e17055,rgba(225, 112, 85, 0.3)">🧡 코랄</option>
+            `;
+            
+            // 색상 선택 다이얼로그 생성
+            const colorDialog = document.createElement('div');
+            colorDialog.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; text-align: center;">
+                        <h3 style="margin-bottom: 20px;">🎨 모던2 버튼 색상 선택</h3>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 14px;">기본: 컬러 배경 + 흰 글씨 | 호버: 흰 배경 + 컬러 글씨</p>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                            ${colorOptions.split('<option').slice(1).map((option, index) => {
+                                const value = option.match(/value="([^"]+)"/)?.[1] || '';
+                                const text = option.match(/>([^<]+)</)?.[1] || '';
+                                const colors = value.split(',');
+                                const mainColor = colors[0];
+                                
+                                return `<div onclick="selectColorModern2('${value}')" style="
+                                    padding: 15px 10px; 
+                                    background: ${mainColor}; 
+                                    color: white; 
+                                    border-radius: 8px; 
+                                    cursor: pointer; 
+                                    font-weight: bold;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                    transition: transform 0.2s ease;
+                                    font-size: 12px;
+                                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">${text}</div>`;
+                            }).join('')}
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="cancelColorSelectionModern2()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold;">취소</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(colorDialog);
+            
+            // 전역 변수로 버튼 정보 저장
+            window.currentExistingBtn = button;
+            window.currentExistingColorDialog = colorDialog;
+            window.currentTemplateType = 'modern2';
         }
 
         // 기존 버튼 색상 적용
@@ -1251,6 +1544,53 @@
             }
         }
 
+        // 색상 선택이 있는 네비게이션 추가
+        function addNavButtonWithColor() {
+            const navContainer = editArea.querySelector('.nav-button')?.parentElement;
+            if (!navContainer) {
+                alert('현재 템플릿에 네비게이션이 없습니다!');
+                return;
+            }
+            
+            const text = prompt('네비게이션 버튼 텍스트:', '새 메뉴');
+            if (!text) return;
+            
+            const link = prompt('링크 주소:', '#새메뉴');
+            
+            // 색상 선택 팝업
+            const colorChoice = prompt(
+                '네비게이션 색상을 선택하세요:\n\n' +
+                '1 - 💙 블루 (기본)\n' +
+                '2 - 💖 핑크\n' +
+                '3 - 💚 초록\n\n' +
+                '숫자 입력:', '1'
+            );
+            
+            let colorClass;
+            switch(colorChoice) {
+                case '2':
+                    colorClass = 'nav-button nav-button-pink';
+                    break;
+                case '3':
+                    colorClass = 'nav-button nav-button-green';
+                    break;
+                default:
+                    colorClass = 'nav-button nav-button-blue';
+            }
+            
+            const newNav = document.createElement('a');
+            newNav.href = link || '#';
+            newNav.className = colorClass;
+            newNav.textContent = text;
+            // 새로 추가하는 네비는 편집 대상에서 제외
+            
+            navContainer.appendChild(newNav);
+            updatePreview();
+            
+            const colorName = colorChoice === '2' ? '💖 핑크' : colorChoice === '3' ? '💚 초록' : '💙 블루';
+            showNotification(`📍 ${colorName} 네비게이션이 추가되었습니다!`);
+        }
+
         function removeNavButton() {
             const navButtons = editArea.querySelectorAll('.nav-button');
             if (navButtons.length > 0) {
@@ -1259,6 +1599,41 @@
                 showNotification('🗑️ 마지막 네비게이션이 제거되었습니다!');
             } else {
                 alert('제거할 네비게이션이 없습니다!');
+            }
+        }
+
+        // 선택한 네비게이션 삭제
+        function deleteSelectedNav() {
+            const allNavButtons = editArea.querySelectorAll('.nav-button, .nav-button-blue, .nav-button-pink, .nav-button-green');
+            
+            if (allNavButtons.length === 0) {
+                alert('삭제할 네비게이션이 없습니다!');
+                return;
+            }
+            
+            if (allNavButtons.length === 1) {
+                allNavButtons[0].remove();
+                updatePreview();
+                showNotification('🗑️ 네비게이션이 삭제되었습니다!');
+                return;
+            }
+            
+            // 여러 개일 때는 선택하도록
+            let navList = '현재 네비게이션 목록:\n\n';
+            allNavButtons.forEach((nav, index) => {
+                navList += `${index + 1}. ${nav.textContent}\n`;
+            });
+            navList += '\n삭제할 번호 입력:';
+            
+            const choice = prompt(navList);
+            const index = parseInt(choice) - 1;
+            
+            if (index >= 0 && index < allNavButtons.length) {
+                allNavButtons[index].remove();
+                updatePreview();
+                showNotification('🗑️ 네비게이션이 삭제되었습니다!');
+            } else {
+                alert('잘못된 번호입니다!');
             }
         }
 
@@ -1315,12 +1690,20 @@
                     element.classList.remove('text-area');
                 }
                 
-                // 점선 스타일만 제거
+                // 편집용 점선 가이드라인 스타일 제거
                 if (element.style.border && element.style.border.includes('dashed')) {
                     element.style.border = '';
                 }
                 if (element.style.background && element.style.background.includes('rgba(248, 249, 250')) {
                     element.style.background = '';
+                }
+                
+                // button-row 클래스의 편집용 스타일 제거
+                if (element.classList.contains('button-row')) {
+                    element.style.border = '';
+                    element.style.background = '';
+                    element.style.minHeight = '';
+                    element.style.padding = '';
                 }
             });
             
@@ -1335,7 +1718,17 @@
             // 깨끗한 HTML 얻기
             const cleanHTML = tempDiv.innerHTML;
             
-            // 완전한 HTML 문서로 만들기
+            // 동적으로 생성된 스타일들 수집
+            const dynamicStyles = [];
+            const dynamicStyleTags = document.head.querySelectorAll('style[id^="style-"]');
+            dynamicStyleTags.forEach(styleTag => {
+                dynamicStyles.push(styleTag.innerHTML);
+            });
+            
+            // 동적 스타일들을 하나의 문자열로 합치기
+            const allDynamicStyles = dynamicStyles.join('\n');
+            
+            // 완전한 HTML 문서로 만들기 (동적 스타일 포함)
             const fullHTML = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1350,10 +1743,42 @@
             background: white;
             min-height: 100vh;
         }
+        .button-row {
+            display: flex !important;
+            gap: 15px !important;
+            flex-wrap: nowrap !important;
+            justify-content: center !important;
+            margin: 20px 0 !important;
+            border: 0 !important;
+            border-style: none !important;
+            background: none !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+            height: auto !important;
+            border-radius: 0 !important;
+            transition: none !important;
+            box-shadow: none !important;
+        }
+        .button-row:hover, .button-row:focus {
+            border: 0 !important;
+            border-style: none !important;
+            background: none !important;
+            background-color: transparent !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+        .button-row:empty:before, .button-row:empty::before {
+            display: none !important;
+            content: none !important;
+        }
         .button-row .link-button {
             flex: 1 !important;
             min-width: 180px !important;
         }
+        
+        /* 동적으로 생성된 호버 스타일들 */
+        ${allDynamicStyles}
     </style>
 </head>
 <body>
