@@ -259,7 +259,7 @@
                     </div>
                 `;
             } else {
-                // iframe을 사용해서 완전한 HTML 렌더링
+                // iframe을 사용해서 완전한 HTML 렌더링 (body와 page-container 스타일 제거)
                 const fullHTML = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -269,21 +269,12 @@
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: white;
-            min-height: 100vh;
-        }
-        .page-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
+            padding: 0;
         }
     </style>
 </head>
 <body>
-    <div class="page-container">
-        ${code}
-    </div>
+    ${code}
 </body>
 </html>`;
 
