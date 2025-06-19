@@ -203,8 +203,10 @@
     }
     
     .page-container {
-        max-width: 1000px;
-        margin: 0 auto;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .header-text {
@@ -306,47 +308,18 @@
                 return;
             }
 
-            // 완전한 HTML 문서로 만들어서 복사
-            const fullHTML = `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>갤럭시드림 페이지</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
-            min-height: 100vh;
-        }
-        .page-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="page-container">
-        ${code}
-    </div>
-</body>
-</html>`;
-
-            // 클립보드에 복사
-            navigator.clipboard.writeText(fullHTML).then(() => {
-                alert('📋 완전한 HTML 페이지가 복사되었습니다!');
+            // 순수 콘텐츠만 복사 (포스팅용)
+            navigator.clipboard.writeText(code).then(() => {
+                alert('📋 포스팅용 소스가 복사되었습니다!');
             }).catch(() => {
                 // 구버전 브라우저용 백업 방법
                 const tempTextarea = document.createElement('textarea');
-                tempTextarea.value = fullHTML;
+                tempTextarea.value = code;
                 document.body.appendChild(tempTextarea);
                 tempTextarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(tempTextarea);
-                alert('📋 완전한 HTML 페이지가 복사되었습니다!');
+                alert('📋 포스팅용 소스가 복사되었습니다!');
             });
         }
 
