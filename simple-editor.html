@@ -1785,9 +1785,16 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            // 2. 클립보드에도 복사
-            navigator.clipboard.writeText(fullHTML).then(() => {
-                showNotification('💾 HTML 파일이 다운로드되고 클립보드에도 복사되었습니다!');
+            // 2. 클립보드에는 body 스타일 제거해서 복사 (포스팅용)
+            let clipboardHTML = fullHTML;
+            // body 스타일 완전 제거
+            clipboardHTML = clipboardHTML.replace(/body\s*\{[\s\S]*?\}/gs, '');
+            // 빈 줄 정리
+            clipboardHTML = clipboardHTML.replace(/\n\s*\n\s*\n/g, '\n\n');
+            clipboardHTML = clipboardHTML.trim();
+            
+            navigator.clipboard.writeText(clipboardHTML).then(() => {
+                showNotification('💾 HTML 파일이 다운로드되고 포스팅용 소스가 클립보드에 복사되었습니다! (body 스타일 제거됨)');
             }).catch(() => {
                 showNotification('💾 HTML 파일이 다운로드되었습니다!');
             });
