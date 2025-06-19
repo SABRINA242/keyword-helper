@@ -195,20 +195,6 @@
         // 기본 템플릿 로드
         function loadTemplate() {
             const template = `<style>
-    body {
-        background: white;
-        padding: 20px;
-        margin: 0;
-        min-height: 100vh;
-    }
-    
-    .page-container {
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
     .header-text {
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
@@ -233,15 +219,13 @@
     }
 </style>
 
-<div class="page-container">
-    <div class="header-text">
-        🌌 갤럭시드림 버튼 페이지
-    </div>
+<div class="header-text">
+    🌌 갤럭시드림 버튼 페이지
+</div>
 
-    <div class="button-area">
-        <!-- 여기에 당신의 버튼 HTML을 넣으세요 -->
-        
-    </div>
+<div class="button-area">
+    <!-- 여기에 당신의 버튼 HTML을 넣으세요 -->
+    
 </div>`;
             
             codeEditor.value = template;
