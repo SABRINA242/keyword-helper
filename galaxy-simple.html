@@ -299,18 +299,30 @@
                 return;
             }
 
+            // body와 page-container 스타일 제거 후 복사
+            let cleanCode = code;
+            
+            // body 스타일 제거
+            cleanCode = cleanCode.replace(/body\s*\{[^}]*\}/g, '');
+            
+            // .page-container 스타일 제거
+            cleanCode = cleanCode.replace(/\.page-container\s*\{[^}]*\}/g, '');
+            
+            // 빈 줄 정리
+            cleanCode = cleanCode.replace(/\n\s*\n\s*\n/g, '\n\n');
+
             // 순수 콘텐츠만 복사 (포스팅용)
-            navigator.clipboard.writeText(code).then(() => {
-                alert('📋 포스팅용 소스가 복사되었습니다!');
+            navigator.clipboard.writeText(cleanCode).then(() => {
+                alert('📋 포스팅용 소스가 복사되었습니다! (body와 page-container 스타일 제외)');
             }).catch(() => {
                 // 구버전 브라우저용 백업 방법
                 const tempTextarea = document.createElement('textarea');
-                tempTextarea.value = code;
+                tempTextarea.value = cleanCode;
                 document.body.appendChild(tempTextarea);
                 tempTextarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(tempTextarea);
-                alert('📋 포스팅용 소스가 복사되었습니다!');
+                alert('📋 포스팅용 소스가 복사되었습니다! (body와 page-container 스타일 제외)');
             });
         }
 
