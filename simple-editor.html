@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9917485719509358"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>심플 버튼 페이지 편집기</title>
@@ -2062,7 +2064,14 @@
                         updatePreview();
                         showNotification(`📏 글자 크기가 ${size}로 변경되었습니다!`);
                     } catch (e) {
-                        showNotification('❌ 텍스트를 선택해주세요!');
+                        // 복잡한 구조에서 실패할 때 대안 방법
+                        const content = range.extractContents();
+                        const fontSpan = document.createElement('span');
+                        fontSpan.style.fontSize = size;
+                        fontSpan.appendChild(content);
+                        range.insertNode(fontSpan);
+                        updatePreview();
+                        showNotification(`📏 글자 크기가 ${size}로 변경되었습니다!`);
                     }
                 }
             } else {
