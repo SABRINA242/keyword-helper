@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9917485719509358"
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9917485719509358"
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -942,25 +942,13 @@
         function showColorPicker(newBtn, templateBtn, count = 1, buttonContainer = null) {
             // 템플릿 타입 감지 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
-            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
-            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
+
+            // 템플릿 2를 먼저, 더 정확하게 감지
+            let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
             
             let colorOptions = '';
             
-            if (isTemplate1) {
-                // 템플릿 1: 보더 스타일 색상들
-                colorOptions = `
-                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
-                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
-                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
-                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
-                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
-                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
-                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
-                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
-                `;
-            } else if (isTemplate2) {
+            if (isTemplate2) {
                 // 템플릿 2: 색상 배경 (호버시 흰색)
                 colorOptions = `
                     <option value="#6c5ce7,rgba(108, 92, 231, 0.3)">🟣 퍼플</option>
@@ -975,7 +963,7 @@
                     <option value="#e17055,rgba(225, 112, 85, 0.3)">🧡 코랄</option>
                 `;
             } else {
-                // 기본값으로 템플릿 1 스타일 사용
+                // 기본값 또는 템플릿 1: 보더 스타일 색상들
                 colorOptions = `
                     <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
                     <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
@@ -1140,9 +1128,9 @@
         function applyColorToButton(button, selectedValue, templateBtn = null) {
             // 템플릿별 색상 적용 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-            let isTemplate1 = templateContainer && (templateContainer.innerHTML.includes('Button 1') || templateContainer.innerHTML.includes('button-blue'));
+            
+            // 템플릿 2를 먼저, 더 정확하게 감지
             let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
-            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
             
             // 고정된 호버 클래스 제거 (모던1과 모던2 모두)
             button.classList.remove('button-blue', 'button-pink', 'button-green', 'button-blue-m2', 'button-pink-m2', 'button-green-m2');
@@ -1151,18 +1139,7 @@
             const buttonId = 'custom-button-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
             button.id = buttonId;
             
-            if (isTemplate1) {
-                // 템플릿 1: 색상, 그림자, 호버 색상 분리
-                const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
-                
-                button.style.color = borderColor;
-                button.style.borderColor = borderColor;
-                button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
-                
-                // 동적 호버 스타일 추가
-                addHoverStyle(buttonId, borderColor, hoverShadow);
-                
-            } else if (isTemplate2) {
+            if (isTemplate2) {
                 // 템플릿 2: 색상 배경 (호버시 흰색)
                 const [bgColor, shadowColor] = selectedValue.split(',');
                 
@@ -1175,7 +1152,7 @@
                 addHoverStyleTemplate2(buttonId, bgColor);
                 
             } else {
-                // 기본값으로 템플릿 1 스타일 사용
+                // 기본값 또는 템플릿 1: 색상, 그림자, 호버 색상 분리
                 const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
                 
                 button.style.color = borderColor;
@@ -1542,10 +1519,28 @@
 
         // 색상 선택이 있는 네비게이션 추가
         function addNavButtonWithColor() {
-            const navContainer = editArea.querySelector('.nav-button')?.parentElement;
+            let navContainer = editArea.querySelector('.nav-container');
+            
+            // 네비 컨테이너가 없으면 새로 생성
             if (!navContainer) {
-                alert('현재 템플릿에 네비게이션이 없습니다!');
-                return;
+                const templateRoot = editArea.querySelector('div[style*="background: white"]');
+                if (!templateRoot) {
+                    alert('❌ 먼저 템플릿을 선택해주세요!');
+                    return;
+                }
+                
+                navContainer = document.createElement('div');
+                navContainer.className = 'nav-container';
+                navContainer.style.cssText = 'display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;';
+                
+                // 첫 번째 프레임 앞에 삽입, 없으면 템플릿 최상단에 추가
+                const firstFrame = templateRoot.querySelector('.content-frame');
+                if (firstFrame) {
+                    templateRoot.insertBefore(navContainer, firstFrame);
+                } else {
+                    templateRoot.prepend(navContainer);
+                }
+                showNotification('✨ 네비게이션 영역이 복구되었습니다!');
             }
             
             const text = prompt('네비게이션 버튼 텍스트:', '새 메뉴');
