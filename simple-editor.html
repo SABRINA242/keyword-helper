@@ -1788,16 +1788,48 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            // 2. 클립보드에는 body 스타일 제거해서 복사 (포스팅용)
-            let clipboardHTML = fullHTML;
-            // body 스타일 완전 제거
-            clipboardHTML = clipboardHTML.replace(/body\s*\{[\s\S]*?\}/gs, '');
-            // 빈 줄 정리
-            clipboardHTML = clipboardHTML.replace(/\n\s*\n\s*\n/g, '\n\n');
-            clipboardHTML = clipboardHTML.trim();
-            
-            navigator.clipboard.writeText(clipboardHTML).then(() => {
-                showNotification('💾 HTML 파일이 다운로드되고 포스팅용 소스가 클립보드에 복사되었습니다! (body 스타일 제거됨)');
+            // 2. 클립보드에는 body, padding, margin 제거해서 복사 (포스팅용)
+            const clipboardTempDiv = document.createElement('div');
+            clipboardTempDiv.innerHTML = cleanHTML;
+
+            // 최상위 컨테이너의 상단 패딩과 네비게이션 상단 마진 제거
+            const rootContainerForClipboard = clipboardTempDiv.querySelector('div[style*="padding"]');
+            if (rootContainerForClipboard) {
+                rootContainerForClipboard.style.paddingTop = '0px';
+            }
+            const navContainerForClipboard = clipboardTempDiv.querySelector('.nav-container');
+            if (navContainerForClipboard) {
+                navContainerForClipboard.style.marginTop = '0px';
+            }
+
+            // 동적으로 생성된 스타일 태그들을 포함한 HTML 준비
+            let clipboardHTML = `<style>
+        .button-row {
+            display: flex !important;
+            gap: 15px !important;
+            flex-wrap: nowrap !important;
+            justify-content: center !important;
+            margin: 20px 0 !important;
+            border: 0 !important;
+            background: none !important;
+            align-items: stretch !important;
+        }
+        .button-row .link-button {
+            flex: 1 !important;
+            min-width: 180px !important;
+            width: 100% !important;
+        }
+        .button-row .link-button:only-child {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 100% !important;
+        }
+${allDynamicStyles.trim()}
+</style>
+${clipboardTempDiv.innerHTML}`;
+
+            navigator.clipboard.writeText(clipboardHTML.trim()).then(() => {
+                showNotification('💾 HTML 파일 다운로드 & 포스팅용 소스가 클립보드에 복사되었습니다!');
             }).catch(() => {
                 showNotification('💾 HTML 파일이 다운로드되었습니다!');
             });
