@@ -20,14 +20,14 @@
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0cqbpx;
             background: white;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 90vw;
-            width: 90vw;
+            max-width: 100%;
+            width: 100%;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -252,41 +252,38 @@
         }
 
         .button-row {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-          justify-content: center;
-          align-items: stretch;
-          margin: 20px 0;
-          min-height: 50px;
-          padding: 5px;
-          border: 2px dashed transparent;
-          border-radius: 10px;
-          transition: all 0.3s ease;
-        }
-        .button-row:hover {
-          border-color: #e0e0e0;
-          background: rgba(224, 224, 224, 0.1);
-        }
-        .button-row:empty:before {
-          content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
-          color: #999;
-          font-style: italic;
-          text-align: center;
-          width: 100%;
-          padding: 20px;
-          display: block;
+            display: flex !important;
+            gap: 15px !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            margin: 20px 0 !important;
         }
         .button-row .link-button {
-          flex: 1 !important;
-          min-width: 180px !important;
-          width: 100% !important;
+            flex: 1 1 45% !important;
+            text-align: center !important;
+        }
+        .button-row:hover {
+            border-color: #e0e0e0;
+            background: rgba(224, 224, 224, 0.1);
+        }
+        .button-row:empty:before {
+            content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            display: block;
+        }
+        .button-row .link-button {
+            flex: 1 1 45%;
+            text-align: center;
         }
         
         .button-row .link-button:only-child {
-          width: 100% !important;
-          max-width: none !important;
-          min-width: 100% !important;
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 100% !important;
         }
     </style>
 </head>
@@ -401,7 +398,7 @@
         // 템플릿 데이터
         const templates = {
             1: `<!-- 템플릿 1: 모던스타일 1 -->
-<div style="background: white; max-width: 1000px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+<div style="background: white; max-width: 1000px; margin: 0 auto;">
   
   <style>
 .nav-button {
@@ -482,7 +479,7 @@
 .button-row {
   display: flex;
   gap: 15px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
   margin: 20px 0;
   min-height: 50px;
@@ -547,6 +544,102 @@
   background: #00b894 !important;
   box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
 }
+.title-button {
+  background: white;
+  border: 2px solid #e17055;
+  border-radius: 10px;
+  color: #e17055;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 40px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(225, 112, 85, 0.3);
+}
+.title-button:hover {
+  background: #e17055 !important;
+  color: white !important;
+  box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+}
+.link-button { 
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+.link-button:hover { 
+  transform: translateY(-8px) scale(1.02); 
+}
+.button-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 0;
+  min-height: 50px;
+  padding: 10px;
+  border: 2px dashed transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.button-row:hover {
+  border-color: #e0e0e0;
+  background: rgba(224, 224, 224, 0.1);
+}
+.button-row:empty:before {
+  content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  display: block;
+}
+/* 파란 버튼 호버 효과 (모던2) */
+.button-blue-m2:hover {
+  color: #74b9ff !important;
+  border-color: #74b9ff !important;
+  background: white !important;
+}
+/* 핑크 버튼 호버 효과 (모던2) */  
+.button-pink-m2:hover {
+  color: #e84393 !important;
+  border-color: #e84393 !important;
+  background: white !important;
+}
+/* 초록 버튼 호버 효과 (모던2) */
+.button-green-m2:hover {
+  color: #00b894 !important;
+  border-color: #00b894 !important;
+  background: white !important;
+}
+/* 네비게이션 버튼 색상 클래스 */
+.nav-button-blue {
+  border-color: #74b9ff !important;
+  color: #74b9ff !important;
+}
+.nav-button-blue:hover {
+  background: #74b9ff !important;
+  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3) !important;
+}
+.nav-button-pink {
+  border-color: #e84393 !important;
+  color: #e84393 !important;
+}
+.nav-button-pink:hover {
+  background: #e84393 !important;
+  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3) !important;
+}
+.nav-button-green {
+  border-color: #00b894 !important;
+  color: #00b894 !important;
+}
+.nav-button-green:hover {
+  background: #00b894 !important;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
+}
   </style>   
 
   <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
@@ -573,7 +666,7 @@
 </div>`,
 
             2: `<!-- 템플릿 2: 모던스타일 2 -->
-<div style="background: white; max-width: 1000px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+<div style="background: white; max-width: 1000px; margin: 0 auto;">
   
   <style>
 .nav-button {
@@ -655,8 +748,8 @@
 }
 /* 파란 버튼 호버 효과 (모던2) */
 .button-blue-m2:hover {
-  color: #6c5ce7 !important;
-  border-color: #6c5ce7 !important;
+  color: #74b9ff !important;
+  border-color: #74b9ff !important;
   background: white !important;
 }
 /* 핑크 버튼 호버 효과 (모던2) */  
@@ -942,13 +1035,25 @@
         function showColorPicker(newBtn, templateBtn, count = 1, buttonContainer = null) {
             // 템플릿 타입 감지 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-
-            // 템플릿 2를 먼저, 더 정확하게 감지
-            let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
+            let isTemplate1 = templateContainer && templateContainer.innerHTML.includes('오늘의 실천');
+            let isTemplate2 = templateContainer && templateContainer.innerHTML.includes('마우스를 올려보세요');
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
             
             let colorOptions = '';
             
-            if (isTemplate2) {
+            if (isTemplate1) {
+                // 템플릿 1: 보더 스타일 색상들
+                colorOptions = `
+                    <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
+                    <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
+                    <option value="#00b894,rgba(0, 184, 148, 0.2),rgba(0, 184, 148, 0.4)">🟢 그린</option>
+                    <option value="#fd79a8,rgba(253, 121, 168, 0.2),rgba(253, 121, 168, 0.4)">💗 라이트핑크</option>
+                    <option value="#fdcb6e,rgba(253, 203, 110, 0.2),rgba(253, 203, 110, 0.4)">🟡 옐로우</option>
+                    <option value="#74b9ff,rgba(116, 185, 255, 0.2),rgba(116, 185, 255, 0.4)">🔵 블루</option>
+                    <option value="#a29bfe,rgba(162, 155, 254, 0.2),rgba(162, 155, 254, 0.4)">🟣 라벤더</option>
+                    <option value="#ff7675,rgba(255, 118, 117, 0.2),rgba(255, 118, 117, 0.4)">🔴 레드</option>
+                `;
+            } else if (isTemplate2) {
                 // 템플릿 2: 색상 배경 (호버시 흰색)
                 colorOptions = `
                     <option value="#6c5ce7,rgba(108, 92, 231, 0.3)">🟣 퍼플</option>
@@ -963,7 +1068,7 @@
                     <option value="#e17055,rgba(225, 112, 85, 0.3)">🧡 코랄</option>
                 `;
             } else {
-                // 기본값 또는 템플릿 1: 보더 스타일 색상들
+                // 기본값으로 템플릿 1 스타일 사용
                 colorOptions = `
                     <option value="#6c5ce7,rgba(108, 92, 231, 0.2),rgba(108, 92, 231, 0.4)">🟣 퍼플</option>
                     <option value="#e84393,rgba(232, 67, 147, 0.2),rgba(232, 67, 147, 0.4)">🩷 핑크</option>
@@ -1128,9 +1233,9 @@
         function applyColorToButton(button, selectedValue, templateBtn = null) {
             // 템플릿별 색상 적용 - 더 정확한 방법으로 수정
             const templateContainer = editArea.querySelector('div[style*="background: white"]');
-            
-            // 템플릿 2를 먼저, 더 정확하게 감지
+            let isTemplate1 = templateContainer && (templateContainer.innerHTML.includes('Button 1') || templateContainer.innerHTML.includes('button-blue'));
             let isTemplate2 = templateContainer && (templateContainer.innerHTML.includes('White Button') || templateContainer.innerHTML.includes('button-blue-m2'));
+            let isTemplate3 = templateContainer && templateContainer.innerHTML.includes('갤럭시드림');
             
             // 고정된 호버 클래스 제거 (모던1과 모던2 모두)
             button.classList.remove('button-blue', 'button-pink', 'button-green', 'button-blue-m2', 'button-pink-m2', 'button-green-m2');
@@ -1139,7 +1244,18 @@
             const buttonId = 'custom-button-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
             button.id = buttonId;
             
-            if (isTemplate2) {
+            if (isTemplate1) {
+                // 템플릿 1: 색상, 그림자, 호버 색상 분리
+                const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
+                
+                button.style.color = borderColor;
+                button.style.borderColor = borderColor;
+                button.style.boxShadow = `${shadowColor} 0px 4px 8px`;
+                
+                // 동적 호버 스타일 추가
+                addHoverStyle(buttonId, borderColor, hoverShadow);
+                
+            } else if (isTemplate2) {
                 // 템플릿 2: 색상 배경 (호버시 흰색)
                 const [bgColor, shadowColor] = selectedValue.split(',');
                 
@@ -1152,7 +1268,7 @@
                 addHoverStyleTemplate2(buttonId, bgColor);
                 
             } else {
-                // 기본값 또는 템플릿 1: 색상, 그림자, 호버 색상 분리
+                // 기본값으로 템플릿 1 스타일 사용
                 const [borderColor, shadowColor, hoverShadow] = selectedValue.split(',');
                 
                 button.style.color = borderColor;
@@ -1186,8 +1302,9 @@
             document.head.appendChild(styleTag);
         }
 
-        // 동적 호버 스타일 추가 함수 (템플릿2용)
-        function addHoverStyleTemplate2(buttonId, bgColor) {
+        
+                // 동적 호버 스타일 추가 함수 (템플릿2용)
+                function addHoverStyleTemplate2(buttonId, bgColor) {
             // 기존 스타일 제거 (같은 버튼의 이전 스타일)
             const existingStyle = document.getElementById(`style-${buttonId}`);
             if (existingStyle) {
@@ -1653,7 +1770,7 @@
         }
 
         // HTML 저장
-        async function saveHTML() {
+        function saveHTML() {
             // DOM을 복사해서 안전하게 처리
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = editArea.innerHTML;
@@ -1737,7 +1854,7 @@
         .button-row {
             display: flex !important;
             gap: 15px !important;
-            flex-wrap: nowrap !important;
+            flex-wrap: wrap !important;
             justify-content: center !important;
             margin: 20px 0 !important;
             border: 0 !important;
@@ -1777,96 +1894,29 @@
 </body>
 </html>`;
             
-            // 1. 파일 저장 로직
-            let saveSuccess = false;
-            try {
-                if (window.showSaveFilePicker) {
-                    // Modern "Save As" dialog
-                    const handle = await window.showSaveFilePicker({
-                        suggestedName: 'button-page.html',
-                        types: [{
-                            description: 'HTML 파일',
-                            accept: { 'text/html': ['.html'] },
-                        }],
-                    });
-                    const writable = await handle.createWritable();
-                    await writable.write(fullHTML);
-                    await writable.close();
-                    saveSuccess = true;
-                } else {
-                    // Fallback method with prompt
-                    const fileName = prompt('저장할 파일 이름을 입력하세요 (예: my-buttons.html):', 'button-page.html');
-                    if (fileName) {
-                        const blob = new Blob([fullHTML], { type: 'text/html' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        saveSuccess = true;
-                    }
-                }
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    console.error(err.name, err.message);
-                    showNotification('❗️ 파일 저장에 실패했습니다.');
-                }
-                // 여기서 중단해도 클립보드 복사는 진행되지 않음
-                return;
-            }
-
-            if (!saveSuccess) {
-                showNotification('파일 저장이 취소되었습니다.');
-                return;
-            }
+            // 1. 파일로 다운로드
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'button-page.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
-            // 2. 클립보드에는 body, padding, margin 제거해서 복사 (포스팅용)
-            const clipboardTempDiv = document.createElement('div');
-            clipboardTempDiv.innerHTML = cleanHTML;
-
-            // 최상위 컨테이너의 상단 패딩과 네비게이션 상단 마진 제거
-            const rootContainerForClipboard = clipboardTempDiv.querySelector('div[style*="padding"]');
-            if (rootContainerForClipboard) {
-                rootContainerForClipboard.style.paddingTop = '0px';
-            }
-            const navContainerForClipboard = clipboardTempDiv.querySelector('.nav-container');
-            if (navContainerForClipboard) {
-                navContainerForClipboard.style.marginTop = '0px';
-            }
-
-            // 동적으로 생성된 스타일 태그들을 포함한 HTML 준비
-            let clipboardHTML = `<style>
-        .button-row {
-            display: flex !important;
-            gap: 15px !important;
-            flex-wrap: nowrap !important;
-            justify-content: center !important;
-            margin: 20px 0 !important;
-            border: 0 !important;
-            background: none !important;
-            align-items: stretch !important;
-        }
-        .button-row .link-button {
-            flex: 1 !important;
-            min-width: 180px !important;
-            width: 100% !important;
-        }
-        .button-row .link-button:only-child {
-          width: 100% !important;
-          max-width: none !important;
-          min-width: 100% !important;
-        }
-${allDynamicStyles.trim()}
-</style>
-${clipboardTempDiv.innerHTML}`;
-
-            navigator.clipboard.writeText(clipboardHTML.trim()).then(() => {
-                showNotification('💾 파일이 저장되고, 포스팅용 소스가 클립보드에 복사되었습니다!');
+            // 2. 클립보드에는 body 스타일 제거해서 복사 (포스팅용)
+            let clipboardHTML = fullHTML;
+            // body 스타일 완전 제거
+            clipboardHTML = clipboardHTML.replace(/body\s*\{[\s\S]*?\}/gs, '');
+            // 빈 줄 정리
+            clipboardHTML = clipboardHTML.replace(/\n\s*\n\s*\n/g, '\n\n');
+            clipboardHTML = clipboardHTML.trim();
+            
+            navigator.clipboard.writeText(clipboardHTML).then(() => {
+                showNotification('💾 HTML 파일이 다운로드되고 포스팅용 소스가 클립보드에 복사되었습니다! (body 스타일 제거됨)');
             }).catch(() => {
-                showNotification('💾 파일이 저장되었습니다. (클립보드 복사 실패)');
+                showNotification('💾 HTML 파일이 다운로드되었습니다!');
             });
         }
 
