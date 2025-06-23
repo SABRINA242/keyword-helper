@@ -260,7 +260,7 @@
         }
         .button-row .link-button {
             flex: 1 1 45% !important;
-            text-align: center !important;
+            min-width: 180px !important;
         }
         .button-row:hover {
             border-color: #e0e0e0;
@@ -274,10 +274,6 @@
             width: 100%;
             padding: 20px;
             display: block;
-        }
-        .button-row .link-button {
-            flex: 1 1 45%;
-            text-align: center;
         }
         
         .button-row .link-button:only-child {
@@ -544,102 +540,6 @@
   background: #00b894 !important;
   box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
 }
-.title-button {
-  background: white;
-  border: 2px solid #e17055;
-  border-radius: 10px;
-  color: #e17055;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: bold;
-  padding: 15px 40px;
-  text-decoration: none !important;
-  transition: all 0.3s ease;
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(225, 112, 85, 0.3);
-}
-.title-button:hover {
-  background: #e17055 !important;
-  color: white !important;
-  box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
-}
-.link-button { 
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-}
-.link-button:hover { 
-  transform: translateY(-8px) scale(1.02); 
-}
-.button-row {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 20px 0;
-  min-height: 50px;
-  padding: 10px;
-  border: 2px dashed transparent;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-.button-row:hover {
-  border-color: #e0e0e0;
-  background: rgba(224, 224, 224, 0.1);
-}
-.button-row:empty:before {
-  content: "✨ 여기에 버튼을 추가하세요! (버튼 추가 클릭)";
-  color: #999;
-  font-style: italic;
-  text-align: center;
-  width: 100%;
-  padding: 20px;
-  display: block;
-}
-/* 파란 버튼 호버 효과 (모던2) */
-.button-blue-m2:hover {
-  color: #74b9ff !important;
-  border-color: #74b9ff !important;
-  background: white !important;
-}
-/* 핑크 버튼 호버 효과 (모던2) */  
-.button-pink-m2:hover {
-  color: #e84393 !important;
-  border-color: #e84393 !important;
-  background: white !important;
-}
-/* 초록 버튼 호버 효과 (모던2) */
-.button-green-m2:hover {
-  color: #00b894 !important;
-  border-color: #00b894 !important;
-  background: white !important;
-}
-/* 네비게이션 버튼 색상 클래스 */
-.nav-button-blue {
-  border-color: #74b9ff !important;
-  color: #74b9ff !important;
-}
-.nav-button-blue:hover {
-  background: #74b9ff !important;
-  box-shadow: 0 6px 12px rgba(116, 185, 255, 0.3) !important;
-}
-.nav-button-pink {
-  border-color: #e84393 !important;
-  color: #e84393 !important;
-}
-.nav-button-pink:hover {
-  background: #e84393 !important;
-  box-shadow: 0 6px 12px rgba(232, 67, 147, 0.3) !important;
-}
-.nav-button-green {
-  border-color: #00b894 !important;
-  color: #00b894 !important;
-}
-.nav-button-green:hover {
-  background: #00b894 !important;
-  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3) !important;
-}
   </style>   
 
   <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
@@ -724,7 +624,7 @@
 .button-row {
   display: flex;
   gap: 15px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
   margin: 20px 0;
   min-height: 50px;
@@ -1882,7 +1782,15 @@
         }
         .button-row .link-button {
             flex: 1 !important;
-            min-width: 180px !important;
+            min-width: 300px !important;
+        }
+        
+        /* 모바일 세로 (480px 이하) */
+        @media (max-width: 480px) {
+            .button-row .link-button {
+                min-width: 75px !important;
+                min-height: 50px !important;
+            }
         }
         
         /* 동적으로 생성된 호버 스타일들 */
