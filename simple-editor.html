@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9917485719509358"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>심플 버튼 페이지 편집기</title>
@@ -304,6 +305,7 @@
                     <button class="tool-btn" onclick="applyTemplate(1)">🎨 모던스타일1</button>
                     <button class="tool-btn" onclick="applyTemplate(2)">✨ 모던스타일2</button>
                     <button class="tool-btn" onclick="openGalaxyTemplate()">🌌 갤럭시드림 3버튼</button>
+                    <button class="tool-btn" onclick="updateMargins()" style="background: #ff6b6b;">📐 여백 업데이트</button>
                 </div>
 
                 <div class="tool-group">
@@ -541,18 +543,18 @@
 }
   </style>   
 
-  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 0 0 20px 0;">
     <a href="#네비1" class="nav-button nav-button-blue" onclick="selectButton(event)">네비1</a>
     <a href="#네비2" class="nav-button nav-button-pink" onclick="selectButton(event)">네비2</a>
     <a href="#네비3" class="nav-button nav-button-green" onclick="selectButton(event)">네비3</a>
   </div>
 
-  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
+  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 0 0 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
     <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
       <p style="color: #999;">✍️ 여기에 텍스트를 입력하세요...</p>
     </div>
     
-    <div class="button-row">
+    <div class="button-row" style="margin: 5px 0;">
       <a class="link-button button-blue" href="/p/button1.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(116, 185, 255, 0.2) 0px 4px 8px; color: #74b9ff; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #74b9ff;">Button 1</a>
       <a class="link-button button-pink" href="/p/button2.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(232, 67, 147, 0.2) 0px 4px 8px; color: #e84393; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #e84393;">Button 2</a>
       <a class="link-button button-green" href="/p/button3.html" onclick="selectButton(event)" style="align-items: center; background: white; border-radius: 10px; box-shadow: rgba(0, 184, 148, 0.2) 0px 4px 8px; color: #00b894; display: flex; font-weight: bold; justify-content: center; min-height: 160px; padding: 15px; text-decoration: none; border: 2px solid #00b894;">Button 3</a>
@@ -690,13 +692,13 @@
 }
   </style>   
 
-  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0;">
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 0 0 20px 0;">
     <a href="#화이트1" class="nav-button nav-button-blue" onclick="selectButton(event)">네비1</a>
     <a href="#화이트2" class="nav-button nav-button-pink" onclick="selectButton(event)">네비2</a>
     <a href="#화이트3" class="nav-button nav-button-green" onclick="selectButton(event)">네비3</a>
   </div>
 
-  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
+  <div class="content-frame" style="border: 2px dashed white; border-radius: 15px; margin: 0 0 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);">
     <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
       <p style="color: #999;">✍️ 여기에 텍스트를 입력하세요...</p>
     </div>
@@ -2447,7 +2449,7 @@
             // 새 프레임 생성
             const newFrame = document.createElement('div');
             newFrame.className = 'content-frame';
-            newFrame.style.cssText = 'border: 2px dashed white; border-radius: 15px; margin: 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);';
+            newFrame.style.cssText = 'border: 2px dashed white; border-radius: 15px; margin: 0 0 5px 0; padding: 5px; background: rgba(248, 249, 250, 0.5);';
             
             newFrame.innerHTML = `
                 <div class="text-area" contenteditable="true" style="min-height: 60px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; background: white; outline: none; color: #999;" placeholder="✍️ 여기에 텍스트를 입력하세요...">
@@ -2607,6 +2609,29 @@
         editArea.addEventListener('input', function() {
             saveToHistory();
         });
+
+        // 여백 업데이트 함수
+        function updateMargins() {
+            let currentHTML = editArea.innerHTML;
+            
+            // 네비게이션 상단 여백만 제거 (하단 여백은 적절히 유지)
+            currentHTML = currentHTML.replace(/margin:\s*30px\s*0/g, 'margin: 0 0 20px 0');
+            currentHTML = currentHTML.replace(/margin:\s*5px\s*0/g, 'margin: 0 0 20px 0');
+            currentHTML = currentHTML.replace(/margin:\s*10px\s*0/g, 'margin: 0 0 20px 0');
+            
+            // content-frame 상단 여백 제거 (네비 없을 때 텍스트가 바로 위로)
+            currentHTML = currentHTML.replace(/margin:\s*5px\s*0;\s*padding:\s*5px/g, 'margin: 0 0 5px 0; padding: 5px');
+            
+            // 첫 번째 텍스트 영역의 상단 여백만 제거
+            currentHTML = currentHTML.replace(/(<div class="content-frame"[^>]*>[\s\S]*?<div class="text-area"[^>]*style="[^"]*?)margin-bottom:\s*15px([^"]*")/g, '$1margin-top: 0; margin-bottom: 15px$2');
+            
+            editArea.innerHTML = currentHTML;
+            updatePreview();
+            setupButtonEvents();
+            setupAllTextAreas();
+            saveToHistory();
+            showNotification('📐 상단 여백 제거 완료! (네비와 텍스트 간격 적절히 유지)');
+        }
 
         // 세로 간격 맞추기
         function adjustVerticalSpacing() {
