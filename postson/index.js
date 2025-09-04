@@ -1,34 +1,30 @@
-// AI 콘텐츠 생성기 번들링된 JavaScript 코드
 (() => {
-  // 객체 생성 및 속성 관련 유틸리티 함수 정의
-  var __create = Object.create; // 객체 생성 함수
-  var __defProp = Object.defineProperty; // 객체 속성 정의 함수
-  var __getOwnPropDesc = Object.getOwnPropertyDescriptor; // 객체 속성 설명자 가져오기
-  var __getOwnPropNames = Object.getOwnPropertyNames; // 객체 속성 이름 목록 가져오기
-  var __getProtoOf = Object.getPrototypeOf; // 객체의 프로토타입 가져오기
-  var __hasOwnProp = Object.prototype.hasOwnProperty; // 객체 자체 속성 확인 함수
-  // 모듈 요구 함수 구현 (번들러에 의해 생성됨)
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
     get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
   }) : x)(function(x) {
     if (typeof require !== "undefined")
       return require.apply(this, arguments);
-    throw Error('Dynamic require of "' + x + '" is not supported'); // 동적 require가 지원되지 않을 때 오류 발생
+    throw Error('Dynamic require of "' + x + '" is not supported');
   });
-  // 객체 속성 복사 유틸리티 함수
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      // from 객체의 모든 속성을 순회하며 to 객체로 복사
       for (let key of __getOwnPropNames(from))
         if (!__hasOwnProp.call(to, key) && key !== except)
           __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
-    return to; // 속성이 복사된 객체 반환
+    return to;
   };
-  // ESM 모듈을 CommonJS 환경에서 사용하기 위한 변환 함수
   var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-    // 노드 호환성 모드이거나 ESM이 아닌 경우 (Babel 호환 변환을 통해 CommonJS로 변환된 파일)
-    // "default"를 CommonJS의 "module.exports"로 설정하여 노드 호환성 유지
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
     isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
     mod
   ));
