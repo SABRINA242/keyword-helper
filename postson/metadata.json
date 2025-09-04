@@ -1,5 +1,8 @@
 {
+  /* 애플리케이션 이름 */
   "name": "AI Content Generator",
+  /* 애플리케이션 설명: 사용자가 제공한 코드나 비디오를 분석하여 Gemini API를 사용해 가이드, 블로그 포스트, 비디오 스크립트를 자동 생성하는 애플리케이션 */
   "description": "An application that analyzes user-provided code or video to automatically generate guides, blog posts, or video scripts using the Gemini API.",
+  /* 필요한 프레임 권한 목록 (현재 비어있음) */
   "requestFramePermissions": []
 }
