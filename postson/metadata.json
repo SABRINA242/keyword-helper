@@ -1,0 +1,5 @@
+{
+  "name": "AI Content Generator",
+  "description": "An application that analyzes user-provided code or video to automatically generate guides, blog posts, or video scripts using the Gemini API.",
+  "requestFramePermissions": []
+}
