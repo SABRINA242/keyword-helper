@@ -30,11 +30,11 @@
   ));
 
   // index.tsx
-  var import_react5 = __toESM(__require("react"));
+  var import_react6 = __toESM(__require("react"));
   var import_client = __toESM(__require("react-dom/client"));
 
   // App.tsx
-  var import_react4 = __require("react");
+  var import_react5 = __require("react");
 
   // types.ts
   var AnalysisType = /* @__PURE__ */ ((AnalysisType2) => {
@@ -58,13 +58,6 @@
 
   // services/geminiService.ts
   var import_genai = __require("@google/genai");
-  var getAiClient = () => {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API \uD0A4\uAC00 \uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uD658\uACBD\uC5D0 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4 (process.env.API_KEY). \uBC30\uD3EC \uC124\uC815\uC744 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
-    }
-    return new import_genai.GoogleGenAI({ apiKey });
-  };
   var analysisTypeToKorean = (type) => {
     switch (type) {
       case "blog post" /* BlogPost */:
@@ -101,8 +94,11 @@
         return "\uC77C\uBC18\uC801\uC778";
     }
   };
-  var identifyFeaturesInCode = async (code, model) => {
-    const ai = getAiClient();
+  var identifyFeaturesInCode = async (code, apiKey, model) => {
+    if (!apiKey) {
+      throw new Error("Gemini API \uD0A4\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC88C\uCE21 \uC0C1\uB2E8\uC5D0 API \uD0A4\uB97C \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+    }
+    const ai = new import_genai.GoogleGenAI({ apiKey });
     const prompt = `
         \uB2F9\uC2E0\uC740 \uC0AC\uC6A9\uC790\uC758 \uAD00\uC810\uC5D0\uC11C \uC18C\uD504\uD2B8\uC6E8\uC5B4\uC758 \uD575\uC2EC \uAE30\uB2A5\uC744 \uC2DD\uBCC4\uD558\uB294 \uC804\uBB38 \uC18C\uD504\uD2B8\uC6E8\uC5B4 \uC544\uD0A4\uD14D\uD2B8\uC785\uB2C8\uB2E4.
 
@@ -151,11 +147,14 @@
       return JSON.parse(cleanedJson);
     } catch (error) {
       console.error("Error identifying features with Gemini API:", error);
-      throw new Error("API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0, \uBC30\uD3EC \uD658\uACBD\uC5D0 \uC62C\uBC14\uB974\uAC8C \uC124\uC815\uB418\uC5C8\uB294\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
+      throw new Error("Gemini API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
     }
   };
-  var analyzeCode = async (code, analysisType, audience, tone, customTemplate, featureToFocusOn, model) => {
-    const ai = getAiClient();
+  var analyzeCode = async (code, analysisType, audience, tone, customTemplate, featureToFocusOn, apiKey, model) => {
+    if (!apiKey) {
+      throw new Error("Gemini API \uD0A4\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC88C\uCE21 \uC0C1\uB2E8\uC5D0 API \uD0A4\uB97C \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+    }
+    const ai = new import_genai.GoogleGenAI({ apiKey });
     const koreanAnalysisType = analysisTypeToKorean(analysisType);
     const koreanTone = toneToKorean(tone);
     let koreanAudienceDescription = audienceToKorean(audience);
@@ -265,11 +264,14 @@
       return result;
     } catch (error) {
       console.error("Error calling Gemini API:", error);
-      throw new Error("API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0, \uBC30\uD3EC \uD658\uACBD\uC5D0 \uC62C\uBC14\uB974\uAC8C \uC124\uC815\uB418\uC5C8\uB294\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
+      throw new Error("Gemini API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
     }
   };
-  var generateVideoScript = async (frames, audience, tone, model) => {
-    const ai = getAiClient();
+  var generateVideoScript = async (frames, audience, tone, apiKey, model) => {
+    if (!apiKey) {
+      throw new Error("Gemini API \uD0A4\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC88C\uCE21 \uC0C1\uB2E8\uC5D0 API \uD0A4\uB97C \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+    }
+    const ai = new import_genai.GoogleGenAI({ apiKey });
     const koreanTone = toneToKorean(tone);
     let koreanAudienceDescription = audienceToKorean(audience);
     let detailedInstructions = "";
@@ -337,11 +339,14 @@
       return result;
     } catch (error) {
       console.error("Error calling Gemini API (Video):", error);
-      throw new Error("API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0, \uBC30\uD3EC \uD658\uACBD\uC5D0 \uC62C\uBC14\uB974\uAC8C \uC124\uC815\uB418\uC5C8\uB294\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
+      throw new Error("Gemini API\uC640 \uD1B5\uC2E0\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. API \uD0A4\uAC00 \uC720\uD6A8\uD55C\uC9C0 \uD655\uC778\uD574\uC8FC\uC138\uC694.");
     }
   };
-  var combineVideoScripts = async (segments, audience, tone, model) => {
-    const ai = getAiClient();
+  var combineVideoScripts = async (segments, audience, tone, apiKey, model) => {
+    if (!apiKey) {
+      throw new Error("Gemini API \uD0A4\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC88C\uCE21 \uC0C1\uB2E8\uC5D0 API \uD0A4\uB97C \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+    }
+    const ai = new import_genai.GoogleGenAI({ apiKey });
     const koreanTone = toneToKorean(tone);
     const koreanAudienceDescription = audienceToKorean(audience);
     const scriptParts = segments.map((segment, index) => `--- \uD074\uB9BD #${index + 1} \uB300\uBCF8 ---
@@ -392,7 +397,7 @@ ${segment}`).join("\n\n");
       return result;
     } catch (error) {
       console.error("Error calling Gemini API (Combine Scripts):", error);
-      throw new Error("API\uC640 \uD1B5\uC2E0\uD558\uC5EC \uCD5C\uC885 \uB300\uBCF8\uC744 \uC0DD\uC131\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.");
+      throw new Error("Gemini API\uC640 \uD1B5\uC2E0\uD558\uC5EC \uCD5C\uC885 \uB300\uBCF8\uC744 \uC0DD\uC131\uD558\uB294 \uB370 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.");
     }
   };
 
@@ -1058,8 +1063,55 @@ ${content}
   };
   var GeneratedContentDisplay_default = GeneratedContentDisplay;
 
-  // App.tsx
+  // components/ApiKeyInput.tsx
+  var import_react4 = __require("react");
   var import_jsx_runtime6 = __require("react/jsx-runtime");
+  var ApiKeyInput = ({ onApiKeyUpdate }) => {
+    const [apiKey, setApiKey] = (0, import_react4.useState)("");
+    const [isSaved, setIsSaved] = (0, import_react4.useState)(false);
+    (0, import_react4.useEffect)(() => {
+      const savedKey = localStorage.getItem("gemini-api-key");
+      if (savedKey) {
+        setApiKey(savedKey);
+        onApiKeyUpdate(savedKey);
+      }
+    }, [onApiKeyUpdate]);
+    const handleSave = () => {
+      localStorage.setItem("gemini-api-key", apiKey);
+      onApiKeyUpdate(apiKey);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3e3);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-slate-800/50 p-4 rounded-lg border border-slate-700 mb-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "api-key-input", className: "block text-sm font-medium text-slate-300 mb-2", children: "Gemini API \uD0A4" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "input",
+          {
+            id: "api-key-input",
+            type: "password",
+            value: apiKey,
+            onChange: (e) => setApiKey(e.target.value),
+            placeholder: "API \uD0A4\uB97C \uC5EC\uAE30\uC5D0 \uC785\uB825\uD558\uC138\uC694",
+            className: "flex-grow p-2 bg-slate-900 border-2 border-slate-700 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            onClick: handleSave,
+            className: "bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm",
+            children: "\uC800\uC7A5"
+          }
+        )
+      ] }),
+      isSaved && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-xs text-emerald-400 mt-2", children: "API \uD0A4\uAC00 \uBE0C\uB77C\uC6B0\uC800\uC5D0 \uC800\uC7A5\uB418\uC5C8\uC2B5\uB2C8\uB2E4." })
+    ] });
+  };
+  var ApiKeyInput_default = ApiKeyInput;
+
+  // App.tsx
+  var import_jsx_runtime7 = __require("react/jsx-runtime");
   var defaultCustomTemplate = `<!-- \u2705 \uC81C\uBAA9: title_block -->
 <h1>\uD504\uB85C\uADF8\uB7A8 \uC774\uB984</h1>
 
@@ -1118,25 +1170,32 @@ ${content}
 <div style="background: #ffffff; border-radius: 20px; padding: 30px; margin: 30px 0; box-shadow: 0 10px 25px #4caf501a; font-family: 'Noto Sans KR', sans-serif; border: 1px solid #4caf5026; position: relative;"><div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #4caf501a, transparent); border-radius: 0 20px 0 100%;"></div><p style="color: #4caf50; font-size: 1.2rem; font-weight: 500; line-height: 1.8; text-align: center;">\uC774\uC81C \uC5EC\uB7EC\uBD84\uB3C4 \uCF58\uD150\uCE20 \uD06C\uB9AC\uC5D0\uC774\uD130\uAC00 \uB420 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uC774 \uD504\uB85C\uADF8\uB7A8\uACFC \uD568\uAED8\uB77C\uBA74 \uAE00\uC4F0\uAE30\uC758 \uC7A5\uBCBD\uC740 \uB0AE\uC544\uC9C0\uACE0, \uCC3D\uC791\uC758 \uC990\uAC70\uC6C0\uC740 \uBC30\uAC00 \uB420 \uAC83\uC785\uB2C8\uB2E4. \uC9C0\uAE08 \uBC14\uB85C \uC5EC\uB7EC\uBD84\uC758 \uC774\uC57C\uAE30\uB97C \uC138\uC0C1\uC5D0 \uACF5\uC720\uD574 \uBCF4\uC138\uC694!</p></div>
 `;
   var App = () => {
-    const [mode, setMode] = (0, import_react4.useState)("code");
-    const [audience, setAudience] = (0, import_react4.useState)("beginner" /* Beginner */);
-    const [tone, setTone] = (0, import_react4.useState)("casual" /* Casual */);
-    const [generatedContent, setGeneratedContent] = (0, import_react4.useState)("");
-    const [isLoading, setIsLoading] = (0, import_react4.useState)(false);
-    const [error, setError] = (0, import_react4.useState)(null);
-    const [appStage, setAppStage] = (0, import_react4.useState)("idle");
-    const [textModel, setTextModel] = (0, import_react4.useState)("gemini-2.5-flash");
-    const [analysisType, setAnalysisType] = (0, import_react4.useState)("blog post" /* BlogPost */);
-    const [code, setCode] = (0, import_react4.useState)("");
-    const [customTemplate, setCustomTemplate] = (0, import_react4.useState)(defaultCustomTemplate);
-    const [identifiedFeatures, setIdentifiedFeatures] = (0, import_react4.useState)([]);
-    const [selectedFeature, setSelectedFeature] = (0, import_react4.useState)(null);
-    const [tags, setTags] = (0, import_react4.useState)("");
-    const [permalink, setPermalink] = (0, import_react4.useState)("");
-    const [metaDescription, setMetaDescription] = (0, import_react4.useState)("");
-    const [videoFrames, setVideoFrames] = (0, import_react4.useState)([]);
-    const [scriptSegments, setScriptSegments] = (0, import_react4.useState)([]);
-    const [processedClipToken, setProcessedClipToken] = (0, import_react4.useState)(0);
+    const [mode, setMode] = (0, import_react5.useState)("code");
+    const [audience, setAudience] = (0, import_react5.useState)("beginner" /* Beginner */);
+    const [tone, setTone] = (0, import_react5.useState)("casual" /* Casual */);
+    const [generatedContent, setGeneratedContent] = (0, import_react5.useState)("");
+    const [isLoading, setIsLoading] = (0, import_react5.useState)(false);
+    const [error, setError] = (0, import_react5.useState)(null);
+    const [appStage, setAppStage] = (0, import_react5.useState)("idle");
+    const [apiKey, setApiKey] = (0, import_react5.useState)("");
+    const [textModel, setTextModel] = (0, import_react5.useState)("gemini-2.5-flash");
+    const [analysisType, setAnalysisType] = (0, import_react5.useState)("blog post" /* BlogPost */);
+    const [code, setCode] = (0, import_react5.useState)("");
+    const [customTemplate, setCustomTemplate] = (0, import_react5.useState)(defaultCustomTemplate);
+    const [identifiedFeatures, setIdentifiedFeatures] = (0, import_react5.useState)([]);
+    const [selectedFeature, setSelectedFeature] = (0, import_react5.useState)(null);
+    const [tags, setTags] = (0, import_react5.useState)("");
+    const [permalink, setPermalink] = (0, import_react5.useState)("");
+    const [metaDescription, setMetaDescription] = (0, import_react5.useState)("");
+    const [videoFrames, setVideoFrames] = (0, import_react5.useState)([]);
+    const [scriptSegments, setScriptSegments] = (0, import_react5.useState)([]);
+    const [processedClipToken, setProcessedClipToken] = (0, import_react5.useState)(0);
+    (0, import_react5.useEffect)(() => {
+      const savedKey = localStorage.getItem("gemini-api-key");
+      if (savedKey) {
+        setApiKey(savedKey);
+      }
+    }, []);
     const resetState = (keepInputs = false) => {
       setIsLoading(false);
       setError(null);
@@ -1154,7 +1213,11 @@ ${content}
         setProcessedClipToken((t) => t + 1);
       }
     };
-    const handleAnalyzeFeatures = (0, import_react4.useCallback)(async () => {
+    const handleAnalyzeFeatures = (0, import_react5.useCallback)(async () => {
+      if (!apiKey) {
+        setError("Gemini API \uD0A4\uB97C \uBA3C\uC800 \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+        return;
+      }
       if (mode !== "code" || !code.trim()) {
         setError("\uBD84\uC11D\uD560 \uCF54\uB4DC\uB97C \uC785\uB825\uD574\uC8FC\uC138\uC694.");
         return;
@@ -1163,7 +1226,7 @@ ${content}
       setIsLoading(true);
       setAppStage("analyzing_features");
       try {
-        const features = await identifyFeaturesInCode(code, textModel);
+        const features = await identifyFeaturesInCode(code, apiKey, textModel);
         if (features.length > 0) {
           setIdentifiedFeatures(features);
           setAppStage("features_identified");
@@ -1177,8 +1240,12 @@ ${content}
       } finally {
         setIsLoading(false);
       }
-    }, [code, mode, textModel]);
-    const handleGeneratePostForFeature = (0, import_react4.useCallback)(async (feature) => {
+    }, [code, mode, apiKey, textModel]);
+    const handleGeneratePostForFeature = (0, import_react5.useCallback)(async (feature) => {
+      if (!apiKey) {
+        setError("Gemini API \uD0A4\uB97C \uBA3C\uC800 \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+        return;
+      }
       setGeneratedContent("");
       setError(null);
       setIsLoading(true);
@@ -1187,7 +1254,7 @@ ${content}
         setSelectedFeature(feature);
       }
       try {
-        const result = await analyzeCode(code, analysisType, audience, tone, customTemplate, feature, textModel);
+        const result = await analyzeCode(code, analysisType, audience, tone, customTemplate, feature, apiKey, textModel);
         setGeneratedContent(result.content);
         setTags(result.tags);
         setPermalink(result.permalink);
@@ -1199,8 +1266,12 @@ ${content}
       } finally {
         setIsLoading(false);
       }
-    }, [code, analysisType, audience, tone, customTemplate, textModel]);
-    const handleGenerateClipScript = (0, import_react4.useCallback)(async () => {
+    }, [code, analysisType, audience, tone, customTemplate, apiKey, textModel]);
+    const handleGenerateClipScript = (0, import_react5.useCallback)(async () => {
+      if (!apiKey) {
+        setError("Gemini API \uD0A4\uB97C \uBA3C\uC800 \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+        return;
+      }
       if (videoFrames.length === 0) {
         setError("\uBD84\uC11D\uD560 \uC601\uC0C1\uC744 \uC5C5\uB85C\uB4DC\uD558\uACE0 \uD504\uB808\uC784 \uCD94\uCD9C\uC744 \uC644\uB8CC\uD560 \uB54C\uAE4C\uC9C0 \uAE30\uB2E4\uB824\uC8FC\uC138\uC694.");
         return;
@@ -1209,7 +1280,7 @@ ${content}
       setAppStage("generating_post");
       setError(null);
       try {
-        const result = await generateVideoScript(videoFrames, audience, tone, textModel);
+        const result = await generateVideoScript(videoFrames, audience, tone, apiKey, textModel);
         setScriptSegments((prev) => [...prev, { id: Date.now(), content: result.content }]);
       } catch (err) {
         setError(err.message || "\uD074\uB9BD \uB300\uBCF8 \uC0DD\uC131 \uC911 \uC624\uB958\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4.");
@@ -1219,8 +1290,12 @@ ${content}
         setVideoFrames([]);
         setProcessedClipToken((t) => t + 1);
       }
-    }, [videoFrames, audience, tone, textModel]);
-    const handleFinalizeScript = (0, import_react4.useCallback)(async () => {
+    }, [videoFrames, audience, tone, apiKey, textModel]);
+    const handleFinalizeScript = (0, import_react5.useCallback)(async () => {
+      if (!apiKey) {
+        setError("Gemini API \uD0A4\uB97C \uBA3C\uC800 \uC785\uB825\uD558\uACE0 \uC800\uC7A5\uD574\uC8FC\uC138\uC694.");
+        return;
+      }
       if (scriptSegments.length < 1) {
         setError("\uACB0\uD569\uD560 \uB300\uBCF8\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
         return;
@@ -1231,7 +1306,7 @@ ${content}
       setGeneratedContent("");
       try {
         const segmentsContent = scriptSegments.map((s) => s.content);
-        const result = await combineVideoScripts(segmentsContent, audience, tone, textModel);
+        const result = await combineVideoScripts(segmentsContent, audience, tone, apiKey, textModel);
         setGeneratedContent(result.content);
         setTags(result.tags);
         setPermalink(result.permalink);
@@ -1244,7 +1319,7 @@ ${content}
       } finally {
         setIsLoading(false);
       }
-    }, [scriptSegments, audience, tone, textModel]);
+    }, [scriptSegments, audience, tone, apiKey, textModel]);
     const handleModeChange = (newMode) => {
       setMode(newMode);
       resetState(false);
@@ -1258,7 +1333,7 @@ ${content}
       setPermalink("");
       setMetaDescription("");
     };
-    const handleContentUpdate = (0, import_react4.useCallback)((newContent) => {
+    const handleContentUpdate = (0, import_react5.useCallback)((newContent) => {
       setGeneratedContent(newContent);
     }, []);
     const getMainButtonText = () => {
@@ -1275,14 +1350,15 @@ ${content}
         return "\uAE30\uB2A5 \uBD84\uC11D \uBC0F \uD3EC\uC2A4\uD305 \uC0DD\uC131";
       return "\uD604\uC7AC \uD074\uB9BD \uB300\uBCF8 \uC0DD\uC131";
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "min-h-screen bg-slate-900 font-sans p-4 sm:p-6 lg:p-8", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "max-w-screen-2xl mx-auto", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("header", { className: "text-center mb-8", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-500", children: "AI \uCF58\uD150\uCE20 \uC0DD\uC131\uAE30" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "mt-2 text-lg text-slate-400", children: "\uCF54\uB4DC \uB610\uB294 \uC601\uC0C1\uC744 \uBD84\uC11D\uD558\uC5EC Gemini AI\uAC00 \uBA4B\uC9C4 \uC18C\uAC1C \uCF58\uD150\uCE20\uB97C \uC791\uC131\uD574\uC90D\uB2C8\uB2E4." })
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "min-h-screen bg-slate-900 font-sans p-4 sm:p-6 lg:p-8", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "max-w-screen-2xl mx-auto", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("header", { className: "text-center mb-8", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h1", { className: "text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-500", children: "AI \uCF58\uD150\uCE20 \uC0DD\uC131\uAE30" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "mt-2 text-lg text-slate-400", children: "\uCF54\uB4DC \uB610\uB294 \uC601\uC0C1\uC744 \uBD84\uC11D\uD558\uC5EC Gemini AI\uAC00 \uBA4B\uC9C4 \uC18C\uAC1C \uCF58\uD150\uCE20\uB97C \uC791\uC131\uD574\uC90D\uB2C8\uB2E4." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-slate-800/50 p-4 rounded-lg border border-slate-700 mb-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "model-select", className: "block text-sm font-medium text-slate-300 mb-2", children: "\uD14D\uC2A4\uD2B8 \uC0DD\uC131 \uBAA8\uB378" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(ApiKeyInput_default, { onApiKeyUpdate: setApiKey }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "bg-slate-800/50 p-4 rounded-lg border border-slate-700 mb-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("label", { htmlFor: "model-select", className: "block text-sm font-medium text-slate-300 mb-2", children: "\uD14D\uC2A4\uD2B8 \uC0DD\uC131 \uBAA8\uB378" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
           "select",
           {
             id: "model-select",
@@ -1290,29 +1366,29 @@ ${content}
             onChange: (e) => setTextModel(e.target.value),
             className: "w-full p-2 bg-slate-900 border-2 border-slate-700 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "gemini-2.0-flash", children: "Gemini 2.0 Flash" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "gemini-2.5-flash", children: "Gemini 2.5 Flash" })
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: "gemini-2.0-flash", children: "Gemini 2.0 Flash" }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: "gemini-2.5-flash", children: "Gemini 2.5 Flash" })
             ]
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("main", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "lg:col-span-1 flex flex-col gap-6 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex border-b border-slate-700", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("button", { onClick: () => handleModeChange("code"), className: `flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors ${mode === "code" ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-400 hover:text-slate-200"}`, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(CodeIcon, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("main", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "lg:col-span-1 flex flex-col gap-6 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex border-b border-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { onClick: () => handleModeChange("code"), className: `flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors ${mode === "code" ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-400 hover:text-slate-200"}`, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(CodeIcon, {}),
               " \uCF54\uB4DC \uBD84\uC11D"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("button", { onClick: () => handleModeChange("video"), className: `flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors ${mode === "video" ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-400 hover:text-slate-200"}`, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(VideoIcon, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { onClick: () => handleModeChange("video"), className: `flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors ${mode === "video" ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-400 hover:text-slate-200"}`, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(VideoIcon, {}),
               " \uC601\uC0C1 \uB300\uBCF8 \uC0DD\uC131"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h2", { className: "text-2xl font-bold text-slate-100 flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(WandIcon, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h2", { className: "text-2xl font-bold text-slate-100 flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(WandIcon, {}),
             "\uC0DD\uC131 \uC635\uC158"
           ] }),
-          mode === "code" && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(import_jsx_runtime6.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          mode === "code" && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_jsx_runtime7.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             OptionSelector_default,
             {
               label: "\uBD84\uC11D \uC720\uD615",
@@ -1326,7 +1402,7 @@ ${content}
               onChange: (val) => setAnalysisType(val)
             }
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             OptionSelector_default,
             {
               label: mode === "code" ? "\uB300\uC0C1 \uB3C5\uC790" : "\uB300\uC0C1 \uC2DC\uCCAD\uC790",
@@ -1340,7 +1416,7 @@ ${content}
               onChange: (val) => setAudience(val)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             OptionSelector_default,
             {
               label: mode === "code" ? "\uAE00\uC758 \uD1A4" : "\uB300\uBCF8 \uD1A4\uC564\uB9E4\uB108",
@@ -1354,10 +1430,10 @@ ${content}
               onChange: (val) => setTone(val)
             }
           ),
-          mode === "code" && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { className: "text-lg font-semibold text-slate-300 mb-2", children: "\uCEE4\uC2A4\uD140 \uD0DC\uADF8 \uD15C\uD50C\uB9BF (\uC120\uD0DD \uC0AC\uD56D)" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "text-xs text-slate-400 mb-2 p-2 bg-slate-700/50 rounded-lg border border-slate-600", children: "\uBE14\uB85C\uADF8\uC5D0\uC11C \uC0AC\uC6A9\uD558\uB294 \uACE0\uC720 HTML \uD15C\uD50C\uB9BF\uC744 \uC785\uB825\uD558\uBA74, AI\uAC00 \uD574\uB2F9 \uAD6C\uC870\uB97C \uD65C\uC6A9\uD558\uC5EC \uAE00\uC744 \uC791\uC131\uD569\uB2C8\uB2E4." }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          mode === "code" && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-lg font-semibold text-slate-300 mb-2", children: "\uCEE4\uC2A4\uD140 \uD0DC\uADF8 \uD15C\uD50C\uB9BF (\uC120\uD0DD \uC0AC\uD56D)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "text-xs text-slate-400 mb-2 p-2 bg-slate-700/50 rounded-lg border border-slate-600", children: "\uBE14\uB85C\uADF8\uC5D0\uC11C \uC0AC\uC6A9\uD558\uB294 \uACE0\uC720 HTML \uD15C\uD50C\uB9BF\uC744 \uC785\uB825\uD558\uBA74, AI\uAC00 \uD574\uB2F9 \uAD6C\uC870\uB97C \uD65C\uC6A9\uD558\uC5EC \uAE00\uC744 \uC791\uC131\uD569\uB2C8\uB2E4." }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
               "textarea",
               {
                 value: customTemplate,
@@ -1368,40 +1444,40 @@ ${content}
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "flex-grow flex flex-col", children: mode === "code" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h3", { className: "text-lg font-semibold text-slate-300 mb-2 flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(CodeIcon, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex-grow flex flex-col", children: mode === "code" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h3", { className: "text-lg font-semibold text-slate-300 mb-2 flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(CodeIcon, {}),
               " \uCF54\uB4DC \uC785\uB825"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-sm text-slate-400 mb-3 p-3 bg-slate-700/50 rounded-lg border border-slate-600", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { className: "text-slate-200", children: "\uD301:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-sm text-slate-400 mb-3 p-3 bg-slate-700/50 rounded-lg border border-slate-600", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-slate-200", children: "\uD301:" }),
               " '\uD3F4\uB354 \uC5C5\uB85C\uB4DC' \uC2DC, \uBD84\uC11D\uC5D0 \uBD88\uD544\uC694\uD55C \uD3F4\uB354(node_modules, venv \uB4F1)\uC640 \uD30C\uC77C\uC740 \uC790\uB3D9\uC73C\uB85C \uC81C\uC678\uB418\uC5B4 \uB354 \uBE60\uB974\uACE0 \uC815\uD655\uD55C \uBD84\uC11D\uC774 \uAC00\uB2A5\uD569\uB2C8\uB2E4. \uC6A9\uB7C9\uC774 \uD070 \uD3F4\uB354\uB294 \uB2E4\uC18C \uC2DC\uAC04\uC774 \uAC78\uB9B4 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(CodeInput_default, { code, setCode })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h3", { className: "text-lg font-semibold text-slate-300 mb-2 flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(VideoIcon, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(CodeInput_default, { code, setCode })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h3", { className: "text-lg font-semibold text-slate-300 mb-2 flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(VideoIcon, {}),
               " \uC601\uC0C1 \uC785\uB825"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(VideoInput_default, { onFramesExtracted: setVideoFrames, setIsLoading, setParentError: setError, processedClipToken })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(VideoInput_default, { onFramesExtracted: setVideoFrames, setIsLoading, setParentError: setError, processedClipToken })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col gap-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
               "button",
               {
                 onClick: mode === "code" ? handleAnalyzeFeatures : handleGenerateClipScript,
                 disabled: isLoading || mode === "video" && videoFrames.length === 0,
                 className: "w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-cyan-300/50",
-                children: isLoading && appStage === "generating_post" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("svg", { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+                children: isLoading && appStage === "generating_post" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("svg", { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
                   ] }),
                   getMainButtonText()
                 ] }) : getMainButtonText()
               }
             ),
-            mode === "video" && scriptSegments.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            mode === "video" && scriptSegments.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
               "button",
               {
                 onClick: handleFinalizeScript,
@@ -1412,7 +1488,7 @@ ${content}
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-lg min-h-[600px] flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-lg min-h-[600px] flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           GeneratedContentDisplay_default,
           {
             content: generatedContent,
@@ -1437,13 +1513,13 @@ ${content}
   var App_default = App;
 
   // index.tsx
-  var import_jsx_runtime7 = __require("react/jsx-runtime");
+  var import_jsx_runtime8 = __require("react/jsx-runtime");
   var rootElement = document.getElementById("root");
   if (!rootElement) {
     throw new Error("Could not find root element to mount to");
   }
   var root = import_client.default.createRoot(rootElement);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_react5.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(App_default, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(App_default, {}) })
   );
 })();
