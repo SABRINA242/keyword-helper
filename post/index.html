@@ -19,9 +19,21 @@
         font-family: 'Noto Sans KR', 'Poppins', sans-serif;
       }
     </style>
-  <!-- importmap 제거: package.json의 의존성을 사용합니다 -->
+
 <link rel="stylesheet" href="/index.css">
-  <script type="module" crossorigin src="/post/assets/index-abb15b9c.js"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.16.0",
+    "vite": "https://aistudiocdn.com/vite@^7.1.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.2"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/post/assets/index-5d0d5adb.js"></script>
 </head>
   <body>
     <div id="root"></div>
