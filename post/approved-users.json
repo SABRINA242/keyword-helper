@@ -1,5 +1,10 @@
 {
-  "openChat": [],
+  "openChat": [
+    {
+      "nickname": "소나",
+      "code": "IKSY2MYa"
+    }
+  ],
   "subscribers": [],
   "members": []
 }
