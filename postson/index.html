@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 코드 문서 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* For custom scrollbars */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #1e293b; /* slate-800 */
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #475569; /* slate-600 */
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #64748b; /* slate-500 */
+      }
+      .prose-custom-styles h1, .prose-custom-styles h2, .prose-custom-styles h3, .prose-custom-styles h4, .prose-custom-styles h5, .prose-custom-styles h6 { color: #f1f5f9; }
+      .prose-custom-styles p, .prose-custom-styles ul, .prose-custom-styles ol, .prose-custom-styles li, .prose-custom-styles blockquote { color: #cbd5e1; }
+      .prose-custom-styles a { color: #5eead4; }
+      .prose-custom-styles a:hover { color: #2dd4bf; }
+      .prose-custom-styles strong { color: #f8fafc; }
+      .prose-custom-styles code { 
+        color: #f472b6;
+        background-color: #334155;
+        padding: 0.2em 0.4em;
+        margin: 0;
+        font-size: 85%;
+        border-radius: 6px;
+      }
+      .prose-custom-styles pre {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+      .prose-custom-styles pre code {
+        color: inherit;
+        background-color: transparent;
+        padding: 0;
+        font-size: inherit;
+      }
+      /* For light scrollbars */
+      .light-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .light-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9; /* slate-100 */
+      }
+      .light-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1; /* slate-300 */
+        border-radius: 4px;
+      }
+      .light-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8; /* slate-400 */
+      }
+      /* Light theme prose styles */
+      .prose-light-styles h1, .prose-light-styles h2, .prose-light-styles h3, .prose-light-styles h4, .prose-light-styles h5, .prose-light-styles h6 { color: #1e293b; }
+      .prose-light-styles p, .prose-light-styles ul, .prose-light-styles ol, .prose-light-styles li, .prose-light-styles blockquote { color: #334155; }
+      .prose-light-styles a { color: #0f766e; }
+      .prose-light-styles a:hover { color: #14b8a6; }
+      .prose-light-styles strong { color: #0f172a; }
+      .prose-light-styles code {
+        color: #be185d;
+        background-color: #f1f5f9;
+        padding: 0.2em 0.4em;
+        margin: 0;
+        font-size: 85%;
+        border-radius: 6px;
+      }
+      .prose-light-styles pre {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+      }
+      .prose-light-styles pre code {
+        color: inherit;
+        background-color: transparent;
+        padding: 0;
+        font-size: inherit;
+      }
+      /* Custom template view styles - EXPANDED */
+      .custom-template-view h1,
+      .custom-template-view h2,
+      .custom-template-view h3,
+      .custom-template-view h4,
+      .custom-template-view h5,
+      .custom-template-view h6,
+      .custom-template-view b,
+      .custom-template-view strong {
+        color: #4caf50;
+      }
+      .custom-template-view p,
+      .custom-template-view li {
+        color: #333333;
+      }
+      .custom-template-view a,
+      .custom-template-view a:visited {
+        color: #4caf50;
+        text-decoration: underline;
+      }
+      .custom-template-view a:hover {
+        color: #388e3c;
+      }
+      .custom-template-view code {
+        color: #388e3c;
+        background-color: #e8f5e9;
+        padding: 0.2em 0.4em;
+        margin: 0;
+        font-size: 85%;
+        border-radius: 6px;
+      }
+
+      /* User-provided button styles */
+      .backlink-btn-5 {
+        --btn-red:   #ff0000; /* 원색 빨강 */
+        --btn-green: #00ff00; /* 원색 초록 */
+        --shine-alpha: 0.18;  /* 빛 투명도 */
+        --shine-width: 12%;   /* 빛 폭 */
+        --shine-speed: 2.4s;  /* 애니메이션 속도 */
+        box-sizing: border-box;
+
+        display: inline-flex; /* Changed for parent centering */
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        
+        width: 80%;
+        max-width: 720px;
+        height: 80px;
+        background: var(--btn-red); /* 단색 빨강 */
+        color: #ffffff !important;
+        text-decoration: none !important;
+        border-radius: 50px;
+        font-family: 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        font-size: clamp(18px, 4vw, 28px);
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.25s ease, transform 0.25s ease;
+        position: relative;
+        overflow: hidden;
+        margin: 20px 0; /* Changed for parent-based centering */
+        border: none;
+        box-shadow: none;
+      }
+
+      .backlink-btn-5::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(255,255,255,0) calc(50% - var(--shine-width)),
+          rgba(255,255,255,var(--shine-alpha)) 50%,
+          rgba(255,255,255,0) calc(50% + var(--shine-width))
+        );
+        transform: translateX(-120%) skewX(-15deg);
+        animation: wave var(--shine-speed) linear infinite;
+        pointer-events: none;
+      }
+
+      @keyframes wave {
+        0%   { transform: translateX(-120%) skewX(-15deg); }
+        100% { transform: translateX(220%)  skewX(-15deg); }
+      }
+
+      .backlink-btn-5:hover {
+        transform: translateY(-1px) scale(1.02);
+        background: var(--btn-green); /* 단색 초록 */
+      }
+
+      @media (max-width: 768px) {
+        .backlink-btn-5 {
+          width: 90%;
+          height: 70px;
+          font-size: 20px;
+          border-radius: 36px;
+          margin: 15px 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .backlink-btn-5 {
+          width: 95%;
+          height: 60px;
+          font-size: 18px;
+          border-radius: 30px;
+          margin: 10px 0;
+        }
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.16.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^18.2.0/",
+    "react/": "https://aistudiocdn.com/react@^18.2.0/",
+    "react": "https://aistudiocdn.com/react@^18.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-900 text-slate-200">
+    <div id="root"></div>
+    <script type="module" src="./index.js"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
