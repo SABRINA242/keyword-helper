@@ -8,7 +8,23 @@ window.baseImageSize = { width: 0, height: 0 };
 
 // 테마 색상 변경 이벤트 리스너
 document.getElementById('primary-color').addEventListener('input', updateThemeColors);
-document.getElementById('secondary-color').addEventListener('input', updateThemeColors);
+
+// 색상 텍스트 입력 이벤트 리스너
+document.getElementById('primary-color-text').addEventListener('input', function(e) {
+    const colorValue = e.target.value;
+    if (isValidHexColor(colorValue)) {
+        document.getElementById('primary-color').value = colorValue;
+        updateThemeColors();
+    }
+});
+
+// 컬러 피커 변경 시 텍스트 입력도 업데이트
+document.getElementById('primary-color').addEventListener('input', function(e) {
+    document.getElementById('primary-color-text').value = e.target.value;
+});
+
+// 색상 저장 버튼 이벤트 리스너
+document.getElementById('save-primary-color').addEventListener('click', savePrimaryColor);
 
 // 가이드 편집 이벤트 리스너
 document.getElementById('guide-title').addEventListener('input', updatePreview);
@@ -20,17 +36,124 @@ document.addEventListener('input', function(e) {
 
 function updateThemeColors() {
     const primaryColor = document.getElementById('primary-color').value;
-    const secondaryColor = document.getElementById('secondary-color').value;
     
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-    document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+    // 미리보기 영역에만 CSS 변수 적용
+    const previewSection = document.querySelector('.guide-slider');
+    if (previewSection) {
+        previewSection.style.setProperty('--primary-color', primaryColor);
+    }
     
     generateCode();
 }
 
+// 색상 유효성 검사 함수
+function isValidHexColor(color) {
+    const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    return hexColorRegex.test(color);
+}
+
+// 주 색상 저장 함수
+function savePrimaryColor() {
+    const primaryColor = document.getElementById('primary-color').value;
+    
+    // 기존 저장된 색상들 가져오기
+    let savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+    
+    // 중복 색상 체크
+    if (!savedColors.includes(primaryColor)) {
+        savedColors.push(primaryColor);
+        localStorage.setItem('savedColors', JSON.stringify(savedColors));
+        
+        // 저장된 색상 목록 업데이트
+        displaySavedColors();
+    }
+    
+    // 현재 색상도 별도로 저장 (기존 기능 유지)
+    localStorage.setItem('savedPrimaryColor', primaryColor);
+    
+    // 저장 완료 알림
+    const saveBtn = document.getElementById('save-primary-color');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = '저장됨!';
+    saveBtn.style.background = '#28a745';
+    
+    setTimeout(() => {
+        saveBtn.textContent = originalText;
+        saveBtn.style.background = '';
+    }, 1500);
+}
+
+// 저장된 색상들을 화면에 표시하는 함수
+function displaySavedColors() {
+    const savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+    const colorsList = document.getElementById('saved-colors-list');
+    
+    // 기존 내용 초기화
+    colorsList.innerHTML = '';
+    
+    // 저장된 색상들을 화면에 표시
+    savedColors.forEach((color, index) => {
+        const colorItem = document.createElement('div');
+        colorItem.className = 'saved-color-item';
+        colorItem.style.backgroundColor = color;
+        colorItem.title = color;
+        
+        // 색상 클릭 시 적용
+        colorItem.addEventListener('click', () => {
+            applyColor(color);
+        });
+        
+        // 삭제 버튼
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-color';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.title = '색상 삭제';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteSavedColor(index);
+        });
+        
+        colorItem.appendChild(deleteBtn);
+        colorsList.appendChild(colorItem);
+    });
+}
+
+// 색상을 적용하는 함수
+function applyColor(color) {
+    document.getElementById('primary-color').value = color;
+    document.getElementById('primary-color-text').value = color;
+    updateThemeColors();
+}
+
+// 저장된 색상을 삭제하는 함수
+function deleteSavedColor(index) {
+    let savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+    savedColors.splice(index, 1);
+    localStorage.setItem('savedColors', JSON.stringify(savedColors));
+    displaySavedColors();
+}
+
+// 저장된 색상 불러오기 함수
+function loadSavedColor() {
+    const savedColor = localStorage.getItem('savedPrimaryColor');
+    if (savedColor && isValidHexColor(savedColor)) {
+        document.getElementById('primary-color').value = savedColor;
+        document.getElementById('primary-color-text').value = savedColor;
+        updateThemeColors();
+    }
+}
+
 function updatePreview() {
     const title = document.getElementById('guide-title').value;
+    const primaryColor = document.getElementById('primary-color').value;
+    
     document.getElementById('preview-title').textContent = title;
+    
+    // 미리보기 영역에 CSS 변수 적용
+    const previewSection = document.querySelector('.guide-slider');
+    if (previewSection) {
+        previewSection.style.setProperty('--primary-color', primaryColor);
+    }
     
     const slideEditors = document.querySelectorAll('.slide-editor');
     const slides = document.querySelectorAll('.slide');
@@ -53,6 +176,9 @@ function updatePreview() {
             if (placeholderSpan) placeholderSpan.textContent = `${stepNumber}단계 이미지`;
         }
     });
+    
+    // dots 네비게이션 업데이트
+    updateDotsNavigation();
     
     generateCode();
 }
@@ -245,10 +371,40 @@ function handleSwipe() {
     }
 }
 
+// dots 네비게이션 업데이트 함수
+function updateDotsNavigation() {
+    const dotsContainer = document.getElementById('dots-container');
+    if (!dotsContainer) return;
+    
+    const primaryColor = document.getElementById('primary-color').value;
+    
+    // 기존 dots 제거
+    dotsContainer.innerHTML = '';
+    
+    // 새로운 dots 생성
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (i === currentSlideIndex) {
+            dot.classList.add('active');
+        }
+        dot.onclick = () => currentSlide(i + 1);
+        dot.style.cssText = `
+            background: ${i === currentSlideIndex ? primaryColor : '#666666'};
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-block;
+            height: 12px;
+            margin: 0 4px;
+            width: 12px;
+        `;
+        dotsContainer.appendChild(dot);
+    }
+}
+
 // HTML 코드 생성
 function generateCode() {
     const primaryColor = document.getElementById('primary-color').value;
-    const secondaryColor = document.getElementById('secondary-color').value;
     const title = document.getElementById('guide-title').value;
     
     const slideEditors = document.querySelectorAll('.slide-editor');
@@ -277,15 +433,13 @@ function generateCode() {
             imageHtml = `<div style="
                 width: 600px;
                 height: 400px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #f8f9fa;
+                background: white;
                 border-radius: 10px;
                 overflow: hidden;
                 margin: 0 auto;
+                position: relative;
             ">
-                <img src="${cleanImageUrl}" alt="${stepNumber}단계" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <img src="${cleanImageUrl}" alt="${stepNumber}단계" style="width: 100%; height: 100%; object-fit: cover;">
             </div>`;
         } else {
             // 이미지가 없는 경우 placeholder 표시
@@ -293,16 +447,19 @@ function generateCode() {
                 width: 600px;
                 height: 400px;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background: #f8f9fa;
-                border: 2px dashed #ddd;
+                background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+                border: 2px dashed #666666;
                 border-radius: 10px;
-                color: #999;
-                font-size: 1.1em;
+                color: #666666;
+                text-align: center;
+                box-sizing: border-box;
                 margin: 0 auto;
             ">
-                이미지를 업로드하세요
+                <span style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">${stepNumber}단계 이미지</span>
+                <p style="font-size: 0.9em; margin: 0;">여기에 스크린샷을 넣으세요</p>
             </div>`;
         }
         
@@ -314,8 +471,9 @@ function generateCode() {
                 background: white;
                 border-radius: 10px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                overflow: hidden;
+                overflow: visible;
                 margin: 0;
+                gap: 15px;
             ">
                 <div style="flex: 1;">
                     ${imageHtml}
@@ -323,11 +481,12 @@ function generateCode() {
                 <div style="
                     text-align: center;
                     padding: 15px 20px;
-                    background: white;
+                    background: rgba(0, 123, 255, 0.05);
                     border-radius: 0 0 10px 10px;
+                    border: 1px solid rgba(0, 123, 255, 0.1);
                 ">
-                    <h5 style="color: var(--primary-color); margin: 0 0 8px 0; font-size: 1.1em;">${stepNumber}단계: ${stepTitle}</h5>
-                    <p style="margin: 0; color: #666; line-height: 1.4; white-space: pre-line;">${stepDescription}</p>
+                    <h5 style="margin: 0 0 8px 0; color: var(--primary-color); font-size: 1.1em; background: var(--primary-color); color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; font-weight: bold;">${stepNumber}단계: ${stepTitle}</h5>
+                    <p style="margin: 0; color: var(--text-color); line-height: 1.4; white-space: pre-line;">${stepDescription}</p>
                 </div>
             </div>`;
             
@@ -335,7 +494,7 @@ function generateCode() {
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
-                background: ${index === 0 ? 'var(--primary-color)' : 'var(--secondary-color)'};
+                background: ${index === 0 ? 'var(--primary-color)' : '#666666'};
                 cursor: pointer;
                 display: inline-block;
                 margin: 0 4px;
@@ -346,19 +505,25 @@ function generateCode() {
 <style>
 .guide-slider {
     --primary-color: ${primaryColor};
-    --secondary-color: ${secondaryColor};
-    max-width: 700px;
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    max-width: 660px;
     margin: 20px auto;
     border: 2px solid var(--primary-color);
     border-radius: 15px;
-    overflow: hidden;
-    background: #ffffff;
+    overflow: visible;
+    background: var(--background-color);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
+    min-height: 500px;
+    height: auto;
 }
 .guide-slider .slides-wrapper {
     display: flex;
+    width: 600px;
+    margin: 0 auto;
     transition: transform 0.3s ease-in-out;
 }
 .guide-slider .slide {
@@ -368,6 +533,7 @@ function generateCode() {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: visible;
     margin: 0;
     gap: 15px;
 }
@@ -381,6 +547,7 @@ function generateCode() {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-radius: 15px 15px 0 0;
     ">
         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; position: relative;">
             <h4 style="margin: 0; font-size: 1.2em;">${title}</h4>
@@ -433,7 +600,7 @@ function generateCode() {
         </div>
     </div>
     
-    <div style="position: relative;">
+    <div style="position: relative; padding: 20px;">
         <div class="slides-wrapper">
             ${slidesHtml}
         </div>
@@ -443,9 +610,9 @@ function generateCode() {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px 20px;
-        background: #f8f9fa;
-        border-top: 1px solid #e0e0e0;
+        padding: 10px 0;
+        background: transparent;
+        width: 100%;
     ">
         <div style="display: flex; gap: 8px;">
             ${dotsHtml}
@@ -471,7 +638,7 @@ function changeSlide(direction) {
         });
         
         dots.forEach((dot, i) => {
-            dot.style.background = i === newIndex ? 'var(--primary-color)' : 'var(--secondary-color)';
+            dot.style.background = i === newIndex ? 'var(--primary-color)' : '#666666';
         });
         
         // 단계 표시기 업데이트
@@ -509,6 +676,8 @@ function copyCode() {
 
 // 초기 설정
 document.addEventListener('DOMContentLoaded', () => {
+    loadSavedColor(); // 저장된 색상 불러오기
+    displaySavedColors(); // 저장된 색상 목록 표시
     showSlide(0);
     updatePreview();
     generateCode();
