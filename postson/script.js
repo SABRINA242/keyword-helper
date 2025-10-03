@@ -282,10 +282,10 @@ function generateCode() {
                 justify-content: center;
                 background: #f8f9fa;
                 border-radius: 10px;
-                overflow: visible;
+                overflow: hidden;
                 margin: 0 auto;
             ">
-                <img src="${cleanImageUrl}" alt="${stepNumber}단계" style="${baseStyle} object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <img src="${cleanImageUrl}" alt="${stepNumber}단계" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             </div>`;
         } else {
             // 이미지가 없는 경우 placeholder 표시
