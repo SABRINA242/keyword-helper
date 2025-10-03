@@ -327,7 +327,7 @@ function generateCode() {
                     border-radius: 0 0 10px 10px;
                 ">
                     <h5 style="color: var(--primary-color); margin: 0 0 8px 0; font-size: 1.1em;">${stepNumber}단계: ${stepTitle}</h5>
-                    <p style="margin: 0; color: #666; line-height: 1.4;">${stepDescription}</p>
+                    <p style="margin: 0; color: #666; line-height: 1.4; white-space: pre-line;">${stepDescription}</p>
                 </div>
             </div>`;
             
