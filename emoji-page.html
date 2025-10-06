@@ -19,15 +19,17 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            margin: 0;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 680px;
+            width: 100%;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
@@ -35,62 +37,105 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-align: center;
-            padding: 30px;
+            padding: 15px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
         }
 
         .content {
-            padding: 40px;
+            padding: 15px;
         }
 
         .category {
-            margin-bottom: 40px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 12px 15px;
+            cursor: pointer;
+            user-select: none;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
         }
 
         .category-title {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #333;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .category.collapsed .toggle-icon {
+            transform: rotate(-90deg);
         }
 
         .emoji-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 6px;
+            padding: 12px;
+            background: #fafafa;
+            max-height: 300px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .category.collapsed .emoji-grid {
+            max-height: 0;
+            padding: 0 12px;
+            overflow: hidden;
         }
 
         .emoji-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 20px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 8px 6px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            font-size: 2rem;
+            transition: all 0.2s ease;
+            font-size: 1.3rem;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .emoji-item:hover {
             background: #667eea;
             color: white;
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
             border-color: #667eea;
+            z-index: 10;
+            position: relative;
         }
 
         .emoji-item:active {
-            transform: translateY(-2px) scale(1.05);
+            transform: scale(1.05);
         }
 
         .copied-notification {
@@ -126,26 +171,37 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .back-button:hover {
             background: #5a6fd8;
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            color: white;
+            text-decoration: none;
         }
 
         .search-box {
-            margin-bottom: 30px;
-            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         .search-input {
-            width: 100%;
-            max-width: 500px;
-            padding: 15px 20px;
-            font-size: 1.1rem;
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
             border: 2px solid #e9ecef;
-            border-radius: 25px;
+            border-radius: 15px;
             outline: none;
             transition: border-color 0.3s ease;
         }
@@ -154,20 +210,70 @@
             border-color: #667eea;
         }
 
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .control-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
             .emoji-grid {
-                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-                gap: 10px;
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+                gap: 6px;
+                padding: 12px;
             }
             
             .emoji-item {
-                padding: 15px;
-                font-size: 1.5rem;
+                padding: 10px 6px;
+                font-size: 1.3rem;
             }
             
             .content {
-                padding: 20px;
+                padding: 15px;
             }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-buttons {
+                justify-content: center;
+            }
+        }
+
+        .emoji-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .emoji-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .emoji-grid::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
         }
     </style>
 </head>
@@ -179,47 +285,62 @@
         </div>
 
         <div class="content">
-            <div class="search-box">
+            <div class="controls">
                 <input type="text" class="search-input" placeholder="🔍 이모지 카테고리 검색..." onkeyup="searchEmojis()">
-            </div>
-
-            <!-- 여행 카테고리 -->
-            <div class="category" data-category="여행">
-                <div class="category-title">✈️ 여행 & 장소</div>
-                <div class="emoji-grid">
-                    <div class="emoji-item" onclick="copyEmoji('✈️')">✈️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🛫')">🛫</div>
-                    <div class="emoji-item" onclick="copyEmoji('🛬')">🛬</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚗')">🚗</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚙')">🚙</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚐')">🚐</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚂')">🚂</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚢')">🚢</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏖️')">🏖️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏝️')">🏝️</div>
-                    <div class="emoji-item" onclick="copyEmoji('⛰️')">⛰️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏕️')">🏕️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🗺️')">🗺️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🧳')">🧳</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎒')">🎒</div>
-                    <div class="emoji-item" onclick="copyEmoji('📸')">📸</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏛️')">🏛️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏰')">🏰</div>
-                    <div class="emoji-item" onclick="copyEmoji('🗽')">🗽</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎡')">🎡</div>
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="expandAll()">모두 펼치기</button>
+                    <button class="control-btn" onclick="collapseAll()">모두 접기</button>
                 </div>
             </div>
 
-            <!-- 주차 & 교통 카테고리 -->
-            <div class="category" data-category="주차교통">
-                <div class="category-title">🅿️ 주차 & 교통</div>
+            <!-- ㄱ: 감정 & 리액션 -->
+            <div class="category" data-category="감정">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">😊 감정 & 리액션</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
-                    <div class="emoji-item" onclick="copyEmoji('🅿️')">🅿️</div>
+                    <div class="emoji-item" onclick="copyEmoji('😊')">😊</div>
+                    <div class="emoji-item" onclick="copyEmoji('😍')">😍</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥰')">🥰</div>
+                    <div class="emoji-item" onclick="copyEmoji('😭')">😭</div>
+                    <div class="emoji-item" onclick="copyEmoji('😂')">😂</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤣')">🤣</div>
+                    <div class="emoji-item" onclick="copyEmoji('😢')">😢</div>
+                    <div class="emoji-item" onclick="copyEmoji('😤')">😤</div>
+                    <div class="emoji-item" onclick="copyEmoji('😡')">😡</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤔')">🤔</div>
+                    <div class="emoji-item" onclick="copyEmoji('😮')">😮</div>
+                    <div class="emoji-item" onclick="copyEmoji('😱')">😱</div>
+                    <div class="emoji-item" onclick="copyEmoji('🙄')">🙄</div>
+                    <div class="emoji-item" onclick="copyEmoji('😴')">😴</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤯')">🤯</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥺')">🥺</div>
+                    <div class="emoji-item" onclick="copyEmoji('😎')">😎</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤩')">🤩</div>
+                    <div class="emoji-item" onclick="copyEmoji('😘')">😘</div>
+                    <div class="emoji-item" onclick="copyEmoji('😉')">😉</div>
+                </div>
+            </div>
+
+            <!-- ㄱ: 교통 & 주차 -->
+            <div class="category" data-category="교통주차">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🚗 교통 & 주차</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🚗')">🚗</div>
                     <div class="emoji-item" onclick="copyEmoji('🚙')">🚙</div>
                     <div class="emoji-item" onclick="copyEmoji('🚌')">🚌</div>
                     <div class="emoji-item" onclick="copyEmoji('🚎')">🚎</div>
                     <div class="emoji-item" onclick="copyEmoji('🚐')">🚐</div>
+                    <div class="emoji-item" onclick="copyEmoji('🚂')">🚂</div>
+                    <div class="emoji-item" onclick="copyEmoji('✈️')">✈️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🛫')">🛫</div>
+                    <div class="emoji-item" onclick="copyEmoji('🛬')">🛬</div>
+                    <div class="emoji-item" onclick="copyEmoji('🚢')">🚢</div>
+                    <div class="emoji-item" onclick="copyEmoji('🅿️')">🅿️</div>
                     <div class="emoji-item" onclick="copyEmoji('🛣️')">🛣️</div>
                     <div class="emoji-item" onclick="copyEmoji('🛤️')">🛤️</div>
                     <div class="emoji-item" onclick="copyEmoji('⛽')">⛽</div>
@@ -228,61 +349,143 @@
                     <div class="emoji-item" onclick="copyEmoji('🚧')">🚧</div>
                     <div class="emoji-item" onclick="copyEmoji('⛔')">⛔</div>
                     <div class="emoji-item" onclick="copyEmoji('🚫')">🚫</div>
-                    <div class="emoji-item" onclick="copyEmoji('🔒')">🔒</div>
-                    <div class="emoji-item" onclick="copyEmoji('💰')">💰</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏪')">🏪</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏬')">🏬</div>
                 </div>
             </div>
 
-            <!-- 음식 카테고리 -->
-            <div class="category" data-category="음식">
-                <div class="category-title">🍕 음식 & 요리</div>
+            <!-- ㄴ: 날씨 & 자연 -->
+            <div class="category" data-category="날씨자연">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🌤️ 날씨 & 자연</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('☀️')">☀️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌤️')">🌤️</div>
+                    <div class="emoji-item" onclick="copyEmoji('⛅')">⛅</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌦️')">🌦️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌧️')">🌧️</div>
+                    <div class="emoji-item" onclick="copyEmoji('⛈️')">⛈️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌩️')">🌩️</div>
+                    <div class="emoji-item" onclick="copyEmoji('❄️')">❄️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌨️')">🌨️</div>
+                    <div class="emoji-item" onclick="copyEmoji('⛰️')">⛰️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏔️')">🏔️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌋')">🌋</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏖️')">🏖️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏝️')">🏝️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌊')">🌊</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌳')">🌳</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌲')">🌲</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌴')">🌴</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌿')">🌿</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍃')">🍃</div>
+                </div>
+            </div>
+
+            <!-- ㄷ: 동물 -->
+            <div class="category" data-category="동물">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🐶 동물</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('🐶')">🐶</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐱')">🐱</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐭')">🐭</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐹')">🐹</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐰')">🐰</div>
+                    <div class="emoji-item" onclick="copyEmoji('🦊')">🦊</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐻')">🐻</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐼')">🐼</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐨')">🐨</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐯')">🐯</div>
+                    <div class="emoji-item" onclick="copyEmoji('🦁')">🦁</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐮')">🐮</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐷')">🐷</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐸')">🐸</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐵')">🐵</div>
+                    <div class="emoji-item" onclick="copyEmoji('🙈')">🙈</div>
+                    <div class="emoji-item" onclick="copyEmoji('🙉')">🙉</div>
+                    <div class="emoji-item" onclick="copyEmoji('🙊')">🙊</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐔')">🐔</div>
+                    <div class="emoji-item" onclick="copyEmoji('🐧')">🐧</div>
+                </div>
+            </div>
+
+            <!-- ㅁ: 먹거리 -->
+            <div class="category" data-category="먹거리">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🍕 먹거리</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🍕')">🍕</div>
                     <div class="emoji-item" onclick="copyEmoji('🍔')">🍔</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍰')">🍰</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍟')">🍟</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌭')">🌭</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥪')">🥪</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌮')">🌮</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌯')">🌯</div>
                     <div class="emoji-item" onclick="copyEmoji('🍜')">🍜</div>
-                    <div class="emoji-item" onclick="copyEmoji('🥘')">🥘</div>
-                    <div class="emoji-item" onclick="copyEmoji('☕')">☕</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍷')">🍷</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍎')">🍎</div>
-                    <div class="emoji-item" onclick="copyEmoji('🥑')">🥑</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍓')">🍓</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍣')">🍣</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍪')">🍪</div>
-                    <div class="emoji-item" onclick="copyEmoji('🧁')">🧁</div>
-                    <div class="emoji-item" onclick="copyEmoji('🥗')">🥗</div>
                     <div class="emoji-item" onclick="copyEmoji('🍝')">🍝</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥘')">🥘</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍣')">🍣</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍱')">🍱</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍙')">🍙</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍘')">🍘</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥗')">🥗</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍎')">🍎</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍊')">🍊</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍌')">🍌</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍓')">🍓</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥑')">🥑</div>
                 </div>
             </div>
 
-            <!-- 영화/엔터 카테고리 -->
-            <div class="category" data-category="엔터테인먼트">
-                <div class="category-title">🎬 영화 & 엔터테인먼트</div>
+            <!-- ㅂ: 음료 -->
+            <div class="category" data-category="음료">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🍺 음료</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
-                    <div class="emoji-item" onclick="copyEmoji('🎬')">🎬</div>
-                    <div class="emoji-item" onclick="copyEmoji('🍿')">🍿</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎭')">🎭</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎪')">🎪</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎨')">🎨</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎵')">🎵</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎤')">🎤</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎸')">🎸</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎹')">🎹</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎮')">🎮</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎯')">🎯</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎲')">🎲</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎧')">🎧</div>
-                    <div class="emoji-item" onclick="copyEmoji('📺')">📺</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎞️')">🎞️</div>
+                    <div class="emoji-item" onclick="copyEmoji('☕')">☕</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍵')">🍵</div>
+                    <div class="emoji-item" onclick="copyEmoji('🧃')">🧃</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥤')">🥤</div>
+                    <div class="emoji-item" onclick="copyEmoji('🧋')">🧋</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍺')">🍺</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍻')">🍻</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍷')">🍷</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥂')">🥂</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍾')">🍾</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍸')">🍸</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍹')">🍹</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥛')">🥛</div>
+                    <div class="emoji-item" onclick="copyEmoji('🫖')">🫖</div>
                 </div>
             </div>
 
-            <!-- 숫자 이모지 카테고리 -->
-            <div class="category" data-category="숫자">
-                <div class="category-title">🔢 숫자 & 순서</div>
+            <!-- ㅅ: 손가락 & 숫자 -->
+            <div class="category" data-category="손가락숫자">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">👉 손가락 & 숫자</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('👉')">👉</div>
+                    <div class="emoji-item" onclick="copyEmoji('👈')">👈</div>
+                    <div class="emoji-item" onclick="copyEmoji('👆')">👆</div>
+                    <div class="emoji-item" onclick="copyEmoji('👇')">👇</div>
+                    <div class="emoji-item" onclick="copyEmoji('👍')">👍</div>
+                    <div class="emoji-item" onclick="copyEmoji('👎')">👎</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤞')">🤞</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤟')">🤟</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤘')">🤘</div>
+                    <div class="emoji-item" onclick="copyEmoji('👌')">👌</div>
+                    <div class="emoji-item" onclick="copyEmoji('🙏')">🙏</div>
+                    <div class="emoji-item" onclick="copyEmoji('👏')">👏</div>
+                    <div class="emoji-item" onclick="copyEmoji('💪')">💪</div>
                     <div class="emoji-item" onclick="copyEmoji('1️⃣')">1️⃣</div>
                     <div class="emoji-item" onclick="copyEmoji('2️⃣')">2️⃣</div>
                     <div class="emoji-item" onclick="copyEmoji('3️⃣')">3️⃣</div>
@@ -294,14 +497,160 @@
                     <div class="emoji-item" onclick="copyEmoji('9️⃣')">9️⃣</div>
                     <div class="emoji-item" onclick="copyEmoji('🔟')">🔟</div>
                     <div class="emoji-item" onclick="copyEmoji('0️⃣')">0️⃣</div>
-                    <div class="emoji-item" onclick="copyEmoji('#️⃣')">#️⃣</div>
-                    <div class="emoji-item" onclick="copyEmoji('*️⃣')">*️⃣</div>
                 </div>
             </div>
 
+            <!-- ㅅ: 스포츠 & 활동 -->
+            <div class="category" data-category="스포츠">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">⚽ 스포츠 & 활동</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('⚽')">⚽</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏀')">🏀</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎾')">🎾</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏊‍♀️')">🏊‍♀️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🚴‍♂️')">🚴‍♂️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏃‍♀️')">🏃‍♀️</div>
+                    <div class="emoji-item" onclick="copyEmoji('⛷️')">⛷️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏌️‍♂️')">🏌️‍♂️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎯')">🎯</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎲')">🎲</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏆')">🏆</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥇')">🥇</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎖️')">🎖️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏋️‍♀️')">🏋️‍♀️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🧘‍♀️')">🧘‍♀️</div>
+                </div>
+            </div>
+
+            <!-- ㅇ: 엔터테인먼트 -->
+            <div class="category" data-category="엔터테인먼트">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🎬 엔터테인먼트</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('🎬')">🎬</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍿')">🍿</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎭')">🎭</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎪')">🎪</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎨')">🎨</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎵')">🎵</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎶')">🎶</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎤')">🎤</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎸')">🎸</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎹')">🎹</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥁')">🥁</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎮')">🎮</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎧')">🎧</div>
+                    <div class="emoji-item" onclick="copyEmoji('📺')">📺</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎞️')">🎞️</div>
+                    <div class="emoji-item" onclick="copyEmoji('📷')">📷</div>
+                    <div class="emoji-item" onclick="copyEmoji('📸')">📸</div>
+                </div>
+            </div>
+
+            <!-- ㅈ: 주의사항 & 중요 -->
+            <div class="category" data-category="주의중요">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">⚠️ 주의사항 & 중요</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('⚠️')">⚠️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🚨')">🚨</div>
+                    <div class="emoji-item" onclick="copyEmoji('❗')">❗</div>
+                    <div class="emoji-item" onclick="copyEmoji('‼️')">‼️</div>
+                    <div class="emoji-item" onclick="copyEmoji('❓')">❓</div>
+                    <div class="emoji-item" onclick="copyEmoji('❔')">❔</div>
+                    <div class="emoji-item" onclick="copyEmoji('💡')">💡</div>
+                    <div class="emoji-item" onclick="copyEmoji('🔥')">🔥</div>
+                    <div class="emoji-item" onclick="copyEmoji('⭐')">⭐</div>
+                    <div class="emoji-item" onclick="copyEmoji('✨')">✨</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎯')">🎯</div>
+                    <div class="emoji-item" onclick="copyEmoji('📌')">📌</div>
+                    <div class="emoji-item" onclick="copyEmoji('🚀')">🚀</div>
+                    <div class="emoji-item" onclick="copyEmoji('💯')">💯</div>
+                    <div class="emoji-item" onclick="copyEmoji('🏆')">🏆</div>
+                    <div class="emoji-item" onclick="copyEmoji('💎')">💎</div>
+                    <div class="emoji-item" onclick="copyEmoji('🔑')">🔑</div>
+                    <div class="emoji-item" onclick="copyEmoji('💰')">💰</div>
+                    <div class="emoji-item" onclick="copyEmoji('📈')">📈</div>
+                    <div class="emoji-item" onclick="copyEmoji('🔝')">🔝</div>
+                </div>
+            </div>
+
+            <!-- ㅊ: 축제 & 축하 -->
+            <div class="category" data-category="축제축하">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🎉 축제 & 축하</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('🎉')">🎉</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎊')">🎊</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎈')">🎈</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎁')">🎁</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎂')">🎂</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍰')">🍰</div>
+                    <div class="emoji-item" onclick="copyEmoji('🧁')">🧁</div>
+                    <div class="emoji-item" onclick="copyEmoji('🍪')">🍪</div>
+                    <div class="emoji-item" onclick="copyEmoji('🕯️')">🕯️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎄')">🎄</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎃')">🎃</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥳')">🥳</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎇')">🎇</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎆')">🎆</div>
+                    <div class="emoji-item" onclick="copyEmoji('🌟')">🌟</div>
+                    <div class="emoji-item" onclick="copyEmoji('💫')">💫</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎀')">🎀</div>
+                    <div class="emoji-item" onclick="copyEmoji('🎗️')">🎗️</div>
+                </div>
+            </div>
+
+            <!-- ㅎ: 하트 & 감정 -->
+            <div class="category" data-category="하트감정">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">❤️ 하트 & 감정</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="emoji-grid">
+                    <div class="emoji-item" onclick="copyEmoji('❤️')">❤️</div>
+                    <div class="emoji-item" onclick="copyEmoji('🧡')">🧡</div>
+                    <div class="emoji-item" onclick="copyEmoji('💛')">💛</div>
+                    <div class="emoji-item" onclick="copyEmoji('💚')">💚</div>
+                    <div class="emoji-item" onclick="copyEmoji('💙')">💙</div>
+                    <div class="emoji-item" onclick="copyEmoji('💜')">💜</div>
+                    <div class="emoji-item" onclick="copyEmoji('🖤')">🖤</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤍')">🤍</div>
+                    <div class="emoji-item" onclick="copyEmoji('🤎')">🤎</div>
+                    <div class="emoji-item" onclick="copyEmoji('💕')">💕</div>
+                    <div class="emoji-item" onclick="copyEmoji('💖')">💖</div>
+                    <div class="emoji-item" onclick="copyEmoji('💗')">💗</div>
+                    <div class="emoji-item" onclick="copyEmoji('💘')">💘</div>
+                    <div class="emoji-item" onclick="copyEmoji('💝')">💝</div>
+                    <div class="emoji-item" onclick="copyEmoji('😀')">😀</div>
+                    <div class="emoji-item" onclick="copyEmoji('😃')">😃</div>
+                    <div class="emoji-item" onclick="copyEmoji('😄')">😄</div>
+                    <div class="emoji-item" onclick="copyEmoji('😁')">😁</div>
+                    <div class="emoji-item" onclick="copyEmoji('😊')">😊</div>
+                    <div class="emoji-item" onclick="copyEmoji('😍')">😍</div>
+                    <div class="emoji-item" onclick="copyEmoji('🥰')">🥰</div>
+                    <div class="emoji-item" onclick="copyEmoji('😘')">😘</div>
+                    <div class="emoji-item" onclick="copyEmoji('😭')">😭</div>
+                    <div class="emoji-item" onclick="copyEmoji('😢')">😢</div>
+                </div>
+            </div>
+        </div>
+
             <!-- 손가락 & 포인팅 카테고리 -->
             <div class="category" data-category="손가락">
-                <div class="category-title">👉 손가락 & 포인팅</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">👉 손가락 & 포인팅</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('👉')">👉</div>
                     <div class="emoji-item" onclick="copyEmoji('👈')">👈</div>
@@ -321,7 +670,10 @@
 
             <!-- 핵심 포인트 카테고리 -->
             <div class="category" data-category="핵심포인트">
-                <div class="category-title">💡 핵심 포인트 & 꿀팁</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">💡 핵심 포인트 & 꿀팁</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('💡')">💡</div>
                     <div class="emoji-item" onclick="copyEmoji('🔥')">🔥</div>
@@ -343,7 +695,10 @@
 
             <!-- 주의사항 & 경고 카테고리 -->
             <div class="category" data-category="주의사항">
-                <div class="category-title">⚠️ 주의사항 & 경고</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">⚠️ 주의사항 & 경고</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('⚠️')">⚠️</div>
                     <div class="emoji-item" onclick="copyEmoji('🚨')">🚨</div>
@@ -365,7 +720,10 @@
 
             <!-- 음료 카테고리 -->
             <div class="category" data-category="음료">
-                <div class="category-title">🍺 음료 & 술</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🍺 음료 & 술</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('☕')">☕</div>
                     <div class="emoji-item" onclick="copyEmoji('🍺')">🍺</div>
@@ -385,7 +743,10 @@
 
             <!-- 축제 & 이벤트 카테고리 -->
             <div class="category" data-category="축제">
-                <div class="category-title">🎉 축제 & 이벤트</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🎉 축제 & 이벤트</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🎉')">🎉</div>
                     <div class="emoji-item" onclick="copyEmoji('🎊')">🎊</div>
@@ -403,31 +764,14 @@
                 </div>
             </div>
 
-            <!-- 감정/리액션 카테고리 -->
-            <div class="category" data-category="감정">
-                <div class="category-title">😊 감정 & 리액션</div>
-                <div class="emoji-grid">
-                    <div class="emoji-item" onclick="copyEmoji('😊')">😊</div>
-                    <div class="emoji-item" onclick="copyEmoji('😍')">😍</div>
-                    <div class="emoji-item" onclick="copyEmoji('🥰')">🥰</div>
-                    <div class="emoji-item" onclick="copyEmoji('😭')">😭</div>
-                    <div class="emoji-item" onclick="copyEmoji('😂')">😂</div>
-                    <div class="emoji-item" onclick="copyEmoji('🤔')">🤔</div>
-                    <div class="emoji-item" onclick="copyEmoji('😢')">😢</div>
-                    <div class="emoji-item" onclick="copyEmoji('😎')">😎</div>
-                    <div class="emoji-item" onclick="copyEmoji('🤩')">🤩</div>
-                    <div class="emoji-item" onclick="copyEmoji('😱')">😱</div>
-                    <div class="emoji-item" onclick="copyEmoji('🤯')">🤯</div>
-                    <div class="emoji-item" onclick="copyEmoji('❤️')">❤️</div>
-                    <div class="emoji-item" onclick="copyEmoji('💕')">💕</div>
-                    <div class="emoji-item" onclick="copyEmoji('💔')">💔</div>
-                    <div class="emoji-item" onclick="copyEmoji('💖')">💖</div>
-                </div>
-            </div>
 
-            <!-- 가이드/교육 카테고리 -->
-            <div class="category" data-category="교육">
-                <div class="category-title">📚 가이드 & 교육</div>
+
+            <!-- 가이드 & 교육 카테고리 -->
+            <div class="category" data-category="가이드">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">📚 가이드 & 교육</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('📚')">📚</div>
                     <div class="emoji-item" onclick="copyEmoji('📝')">📝</div>
@@ -447,9 +791,12 @@
                 </div>
             </div>
 
-            <!-- 날씨/자연 카테고리 -->
-            <div class="category" data-category="자연">
-                <div class="category-title">🌞 날씨 & 자연</div>
+            <!-- 날씨 & 자연 카테고리 -->
+            <div class="category" data-category="날씨">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🌞 날씨 & 자연</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('☀️')">☀️</div>
                     <div class="emoji-item" onclick="copyEmoji('🌧️')">🌧️</div>
@@ -469,31 +816,12 @@
                 </div>
             </div>
 
-            <!-- 스포츠/활동 카테고리 -->
-            <div class="category" data-category="스포츠">
-                <div class="category-title">⚽ 스포츠 & 활동</div>
-                <div class="emoji-grid">
-                    <div class="emoji-item" onclick="copyEmoji('⚽')">⚽</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏀')">🏀</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎾')">🎾</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏊‍♀️')">🏊‍♀️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🚴‍♂️')">🚴‍♂️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏃‍♀️')">🏃‍♀️</div>
-                    <div class="emoji-item" onclick="copyEmoji('⛷️')">⛷️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏌️‍♂️')">🏌️‍♂️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎯')">🎯</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎲')">🎲</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏆')">🏆</div>
-                    <div class="emoji-item" onclick="copyEmoji('🥇')">🥇</div>
-                    <div class="emoji-item" onclick="copyEmoji('🎖️')">🎖️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🏋️‍♀️')">🏋️‍♀️</div>
-                    <div class="emoji-item" onclick="copyEmoji('🧘‍♀️')">🧘‍♀️</div>
-                </div>
-            </div>
-
             <!-- 쇼핑/패션 카테고리 -->
             <div class="category" data-category="패션">
-                <div class="category-title">👗 쇼핑 & 패션</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">👗 쇼핑 & 패션</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('👗')">👗</div>
                     <div class="emoji-item" onclick="copyEmoji('👠')">👠</div>
@@ -515,7 +843,10 @@
 
             <!-- 직업/연령대 카테고리 -->
             <div class="category" data-category="직업">
-                <div class="category-title">👩‍💼 직업 & 연령대</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">👩‍💼 직업 & 연령대</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('👩‍💼')">👩‍💼</div>
                     <div class="emoji-item" onclick="copyEmoji('👨‍💼')">👨‍💼</div>
@@ -550,7 +881,10 @@
 
             <!-- 가족/부부/모임 카테고리 -->
             <div class="category" data-category="가족">
-                <div class="category-title">👪 가족 & 부부 & 모임</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">👪 가족 & 부부 & 모임</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('👪')">👪</div>
                     <div class="emoji-item" onclick="copyEmoji('👨‍👩‍👧‍👦')">👨‍👩‍👧‍👦</div>
@@ -589,7 +923,10 @@
 
             <!-- 집/건물 카테고리 -->
             <div class="category" data-category="집">
-                <div class="category-title">🏠 집 & 건물</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🏠 집 & 건물</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🏠')">🏠</div>
                     <div class="emoji-item" onclick="copyEmoji('🏡')">🏡</div>
@@ -620,7 +957,10 @@
 
             <!-- 가사/생활용품 카테고리 -->
             <div class="category" data-category="가사">
-                <div class="category-title">🧹 가사 & 생활용품</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🧹 가사 & 생활용품</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🧹')">🧹</div>
                     <div class="emoji-item" onclick="copyEmoji('🧽')">🧽</div>
@@ -657,7 +997,10 @@
 
             <!-- 전기/공구 카테고리 -->
             <div class="category" data-category="전기">
-                <div class="category-title">⚡ 전기 & 공구</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">⚡ 전기 & 공구</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('⚡')">⚡</div>
                     <div class="emoji-item" onclick="copyEmoji('🔧')">🔧</div>
@@ -688,7 +1031,10 @@
 
             <!-- 카드/금융 카테고리 -->
             <div class="category" data-category="금융">
-                <div class="category-title">💳 카드 & 금융 & 돈</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">💳 카드 & 금융 & 돈</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('💳')">💳</div>
                     <div class="emoji-item" onclick="copyEmoji('💰')">💰</div>
@@ -723,7 +1069,10 @@
 
             <!-- 창업/소상공인 카테고리 -->
             <div class="category" data-category="창업">
-                <div class="category-title">🏪 창업 & 소상공인</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🏪 창업 & 소상공인</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🏪')">🏪</div>
                     <div class="emoji-item" onclick="copyEmoji('🏬')">🏬</div>
@@ -778,7 +1127,10 @@
 
             <!-- 신청/행정 카테고리 -->
             <div class="category" data-category="신청">
-                <div class="category-title">📝 신청 & 행정</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">📝 신청 & 행정</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('📝')">📝</div>
                     <div class="emoji-item" onclick="copyEmoji('📋')">📋</div>
@@ -809,7 +1161,10 @@
 
             <!-- 예매/티켓 카테고리 -->
             <div class="category" data-category="예매">
-                <div class="category-title">🎫 예매 & 티켓</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🎫 예매 & 티켓</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🎫')">🎫</div>
                     <div class="emoji-item" onclick="copyEmoji('🎟️')">🎟️</div>
@@ -840,7 +1195,10 @@
 
             <!-- 자격/인증 카테고리 -->
             <div class="category" data-category="자격">
-                <div class="category-title">🎓 자격 & 인증</div>
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title">🎓 자격 & 인증</div>
+                    <div class="toggle-icon">▼</div>
+                </div>
                 <div class="emoji-grid">
                     <div class="emoji-item" onclick="copyEmoji('🎓')">🎓</div>
                     <div class="emoji-item" onclick="copyEmoji('📜')">📜</div>
@@ -872,7 +1230,7 @@
         </div>
     </div>
 
-    <button class="back-button" onclick="goBack()">🏠 편집기로 돌아가기</button>
+    <a href="https://www.emojiall.com/ko" class="back-button" target="_blank">🎭✨🌟 더 많은 이모지 보기</a>
 
     <script>
         // 이모지 복사 기능
@@ -930,6 +1288,51 @@
             });
         }
 
+        // 카테고리 접기/펼치기 기능
+        function toggleCategory(header) {
+            const category = header.parentElement;
+            const emojiGrid = category.querySelector('.emoji-grid');
+            const toggleIcon = header.querySelector('.toggle-icon');
+            
+            category.classList.toggle('collapsed');
+            
+            if (category.classList.contains('collapsed')) {
+                emojiGrid.style.display = 'none';
+                toggleIcon.textContent = '▶';
+            } else {
+                emojiGrid.style.display = 'grid';
+                toggleIcon.textContent = '▼';
+            }
+        }
+
+        // 모든 카테고리 펼치기
+        function expandAll() {
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(category => {
+                const emojiGrid = category.querySelector('.emoji-grid');
+                const toggleIcon = category.querySelector('.toggle-icon');
+                
+                category.classList.remove('collapsed');
+                emojiGrid.style.display = 'grid';
+                toggleIcon.textContent = '▼';
+            });
+        }
+
+        // 모든 카테고리 접기
+        function collapseAll() {
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(category => {
+                const emojiGrid = category.querySelector('.emoji-grid');
+                const toggleIcon = category.querySelector('.toggle-icon');
+                
+                if (emojiGrid && toggleIcon) {
+                    category.classList.add('collapsed');
+                    emojiGrid.style.display = 'none';
+                    toggleIcon.textContent = '▶';
+                }
+            });
+        }
+
         // 뒤로가기
         function goBack() {
             // 새 창으로 열린 경우 (opener가 있으면)
@@ -951,6 +1354,11 @@
                 goBack();
             }
         });
+
+        // 페이지 로드 시 모든 카테고리 접기
+        document.addEventListener('DOMContentLoaded', function() {
+            collapseAll();
+        });
     </script>
 </body>
-</html> 
+</html>
