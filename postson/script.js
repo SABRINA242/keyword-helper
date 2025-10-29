@@ -477,7 +477,7 @@ function generateCode() {
                 ${title}
             </h4>
             
-            <button onclick="changeSlide(-1)" style="
+            <button class="prev-btn" style="
                 position: absolute;
                 left: 0;
                 top: 200px;
@@ -498,7 +498,7 @@ function generateCode() {
                 z-index: 10;
             " onmouseover="this.style.background='var(--primary-color, #007bff)'; this.style.color='white'; this.style.borderColor='white';" onmouseout="this.style.background='rgba(255,255,255,0.9)'; this.style.color='var(--primary-color, #007bff)'; this.style.borderColor='var(--primary-color, #007bff)';">‹</button>
             
-            <button onclick="changeSlide(1)" style="
+            <button class="next-btn" style="
                 position: absolute;
                 right: 0;
                 top: 200px;
@@ -527,7 +527,7 @@ function generateCode() {
                 border-radius: clamp(10px, 3vw, 15px);
                 font-size: clamp(0.7em, 2.5vw, 0.9em);
                 font-weight: bold;
-            ">${currentSlideIndex + 1} / ${totalSlides}</div>
+            "><span class="current-step">1</span> / <span class="total-steps">${totalSlides}</span></div>
         </div>
     </div>
     
@@ -541,39 +541,76 @@ function generateCode() {
 </div>
 
 <script>
-// 슬라이드 기능 JavaScript 코드
-let currentSlideIndex = 0;
-const totalSlides = ${totalSlides};
+// 슬라이드 기능 JavaScript 코드 (인스턴스 스코프)
+(function(){
+    const root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.classList.contains('guide-slider')) return;
 
-function changeSlide(direction) {
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const newIndex = currentSlideIndex + direction;
-    
-    if (newIndex >= 0 && newIndex < totalSlides) {
-        document.querySelector('.slides-wrapper').style.transform = \`translateX(-\${newIndex * 100}%)\`;
+    let currentSlideIndex = 0;
+    const slidesWrapper = root.querySelector('.slides-wrapper');
+    const slides = root.querySelectorAll('.slide');
+    const dots = root.querySelectorAll('.dot');
+    const totalSlides = slides.length;
+
+    const currentStepElement = root.querySelector('.current-step');
+    const totalStepsElement = root.querySelector('.total-steps');
+
+    function updateUI(index) {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.transform = \`translateX(-\${index * 100}%)\`;
         
         slides.forEach((slide, i) => {
-            slide.classList.toggle('active', i === newIndex);
+            slide.classList.toggle('active', i === index);
         });
         
         dots.forEach((dot, i) => {
-            dot.style.background = i === newIndex ? 'var(--primary-color)' : 'var(--secondary-color)';
+            dot.classList.toggle('active', i === index);
+            dot.style.background = i === index ? 'var(--primary-color)' : 'var(--secondary-color)';
         });
         
-        // 단계 표시기 업데이트
-        const currentStepElement = document.querySelector('.current-step');
-        if (currentStepElement) {
-            currentStepElement.textContent = newIndex + 1;
+        if (currentStepElement) currentStepElement.textContent = index + 1;
+        if (totalStepsElement) totalStepsElement.textContent = totalSlides;
+        
+        const prevBtn = root.querySelector('.prev-btn');
+        const nextBtn = root.querySelector('.next-btn');
+        if (prevBtn && nextBtn) {
+            if (totalSlides <= 1) {
+                prevBtn.disabled = false;
+                nextBtn.disabled = false;
+            } else {
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSlides - 1;
+            }
         }
         
-        currentSlideIndex = newIndex;
+        currentSlideIndex = index;
     }
-}
 
-function currentSlide(index) {
-    changeSlide(index - 1 - currentSlideIndex);
-}
+    function changeSlide(direction) {
+        const newIndex = currentSlideIndex + direction;
+        if (newIndex >= 0 && newIndex < totalSlides) {
+            updateUI(newIndex);
+        }
+    }
+
+    function goToSlide(index) {
+        if (index >= 0 && index < totalSlides) {
+            updateUI(index);
+        }
+    }
+
+    const prevBtn = root.querySelector('.prev-btn');
+    const nextBtn = root.querySelector('.next-btn');
+    if (prevBtn) prevBtn.addEventListener('click', () => changeSlide(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => changeSlide(1));
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => goToSlide(i));
+    });
+
+    // 초기화
+    updateUI(0);
+})();
 </script>`;
     
     document.querySelector('#generatedCode code').textContent = htmlCode;
