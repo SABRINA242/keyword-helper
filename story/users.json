@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "nickname": "테스트",
+      "accessCode": "12345678",
+      "joinedDate": "2024-05-20",
+      "lastRenewedDate": "2024-05-20",
+      "memo": "연결 확인용 테스트 계정 (배포 후 삭제하세요)"
+    }
+  ]
+}
