@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>야담 이미지 프롬프트 생성기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="app-header-main">
+        <h1>야담 이미지 프롬프트 생성기</h1>
+        <p>야담 대본을 넣으면 AI용 이미지 프롬프트를 만들어 줍니다.</p>
+      </div>
+      <button id="apiKeyButton" class="api-key-button">API 키 설정</button>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab-button active" data-tab="script-settings">대본/설정</button>
+      <button class="tab-button" data-tab="shintong">신통이</button>
+      <button class="tab-button" data-tab="bangtong">방통이</button>
+    </nav>
+
+    <main id="tabContent" class="tab-content"></main>
+
+    <div id="apiKeyModalOverlay" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>API 키 설정</h2>
+          <button id="apiKeyModalClose" class="modal-close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="field-group">
+            <label for="geminiApiKeyInput">Gemini 2.5 Flash API 키</label>
+            <input id="geminiApiKeyInput" type="password" placeholder="Gemini API 키를 입력하세요">
+          </div>
+          <div class="field-group">
+            <label for="openaiApiKeyInput">OpenAI GPT-4o mini API 키</label>
+            <input id="openaiApiKeyInput" type="password" placeholder="OpenAI API 키를 입력하세요">
+          </div>
+          <p class="helper-text modal-helper-text">입력한 키는 이 브라우저의 localStorage에만 저장되며, 서버로 전송되지 않습니다.</p>
+        </div>
+        <div class="modal-footer">
+          <button id="apiKeyModalCancel" class="secondary-button">취소</button>
+          <button id="apiKeyModalSave" class="primary-button">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmModalOverlay" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="confirmModalTitle">확인</h2>
+          <button id="confirmModalClose" class="modal-close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button id="confirmModalCancel" class="secondary-button">취소</button>
+          <button id="confirmModalOk" class="primary-button">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <span>프론트엔드만으로 동작하는 프로토타입입니다. 나중에 Gemini와 OpenAI API를 연결합니다.</span>
+    </footer>
+  </div>
+
+  <div id="scrollControls" class="scroll-controls">
+    <button id="scrollUpBtn" class="scroll-btn" title="위로">▲</button>
+    <button id="scrollDownBtn" class="scroll-btn" title="아래로">▼</button>
+  </div>
+
+  <script src="./app.js?v=20260223-12"></script>
+</body>
+</html>
+
