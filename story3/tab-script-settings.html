@@ -1,0 +1,70 @@
+<div class="app-main app-main-vertical">
+  <section class="panel panel-input">
+    <h2>1. 챕터 대본 입력</h2>
+    <textarea id="scriptInput" placeholder="한 챕터(약 3,000~6,000자)를 여기 넣어 주세요"></textarea>
+
+    <div class="chapter-info-row">
+      <span id="chapterCharCount" class="chapter-char-count">0자</span>
+      <span class="chapter-info-hint">한 번에 한 챕터만 입력 (권장 3,000~6,000자)</span>
+    </div>
+
+    <div class="field-group">
+      <label>이미지 스타일 (고정)</label>
+      <p class="helper-text">카드 한국 조선시대 웹 반실사 스타일</p>
+    </div>
+
+    <div class="field-group">
+      <label for="ratioSelect">이미지 비율</label>
+      <select id="ratioSelect">
+        <option value="16:9">16:9 가로형</option>
+        <option value="9:16">9:16 세로형</option>
+        <option value="1:1">1:1 정사각형</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label for="chapterNumberInput">챕터 번호</label>
+      <input type="number" id="chapterNumberInput" min="1" value="1" class="chapter-number-input" style="width: 80px; font-size: 1rem; padding: 6px;">
+    </div>
+
+    <button id="generateButton" class="primary-button">스토리에 추가하기</button>
+  </section>
+
+  <section class="panel panel-output">
+    <h2>2. 저장된 챕터</h2>
+    <div id="chapterList" class="chapter-list"></div>
+  </section>
+</div>
+
+<div class="app-main app-main-vertical">
+  <section class="panel panel-input">
+    <h2>3. 등장인물 분석</h2>
+    <p class="helper-text">저장된 챕터 전체를 기준으로 반복해서 등장하는 이름을 찾아봅니다.</p>
+    <button id="runCharacterAnalysisButton" class="primary-button">
+      대본을 분석해서 등장인물 찾기
+    </button>
+    <div id="characterAnalysisResult" class="entity-list"></div>
+    <button id="buildCharacterPromptButton" class="secondary-button analysis-bottom-button">
+      텍스트로 저장하기
+    </button>
+    <button id="clearCharactersButton" class="secondary-button analysis-bottom-button">
+      등장인물 초기화
+    </button>
+  </section>
+
+  <section class="panel panel-output">
+    <h2>4. 장소·씬 분할</h2>
+    <div id="sceneSummary" class="scene-summary"></div>
+    <button id="runSceneAnalysisButton" class="primary-button">
+      장소·씬 분할 분석 시작
+    </button>
+    <div id="sceneList" class="scene-list"></div>
+    <button id="buildScenePromptButton" class="secondary-button analysis-bottom-button">
+      이미지 대본 분석 후 장면 프롬프트 만들기
+    </button>
+    <p id="scenePromptBuildStatus" class="helper-text"></p>
+    <button id="resetSceneButton" class="secondary-button analysis-bottom-button">
+      장소·씬 설정 초기화
+    </button>
+  </section>
+</div>
