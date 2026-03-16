@@ -1,0 +1,251 @@
+<div class="app-main app-main-vertical">
+  <section class="panel">
+    <h2>방통이 · 썸네일 스튜디오</h2>
+    <p class="helper-text">
+      배경 이미지를 넣고 텍스트 레이어를 추가해서 썸네일을 직접 편집합니다.
+    </p>
+
+    <div class="bang-editor-section">
+      <h3 class="bang-section-title">썸네일 제작 스튜디오</h3>
+      <p class="helper-text">
+        배경 이미지와 텍스트를 직접 조합해서 썸네일을 만듭니다.
+      </p>
+
+      <div class="bang-editor-container">
+        <!-- Left: Canvas Area -->
+        <div class="bang-canvas-area">
+           <div class="bang-canvas-wrapper">
+              <canvas id="thumbnailCanvas" width="1280" height="720"></canvas>
+              <button id="openLargeViewBtn" class="canvas-overlay-btn" title="크게 보기">🔍</button>
+           </div>
+           
+           <div class="control-row mt-2">
+              <span class="sub-label">좌측 그라데이션 범위 (0 = 없음)</span>
+              <input type="range" id="gradientWidthInput" min="0" max="100" value="60" class="range-input full-width">
+           </div>
+           
+           <div class="control-row mt-1">
+              <span class="sub-label">하단 그라데이션 높이 (0 = 없음)</span>
+              <input type="range" id="gradientHeightInput" min="0" max="100" value="0" class="range-input full-width">
+           </div>
+
+           <div class="bang-canvas-controls">
+              <input type="file" id="bgImageInput" accept="image/*" style="display: none;">
+              <button id="uploadBgButton" class="secondary-button small-button">배경 이미지 업로드</button>
+              <button id="downloadThumbnailButton" class="primary-button small-button">썸네일 다운로드</button>
+           </div>
+        </div>
+
+        <!-- Large View Modal -->
+        <div id="largeViewModal" class="modal-overlay hidden">
+           <div class="modal-content large-view-modal">
+              <div class="modal-header">
+                 <h3>썸네일 미리보기</h3>
+                 <button id="closeLargeViewBtn" class="close-button">✕</button>
+              </div>
+              <div class="modal-body">
+                 <img id="largeViewImage" src="" alt="Large Preview" style="width: 100%; height: auto; border-radius: 8px;">
+              </div>
+           </div>
+        </div>
+
+        <!-- Right: Controls -->
+        <div class="bang-controls-area">
+           <!-- Text Layers List -->
+           <div class="control-group">
+              <label class="control-label">텍스트 레이어 <span class="sub-text">(Shift+Enter로 줄바꿈 시 분리)</span></label>
+              <div id="textLayerList" class="text-layer-list">
+                 <!-- Text layers will be injected here -->
+              </div>
+              <button id="addTextLayerButton" class="secondary-button small-button full-width mt-2">+ 텍스트 추가</button>
+           </div>
+           
+           <!-- Selected Layer Properties (Contextual) -->
+           <div id="layerPropertiesPanel" class="layer-properties hidden">
+              <div class="layer-properties-header flex-row space-between">
+                <label class="control-label highlight-text">선택된 텍스트 속성</label>
+                <label class="checkbox-label font-sm" style="margin-bottom:0; cursor:pointer;">
+                   <input type="checkbox" id="applyAllLayersCheckbox"> 전체 적용
+                </label>
+              </div>
+              
+              <div class="control-row">
+                 <textarea id="layerTextInput" rows="2" class="text-input font-sm"></textarea>
+                 <div class="flex-row space-between mt-1">
+                     <span class="font-xs" style="color:#aaa;">* 드래그 후 색상 변경 시 부분 적용</span>
+                     <button id="highlightTextBtn" class="secondary-button small-button font-xs">선택 텍스트 강조색 적용</button>
+                 </div>
+              </div>
+
+              <div class="control-row flex-row mt-2">
+                 <div class="flex-1">
+                    <span class="sub-label">폰트 굵기</span>
+                    <select id="fontWeightSelect" class="text-input">
+                       <option value="900">매우 굵게 (900)</option>
+                       <option value="700" selected>굵게 (700)</option>
+                       <option value="400">보통 (400)</option>
+                       <option value="100">얇게 (100)</option>
+                    </select>
+                 </div>
+                 <div class="w-80">
+                    <span class="sub-label">크기</span>
+                    <input type="number" id="fontSizeInput" class="text-input" value="60">
+                 </div>
+              </div>
+
+              <div class="control-row">
+                 <span class="sub-label">폰트</span>
+                 <div class="flex-row">
+                    <select id="fontFamilySelect" class="text-input flex-1">
+                       <option value="Pretendard, sans-serif">기본 (Pretendard)</option>
+                       <option value="'Noto Serif KR', serif">바탕 (Noto Serif)</option>
+                       <option value="'Noto Sans KR', sans-serif">고딕 (Noto Sans)</option>
+                       <option value="'GungSeo', serif">궁서체</option>
+                       <option value="'Black Han Sans', sans-serif">검은고딕</option>
+                       <option value="Impact, sans-serif">Impact</option>
+                    </select>
+                    <button id="toggleFontFavoriteBtn" class="secondary-button small-button" title="즐겨찾기">★</button>
+                 </div>
+                 <div class="mt-1">
+                    <input type="text" id="fontFilterInput" class="text-input font-xs" placeholder="폰트 이름 검색 (예: Pretendard, 나눔)">
+                 </div>
+                 <div class="mt-2">
+                    <button id="scanLocalFontBtn" class="secondary-button small-button full-width">내 컴퓨터 설치된 폰트 스캔하기</button>
+                    <button id="loadLocalFontBtn" class="secondary-button small-button full-width mt-1" style="font-size:0.75rem;">(또는 폰트 파일 직접 선택)</button>
+                    <input type="file" id="localFontInput" accept=".ttf,.otf,.woff,.woff2" style="display:none">
+                 </div>
+                 <div class="mt-2 flex-row">
+                    <input type="text" id="manualFontNameInput" class="text-input font-xs flex-1" placeholder="직접 폰트 이름 입력 (예: NanumSquareNeo)">
+                    <button id="applyManualFontBtn" class="secondary-button small-button ml-1 font-xs">직접 적용</button>
+                 </div>
+              </div>
+
+              <div class="control-row flex-row mt-2">
+                 <div class="flex-1">
+                    <span class="sub-label">글자색</span>
+                    <div class="color-picker-wrapper flex-row">
+                        <input type="color" id="textColorInput" value="#ffffff" title="전체/선택 글자색">
+                        <input type="color" id="highlightColorInput" value="#ffff00" title="강조색(노랑)">
+                    </div>
+                 </div>
+                 <div class="flex-1">
+                    <span class="sub-label">테두리색</span>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="strokeColorInput" value="#000000">
+                    </div>
+                 </div>
+                 <div class="w-60">
+                     <span class="sub-label">두께</span>
+                     <input type="number" id="strokeWidthInput" class="text-input" value="4">
+                 </div>
+              </div>
+
+              <div class="control-row flex-row mt-2">
+                 <div class="flex-1">
+                    <span class="sub-label">자간</span>
+                    <input type="number" id="letterSpacingInput" class="text-input" value="0" step="1">
+                 </div>
+                 <div class="flex-1">
+                    <span class="sub-label">세로크기(%)</span>
+                    <input type="number" id="scaleYInput" class="text-input" value="100" step="5">
+                 </div>
+              </div>
+              
+              <div class="control-row flex-row mt-2">
+                 <div class="flex-1">
+                    <span class="sub-label">행간(%)</span>
+                    <input type="number" id="lineHeightInput" class="text-input" value="120" step="5" min="60" max="200">
+                 </div>
+              </div>
+              
+              <div class="control-row flex-row mt-2">
+                  <div class="flex-1">
+                    <span class="sub-label">X 위치</span>
+                    <input type="number" id="posXInput" class="text-input" value="50">
+                  </div>
+                  <div class="flex-1">
+                    <span class="sub-label">Y 위치</span>
+                    <input type="number" id="posYInput" class="text-input" value="100">
+                  </div>
+              </div>
+
+              <button id="deleteLayerButton" class="danger-button small-button full-width mt-3">삭제</button>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bang-editor-section mt-4">
+      <h3 class="bang-section-title">Suno 사극 BGM 스타일 프롬프트</h3>
+      <p class="helper-text">
+        인트로 시퀀스를 요약하고 스타일을 선택하면 Suno에 넣을 한 줄짜리 스타일 프롬프트를 만들어 줍니다.
+      </p>
+
+      <div class="bang-editor-container">
+        <div class="bang-canvas-area">
+          <div class="control-group">
+            <label class="control-label" for="sunoSequenceInput">인트로 시퀀스 요약 (선택)</label>
+            <textarea id="sunoSequenceInput" class="text-input" rows="3" placeholder="예: 버려진 왕세자가 산속 초가집에서 깨어나 주변을 둘러보는 장면"></textarea>
+          </div>
+        </div>
+
+        <div class="bang-controls-area">
+          <div class="control-group">
+            <label class="control-label" for="sunoMusicStyleSelect">음악 스타일</label>
+            <select id="sunoMusicStyleSelect" class="text-input">
+              <option value="auto">자동 선택</option>
+              <option value="fast_exciting">빠름 / 흥겨운 마당놀음</option>
+              <option value="sad_sorrowful">슬픔 / 애잔 발라드</option>
+              <option value="faint_hazy">아스라한 / 몽환</option>
+              <option value="slow_mystery">느림 / 긴장 / 미스터리</option>
+              <option value="medium_story">미디엄 / 이야기 / 판소리</option>
+              <option value="grand_epic">웅장 / 영웅</option>
+            </select>
+          </div>
+
+          <div class="control-group mt-2">
+            <label class="control-label" for="sunoThemeSelect">테마</label>
+            <select id="sunoThemeSelect" class="text-input">
+              <option value="auto">자동 분석</option>
+              <option value="mystery">미스터리</option>
+              <option value="comedy">코미디</option>
+              <option value="destiny">운명 / 장대한 서사</option>
+              <option value="tragedy">비극 / 슬픔</option>
+              <option value="revenge">복수 / 분노</option>
+              <option value="despair">절망 / 공허</option>
+              <option value="hope">희망 / 따뜻한 여운</option>
+            </select>
+          </div>
+
+          <div class="control-group mt-2">
+            <label class="control-label" for="sunoLoopSelect">루프 길이</label>
+            <select id="sunoLoopSelect" class="text-input">
+              <option value="auto">자동 (서비스 기본값)</option>
+              <option value="40_60">40~60초 인트로 루프</option>
+            </select>
+          </div>
+
+          <div class="control-group mt-3">
+            <button id="sunoGenerateStyleButton" class="primary-button full-width">스타일 프롬프트 생성</button>
+          </div>
+
+          <div class="control-group mt-2">
+            <label class="control-label" for="sunoTitleOutput">Title (한글) · 곡 제목</label>
+            <div class="input-with-copy-inside">
+              <input id="sunoTitleOutput" class="text-input" type="text" readonly>
+              <button id="sunoTitleCopyButton" class="secondary-button small-button">복사</button>
+            </div>
+          </div>
+
+          <div class="control-group mt-2">
+            <label class="control-label" for="sunoStyleEnOutput">Style (영문) · Suno에 그대로 붙여넣기</label>
+            <div class="input-with-copy-inside">
+              <textarea id="sunoStyleEnOutput" class="text-input" rows="3" readonly></textarea>
+              <button id="sunoStyleEnCopyButton" class="secondary-button small-button">복사</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
