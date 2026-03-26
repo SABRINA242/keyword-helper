@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캡컷 이미지 자동 배치기</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Malgun Gothic', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+.header { background: #1a1a1a; color: #fff; padding: 20px 32px; }
+.header h1 { font-size: 20px; font-weight: 600; }
+.header p { font-size: 13px; color: #888; margin-top: 4px; }
+.container { max-width: 860px; margin: 32px auto; padding: 0 20px; }
+.card { background: #fff; border: 1px solid #e0e0db; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.card-title { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.step-num { background: #1a1a1a; color: #fff; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.drop-zone { border: 2px dashed #d0d0c8; border-radius: 8px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.15s; background: #fafaf8; }
+.drop-zone:hover, .drop-zone.over { border-color: #1a1a1a; background: #f0f0eb; }
+.drop-zone input { display: none; }
+.drop-zone .icon { font-size: 28px; margin-bottom: 8px; }
+.drop-zone .label { font-size: 14px; color: #555; }
+.drop-zone .label span { color: #1a1a1a; text-decoration: underline; font-weight: 600; }
+.drop-zone .sub { font-size: 12px; color: #999; margin-top: 4px; }
+.file-ok { display: flex; align-items: center; gap: 8px; background: #f0faf4; border: 1px solid #b0e0c0; border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: #1a6635; }
+.file-ok .icon { font-size: 16px; }
+.tab-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab { padding: 7px 16px; border-radius: 99px; font-size: 13px; cursor: pointer; border: 1px solid #d0d0c8; background: #fff; color: #666; transition: all 0.15s; }
+.tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.info-box { background: #fafaf8; border: 1px solid #e8e8e0; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #666; line-height: 1.7; margin-bottom: 12px; }
+.info-box strong { color: #1a1a1a; }
+.ch-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ch-row label { font-size: 13px; color: #555; min-width: 64px; }
+.ch-row input { height: 36px; border: 1px solid #d0d0c8; border-radius: 6px; padding: 0 12px; font-size: 13px; width: 110px; }
+.ch-row input:focus { outline: none; border-color: #1a1a1a; }
+.ch-row .hint { font-size: 12px; color: #999; }
+.del-btn { background: none; border: none; font-size: 18px; color: #bbb; cursor: pointer; padding: 0 4px; line-height: 1; }
+.del-btn:hover { color: #666; }
+.add-btn { background: none; border: 1px solid #d0d0c8; border-radius: 6px; padding: 6px 14px; font-size: 12px; color: #555; cursor: pointer; margin-top: 4px; }
+.add-btn:hover { background: #f5f5f0; }
+.auto-hint { background: #f0faf4; border: 1px solid #b0e0c0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #1a6635; margin-top: 10px; display: none; }
+.run-btn { width: 100%; height: 52px; font-size: 16px; font-weight: 600; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.15s; margin-top: 4px; }
+.run-btn:hover { opacity: 0.85; }
+.run-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.result-card { display: none; }
+.result-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.rtab { padding: 6px 14px; border-radius: 99px; font-size: 12px; cursor: pointer; border: 1px solid #d0d0c8; background: #fff; color: #666; }
+.rtab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.result-box { background: #fafaf8; border: 1px solid #e8e8e0; border-radius: 8px; padding: 14px; font-size: 12px; font-family: monospace; color: #444; white-space: pre-wrap; max-height: 360px; overflow-y: auto; line-height: 1.7; }
+.dl-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.dl-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid #d0d0c8; background: #fff; color: #1a1a1a; font-weight: 600; }
+.dl-btn.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.dl-btn:hover { opacity: 0.8; }
+.stat-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.stat { background: #fafaf8; border: 1px solid #e8e8e0; border-radius: 8px; padding: 10px 16px; flex: 1; min-width: 120px; }
+.stat .n { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+.stat .l { font-size: 11px; color: #888; margin-top: 2px; }
+.warn { background: #fff8f0; border: 1px solid #f0d0a0; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #a06010; margin-top: 10px; display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>캡컷 이미지 자동 배치기</h1>
+  <p>SRT 자막 또는 오디오 기준으로 이미지를 캡컷 타임라인에 자동 배치합니다</p>
+</div>
+
+<div class="container">
+
+  <!-- STEP 1: 캡컷 JSON -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">1</span> 캡컷 프로젝트 파일 (draft_content.json)</div>
+    <div class="info-box">
+      캡컷 프로젝트 폴더에서 <strong>draft_content.json</strong> 파일을 업로드하세요.<br>
+      작업 후 이 파일을 다시 원래 폴더에 덮어쓰면 됩니다.
+    </div>
+    <div class="drop-zone" id="jsonZone" onclick="document.getElementById('jsonInput').click()" ondragover="onDrag(event,'jsonZone')" ondragleave="offDrag('jsonZone')" ondrop="onDrop(event,'json')">
+      <input type="file" id="jsonInput" accept=".json" onchange="loadJSON(this)">
+      <div class="icon">📄</div>
+      <div class="label">파일을 끌어다 놓거나 <span>선택</span>하세요</div>
+      <div class="sub">draft_content.json</div>
+    </div>
+    <div id="jsonStatus"></div>
+  </div>
+
+  <!-- STEP 2: 이미지 -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">2</span> 이미지 파일 선택</div>
+    <div class="info-box">
+      <strong>001_자막텍스트.png</strong> 형식의 이미지 파일들을 선택하세요.<br>
+      파일명 순서대로 타임라인에 배치됩니다.
+    </div>
+    <div class="drop-zone" id="imgZone" onclick="document.getElementById('imgInput').click()">
+      <input type="file" id="imgInput" webkitdirectory onchange="loadImages(this)">
+      <div class="icon">📁</div>
+      <div class="label">이미지 <span>폴더</span>를 선택하세요</div>
+      <div class="sub">폴더 안의 이미지가 전부 자동으로 불러와집니다</div>
+    </div>
+    <div id="imgStatus"></div>
+  </div>
+
+  <!-- STEP 3: 기준 파일 -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">3</span> 타임코드 기준 파일</div>
+    <div class="tab-row">
+      <div class="tab active" id="tab-srt" onclick="setMode('srt')">SRT 자막 기준</div>
+      <div class="tab" id="tab-audio" onclick="setMode('audio')">오디오 기준</div>
+    </div>
+
+    <div id="zone-srt">
+      <div class="info-box">자막 <strong>150~250자</strong> 단위로 이미지 한 장씩 매칭됩니다.</div>
+      <div class="drop-zone" id="srtZone" onclick="document.getElementById('srtInput').click()" ondragover="onDrag(event,'srtZone')" ondragleave="offDrag('srtZone')" ondrop="onDrop(event,'srt')">
+        <input type="file" id="srtInput" accept=".srt" onchange="loadSRT(this)">
+        <div class="icon">📝</div>
+        <div class="label">SRT 파일을 <span>선택</span>하세요</div>
+      </div>
+      <div id="srtStatus"></div>
+    </div>
+
+    <div id="zone-audio" style="display:none">
+      <div class="info-box">오디오 총 길이를 이미지 수로 <strong>균등 분배</strong>합니다.</div>
+      <div class="drop-zone" id="audioZone" onclick="document.getElementById('audioInput').click()" ondragover="onDrag(event,'audioZone')" ondragleave="offDrag('audioZone')" ondrop="onDrop(event,'audio')">
+        <input type="file" id="audioInput" accept="audio/*" onchange="loadAudio(this)">
+        <div class="icon">🎵</div>
+        <div class="label">오디오 파일을 <span>선택</span>하세요</div>
+        <div class="sub">MP3, WAV</div>
+      </div>
+      <div id="audioStatus"></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: 챕터 -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">4</span> 챕터 구간 설정 <span style="font-weight:400;color:#aaa;font-size:11px;text-transform:none">(선택사항)</span></div>
+    <div class="info-box">각 챕터가 끝나는 이미지 번호를 입력하세요. 마지막 챕터는 자동으로 나머지 전체가 됩니다.</div>
+    <div id="chapterRows"></div>
+    <div class="auto-hint" id="autoHint"></div>
+    <button class="add-btn" onclick="addChapter()">+ 챕터 추가</button>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="runMatch()" disabled>▶ 자동 배치 실행</button>
+
+  <!-- 결과 -->
+  <div class="card result-card" id="resultCard" style="margin-top:16px">
+    <div class="card-title" style="margin-bottom:14px">✅ 완료</div>
+    <div class="stat-row" id="statRow"></div>
+    <div class="warn" id="warnBox"></div>
+    <div class="result-tabs">
+      <div class="rtab active" onclick="showTab('timecode')">타임코드 목록</div>
+      <div class="rtab" onclick="showTab('folder')">폴더 구조</div>
+    </div>
+    <div class="result-box" id="resultBox"></div>
+    <div class="dl-row">
+      <button class="dl-btn primary" onclick="downloadJSON()">📥 수정된 JSON 다운로드</button>
+      <button class="dl-btn" onclick="downloadTxt()">타임코드 목록 txt</button>
+      <button class="dl-btn" onclick="downloadFolder()">폴더 구조 txt</button>
+    </div>
+    <div class="info-box" style="margin-top:14px">
+      ① 다운로드된 <strong>draft_content.json</strong>을 원래 캡컷 프로젝트 폴더에 <strong>덮어쓰기</strong><br>
+      ② 캡컷에서 해당 프로젝트 열면 이미지가 타임라인에 자동 배치되어 있습니다
+    </div>
+  </div>
+
+</div>
+
+<script>
+let mode = 'srt';
+let jsonData = null;
+let imageFiles = [];
+let srtData = [];
+let audioDuration = 0;
+let chapterCount = 0;
+let matchResult = [];
+let modifiedJSON = null;
+let timecodeText = '';
+let folderText = '';
+
+// 드래그앤드롭
+function onDrag(e, id) { e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function offDrag(id) { document.getElementById(id).classList.remove('over'); }
+function onDrop(e, type) {
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if(type==='json') { const inp = document.getElementById('jsonInput'); inp.files = files; loadJSON(inp); offDrag('jsonZone'); }
+  else if(type==='img') { const inp = document.getElementById('imgInput'); inp.files = files; loadImages(inp); offDrag('imgZone'); }
+  else if(type==='srt') { const inp = document.getElementById('srtInput'); inp.files = files; loadSRT(inp); offDrag('srtZone'); }
+  else if(type==='audio') { const inp = document.getElementById('audioInput'); inp.files = files; loadAudio(inp); offDrag('audioZone'); }
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tab-srt').className = 'tab'+(m==='srt'?' active':'');
+  document.getElementById('tab-audio').className = 'tab'+(m==='audio'?' active':'');
+  document.getElementById('zone-srt').style.display = m==='srt'?'block':'none';
+  document.getElementById('zone-audio').style.display = m==='audio'?'block':'none';
+  checkReady();
+}
+
+function loadJSON(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      jsonData = JSON.parse(e.target.result);
+      document.getElementById('jsonStatus').innerHTML = `<div class="file-ok"><span class="icon">✅</span> ${file.name} 로드 완료</div>`;
+      checkReady();
+    } catch(err) {
+      alert('JSON 파일을 읽을 수 없습니다: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function loadImages(input) {
+  imageFiles = Array.from(input.files).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  document.getElementById('imgStatus').innerHTML = `<div class="file-ok"><span class="icon">✅</span> ${imageFiles.length}개 이미지 로드됨 (${imageFiles[0].name} ~ ${imageFiles[imageFiles.length-1].name})</div>`;
+  updateAutoHint();
+  checkReady();
+}
+
+function parseSRT(text) {
+  const blocks = text.trim().split(/\n\s*\n/);
+  const result = [];
+  for(const block of blocks) {
+    const lines = block.trim().split('\n');
+    if(lines.length < 3) continue;
+    const m = lines[1].match(/(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)/);
+    if(!m) continue;
+    const start = (+m[1]*3600 + +m[2]*60 + +m[3] + +m[4]/1000) * 1000000;
+    const end   = (+m[5]*3600 + +m[6]*60 + +m[7] + +m[8]/1000) * 1000000;
+    result.push({start, end, text: lines.slice(2).join(' ').trim()});
+  }
+  return result;
+}
+
+function loadSRT(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    srtData = parseSRT(e.target.result);
+    document.getElementById('srtStatus').innerHTML = `<div class="file-ok"><span class="icon">✅</span> ${file.name} — ${srtData.length}개 자막, 총 ${fmtTime(srtData[srtData.length-1]?.end||0)}</div>`;
+    checkReady();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function loadAudio(input) {
+  const file = input.files[0]; if(!file) return;
+  const url = URL.createObjectURL(file);
+  const audio = new Audio(url);
+  audio.onloadedmetadata = () => {
+    audioDuration = audio.duration * 1000000;
+    document.getElementById('audioStatus').innerHTML = `<div class="file-ok"><span class="icon">✅</span> ${file.name} — 총 ${fmtTime(audioDuration)}</div>`;
+    checkReady();
+  };
+}
+
+function checkReady() {
+  const hasJSON = jsonData !== null;
+  const hasImg = imageFiles.length > 0;
+  const hasRef = mode==='srt' ? srtData.length>0 : audioDuration>0;
+  document.getElementById('runBtn').disabled = !(hasJSON && hasImg && hasRef);
+}
+
+function addChapter() {
+  const n = chapterCount;
+  const div = document.createElement('div');
+  div.className = 'ch-row'; div.id = 'ch_'+n;
+  div.innerHTML = `<label>챕터 ${n+1}</label><input type="number" min="1" placeholder="끝 번호" id="ch${n}_e" oninput="updateAutoHint()"><span class="hint">번 이미지까지</span><button class="del-btn" onclick="delCh(${n})">×</button>`;
+  document.getElementById('chapterRows').appendChild(div);
+  chapterCount++;
+  updateAutoHint();
+}
+
+function delCh(n) {
+  const el = document.getElementById('ch_'+n); if(el) el.remove();
+  updateAutoHint();
+}
+
+function getChapters() {
+  const ch = [];
+  for(let i=0;i<chapterCount;i++) {
+    const el = document.getElementById('ch_'+i); if(!el) continue;
+    const e = document.getElementById('ch'+i+'_e');
+    if(e && e.value) ch.push({num: ch.length+1, end: parseInt(e.value)});
+  }
+  return ch;
+}
+
+function updateAutoHint() {
+  const ch = getChapters();
+  const total = imageFiles.length;
+  const hint = document.getElementById('autoHint');
+  if(ch.length>0 && total>0) {
+    const last = ch[ch.length-1].end;
+    if(last < total) {
+      hint.style.display = 'block';
+      hint.textContent = `마지막 챕터 (챕터${ch.length+1}): ${last+1}번 ~ ${total}번 이미지 자동 포함`;
+    } else { hint.style.display = 'none'; }
+  } else { hint.style.display = 'none'; }
+}
+
+function fmtTime(us) {
+  const sec = us / 1000000;
+  const h = Math.floor(sec/3600);
+  const m = Math.floor((sec%3600)/60);
+  const s = Math.floor(sec%60);
+  const ms = Math.round((sec%1)*1000);
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')},${String(ms).padStart(3,'0')}`;
+}
+
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random()*16|0, v = c=='x'?r:(r&0x3|0x8);
+    return v.toString(16).toUpperCase();
+  });
+}
+
+// 텍스트 정규화 (공백, 특수문자 제거)
+function normalize(str) {
+  return str.replace(/[\s\.,!?~·\-_\(\)\[\]「」『』【】《》〈〉""'']/g, '');
+}
+
+// 파일명에서 매칭용 텍스트 추출 (숫자_ 제거 후 앞 20자)
+function extractKeyFromFilename(filename) {
+  // 확장자 제거
+  const noExt = filename.replace(/\.[^.]+$/, '');
+  // 앞 숫자_ 패턴 제거 (예: 001_, 01_)
+  const noNum = noExt.replace(/^\d+[_\s]*/, '');
+  // 정규화 후 앞 20자
+  return normalize(noNum).slice(0, 20);
+}
+
+function runMatch() {
+  matchResult = [];
+  if(mode==='srt') matchBySRT();
+  else matchByAudio();
+  buildJSON();
+  showResult();
+}
+
+function matchBySRT() {
+  // SRT 전체 텍스트를 자막 인덱스와 함께 이어붙임
+  const srtNormalized = normalize(srtData.map(s=>s.text).join(''));
+
+  // 각 이미지 파일명에서 키 추출 → SRT에서 위치 찾기
+  const keyPositions = [];
+  for(let i=0;i<imageFiles.length;i++) {
+    const key = extractKeyFromFilename(imageFiles[i].name);
+    const pos = srtNormalized.indexOf(key);
+    keyPositions.push({ idx: i, file: imageFiles[i].name, key, pos });
+  }
+
+  // 매칭 실패한 것 표시
+  const unmatched = keyPositions.filter(k=>k.pos===-1);
+
+  // pos 기준으로 정렬 (혹시 순서가 뒤섞여도 대응)
+  const matched = keyPositions.filter(k=>k.pos!==-1).sort((a,b)=>a.pos-b.pos);
+
+  // pos → 실제 SRT 타임코드 변환
+  // SRT를 정규화한 누적 길이로 어느 자막 인덱스에 해당하는지 찾기
+  const srtCumLen = [];
+  let cum = 0;
+  for(const sub of srtData) {
+    srtCumLen.push(cum);
+    cum += normalize(sub.text).length;
+  }
+
+  function posToSRTIndex(pos) {
+    for(let i=srtCumLen.length-1;i>=0;i--) {
+      if(pos >= srtCumLen[i]) return i;
+    }
+    return 0;
+  }
+
+  // 각 이미지의 시작 타임코드 결정
+  const startTimes = matched.map(k => {
+    const srtIdx = posToSRTIndex(k.pos);
+    return { ...k, srtIdx, startTime: srtData[srtIdx].start };
+  });
+
+  // 끝 시간 = 다음 이미지 시작 시간, 마지막은 SRT 끝
+  for(let i=0;i<startTimes.length;i++) {
+    const r = startTimes[i];
+    const endTime = i < startTimes.length-1
+      ? startTimes[i+1].startTime
+      : srtData[srtData.length-1].end;
+    matchResult.push({
+      idx: r.idx+1,
+      file: r.file,
+      key: r.key,
+      start: r.startTime,
+      end: endTime,
+      duration: endTime - r.startTime,
+      preview: srtData[r.srtIdx]?.text?.slice(0,50) || ''
+    });
+  }
+
+  // 매칭 실패 항목 추가 (경고용)
+  for(const u of unmatched) {
+    matchResult.push({
+      idx: u.idx+1,
+      file: u.file,
+      key: u.key,
+      start: 0, end: 0, duration: 0,
+      preview: '⚠ 매칭 실패 — SRT에서 키를 찾지 못했습니다',
+      failed: true
+    });
+  }
+
+  // idx 순서로 정렬
+  matchResult.sort((a,b)=>a.idx-b.idx);
+}
+
+function matchByAudio() {
+  const count = imageFiles.length;
+  const perImg = Math.floor(audioDuration / count);
+  for(let i=0;i<count;i++) {
+    matchResult.push({
+      idx: i+1,
+      file: imageFiles[i].name,
+      start: i*perImg,
+      end: (i+1)*perImg,
+      duration: perImg,
+      preview: '균등분배'
+    });
+  }
+}
+
+function buildJSON() {
+  const d = JSON.parse(JSON.stringify(jsonData));
+
+  // 기존 video 트랙 찾기
+  const videoTrack = d.tracks.find(t => t.type === 'video');
+  if(!videoTrack) { alert('video 트랙을 찾을 수 없습니다'); return; }
+
+  // 기존 세그먼트에서 extra_material_refs 템플릿 가져오기
+  const templateSeg = videoTrack.segments[0] || {};
+  const extraRefs = templateSeg.extra_material_refs || [];
+
+  // materials.videos 초기화 (기존 유지하면서 새 이미지 추가)
+  const existingPaths = new Set(d.materials.videos.map(v=>v.path));
+
+  const newSegments = [];
+  const newMaterials = [];
+
+  for(const r of matchResult) {
+    if(!r.file) continue;
+    const matId = generateUUID();
+    const segId = generateUUID();
+
+    // material 등록 (이미지 파일 경로는 파일명만 — 사용자가 실제 경로로 수정 필요)
+    newMaterials.push({
+      id: matId,
+      unique_id: '',
+      type: 'photo',
+      duration: 10800000000,
+      path: r.file,
+      media_path: '',
+      local_id: '',
+      has_audio: false,
+      reverse_path: '',
+      intensifies_path: '',
+      reverse_intensifies_path: '',
+      intensifies_audio_path: '',
+      cartoon_path: '',
+      width: 2752,
+      height: 1536,
+      category_id: '',
+      category_name: '',
+      material_id: '',
+      material_name: '',
+      material_url: '',
+      crop: { upper_left_x: 0, upper_left_y: 0, upper_right_x: 1, upper_right_y: 0, lower_left_x: 0, lower_left_y: 1, lower_right_x: 1, lower_right_y: 1 },
+      crop_ratio: 'free',
+      audio_fade: null,
+      crop_scale: 1,
+      extra_type_option: 0,
+      stable: { matrix_path: '', stable_level: 0, time_range: { start: 0, duration: r.duration } },
+      matting: { flag: 0, has_use_quick_brush: false, has_use_quick_eraser: false, interactiveTime: [], path: '', strokes: [] },
+      source: 'none',
+      source_platform: 0,
+      formula_id: '',
+      check_flag: 63487,
+      video_algorithm: { algorithms: [], deflicker: null, motion_blur_config: null, noise_reduction: null, path: '', time_range: null },
+      is_unified_beauty_mode: false,
+      object_locked: null,
+      smart_motion: null,
+      multi_camera_info: null,
+      freeze: null,
+      picture_from: 'none',
+      picture_set_category_id: '',
+      picture_set_category_name: '',
+      team_id: '',
+      local_material_id: '',
+      origin_material_id: '',
+      request_id: '',
+      has_sound_separated: false,
+      is_text_edit_overdub: false,
+      is_ai_generate_content: false,
+      aigc_type: 'none',
+      is_copyright: false,
+      aigc_history_id: '',
+      aigc_item_id: '',
+      local_material_from: '',
+      smart_match_info: null,
+      beauty_face_preset_infos: [],
+      beauty_body_preset_id: '',
+      beauty_face_auto_preset: null,
+      beauty_face_auto_preset_infos: [],
+      beauty_body_auto_preset: null,
+      live_photo_timestamp: -1,
+      live_photo_cover_path: '',
+      content_feature_info: null,
+      corner_pin: null,
+      surface_trackings: [],
+      video_mask_stroke: null,
+      video_mask_shadow: null
+    });
+
+    // 세그먼트 생성
+    const speedId = generateUUID();
+    const placeholderInfoId = generateUUID();
+    const canvasId = generateUUID();
+    const soundId = generateUUID();
+    const colorId = generateUUID();
+    const loudnessId = generateUUID();
+    const vocalId = generateUUID();
+
+    // speeds에 추가
+    d.materials.speeds.push({ id: speedId, type: 'speed', mode: 0, speed: 1, curve_speed: null });
+    d.materials.placeholder_infos.push({ id: placeholderInfoId, type: 'placeholder_info', meta_type: 'none', res_path: '', res_text: '', error_path: '', error_text: '' });
+    d.materials.canvases.push({ id: canvasId, type: 'canvas_color', color: '', blur: 0, image: '', album_image: '', image_id: '', image_name: '', source_platform: 0, team_id: '' });
+    d.materials.sound_channel_mappings.push({ id: soundId, type: 'none', audio_channel_mapping: 0, is_config_open: false });
+    d.materials.material_colors.push({ id: colorId, is_color_clip: false, is_gradient: false, solid_color: '', gradient_colors: [], gradient_percents: [], gradient_angle: 90, width: 0, height: 0 });
+    d.materials.loudnesses.push({ id: loudnessId, enable: false, time_range: null, file_id: '', target_loudness: 0, loudness_param: null });
+    d.materials.vocal_separations.push({ id: vocalId, type: 'vocal_separation', choice: 0, removed_sounds: [], time_range: null, production_path: '', final_algorithm: '', enter_from: '' });
+
+    newSegments.push({
+      id: segId,
+      source_timerange: { start: 0, duration: r.duration },
+      target_timerange: { start: r.start, duration: r.duration },
+      render_timerange: { start: 0, duration: 0 },
+      desc: '',
+      state: 0,
+      speed: 1.0,
+      is_loop: false,
+      is_tone_modify: false,
+      reverse: false,
+      intensifies_audio: false,
+      cartoon: false,
+      volume: 1.0,
+      last_nonzero_volume: 1.0,
+      clip: { scale: {x:1,y:1}, rotation: 0, transform: {x:0,y:0}, flip: {vertical:false,horizontal:false}, alpha: 1.0 },
+      uniform_scale: { on: true, value: 1.0 },
+      material_id: matId,
+      extra_material_refs: [speedId, placeholderInfoId, canvasId, soundId, colorId, loudnessId, vocalId],
+      render_index: 0,
+      keyframe_refs: [],
+      enable_lut: true,
+      enable_adjust: true,
+      enable_hsl: false,
+      visible: true,
+      group_id: '',
+      enable_color_curves: true,
+      enable_hsl_curves: true,
+      track_render_index: 0,
+      hdr_settings: { mode: 1, intensity: 1.0, nits: 1000 },
+      enable_color_wheels: true,
+      track_attribute: 0,
+      is_placeholder: false,
+      template_id: '',
+      enable_smart_color_adjust: false,
+      template_scene: 'default',
+      common_keyframes: [],
+      caption_info: null,
+      responsive_layout: { enable: false, target_follow: '', size_layout: 0, horizontal_pos_layout: 0, vertical_pos_layout: 0 },
+      enable_color_match_adjust: false,
+      enable_color_correct_adjust: false,
+      enable_adjust_mask: false,
+      raw_segment_id: '',
+      lyric_keyframes: null,
+      enable_video_mask: true,
+      digital_human_template_group_id: '',
+      color_correct_alg_result: '',
+      source: 'segmentsourcenormal',
+      enable_mask_stroke: false,
+      enable_mask_shadow: false,
+      enable_color_adjust_pro: false
+    });
+  }
+
+  // videos materials 추가
+  d.materials.videos.push(...newMaterials);
+
+  // 기존 video 트랙 세그먼트 교체
+  videoTrack.segments = newSegments;
+
+  // 전체 duration 업데이트
+  const totalDur = matchResult[matchResult.length-1]?.end || 0;
+  d.duration = totalDur;
+
+  modifiedJSON = d;
+}
+
+function showResult() {
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
+
+  // 통계
+  const chapters = getChapters();
+  const warn = matchResult.filter(r=>!r.file).length;
+  document.getElementById('statRow').innerHTML = `
+    <div class="stat"><div class="n">${matchResult.length}</div><div class="l">총 이미지 수</div></div>
+    <div class="stat"><div class="n">${fmtTime(matchResult[matchResult.length-1]?.end||0)}</div><div class="l">총 재생 시간</div></div>
+    <div class="stat"><div class="n">${chapters.length>0?chapters.length+1+'개':'없음'}</div><div class="l">챕터 수</div></div>
+  `;
+
+  if(warn>0) {
+    const w = document.getElementById('warnBox');
+    w.style.display='block';
+    w.textContent = `⚠ 이미지 파일이 부족합니다. ${warn}개 자막 구간에 매칭할 이미지가 없습니다.`;
+  }
+
+  // 타임코드 목록
+  timecodeText = `이미지 타임코드 목록\n생성: ${new Date().toLocaleString('ko-KR')} / 기준: ${mode==='srt'?'SRT 자막':'오디오 균등분배'}\n${'='.repeat(60)}\n\n`;
+  for(const r of matchResult) {
+    timecodeText += `[${String(r.idx).padStart(3,'0')}] ${r.file||'(이미지 없음)'}\n    ${fmtTime(r.start)} --> ${fmtTime(r.end)}\n    ${r.preview}\n\n`;
+  }
+
+  // 폴더 구조
+  folderText = `폴더 구조 가이드\n${'='.repeat(60)}\n\n📁 전체/ (${matchResult.length}개)\n`;
+  for(const r of matchResult) folderText += `    ${String(r.idx).padStart(3,'0')} ${r.file||'(없음)'}\n`;
+
+  if(chapters.length>0) {
+    let prev=0;
+    for(let i=0;i<chapters.length;i++) {
+      const ch=chapters[i];
+      const slice=matchResult.filter(r=>r.idx>prev&&r.idx<=ch.end);
+      folderText+=`\n📁 챕터${String(i+1).padStart(2,'0')}/ (${prev+1}~${ch.end}번, ${slice.length}개)\n`;
+      for(const r of slice) folderText+=`    ${String(r.idx).padStart(3,'0')} ${r.file||'(없음)'}\n`;
+      prev=ch.end;
+    }
+    if(prev<matchResult.length) {
+      const slice=matchResult.filter(r=>r.idx>prev);
+      folderText+=`\n📁 챕터${String(chapters.length+1).padStart(2,'0')}/ (${prev+1}~끝, ${slice.length}개 자동)\n`;
+      for(const r of slice) folderText+=`    ${String(r.idx).padStart(3,'0')} ${r.file||'(없음)'}\n`;
+    }
+  }
+
+  document.getElementById('resultBox').textContent = timecodeText;
+}
+
+function showTab(t) {
+  document.querySelectorAll('.rtab').forEach(el=>el.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('resultBox').textContent = t==='timecode' ? timecodeText : folderText;
+}
+
+function downloadJSON() {
+  if(!modifiedJSON) return;
+  const blob = new Blob([JSON.stringify(modifiedJSON)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='draft_content.json'; a.click();
+}
+function downloadTxt() {
+  const blob = new Blob([timecodeText],{type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='타임코드_목록.txt'; a.click();
+}
+function downloadFolder() {
+  const blob = new Blob([folderText],{type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='폴더_구조_가이드.txt'; a.click();
+}
+</script>
+</body>
+</html>
