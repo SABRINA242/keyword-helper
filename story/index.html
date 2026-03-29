@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>야담 대본 분리 도구</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0c09;
+    --surface: #1a1610;
+    --surface2: #231f18;
+    --border: #3a3020;
+    --border2: #4e4330;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --amber: #d4882a;
+    --text: #e8dfc8;
+    --text-muted: #9a8f78;
+    --text-dim: #5c5445;
+    --red: #c44;
+    --green: #5a9e6f;
+    --section-colors: #c9a84c, #8fb88f, #7aadcc, #cc8f7a, #a87acc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif KR', serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Decorative top border */
+  .top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--amber), var(--gold), transparent);
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  header::before {
+    content: '◈';
+    display: block;
+    color: var(--gold);
+    font-size: 20px;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  header h1 {
+    font-family: 'Gowun Batang', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold2);
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(201,168,76,0.3);
+  }
+
+  header p {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+  }
+
+  /* API Key Section */
+  .api-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .api-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+
+  .api-toggle:hover { color: var(--text); }
+  .api-toggle .arrow { transition: transform 0.2s; font-size: 10px; }
+  .api-toggle.open .arrow { transform: rotate(90deg); }
+  .api-toggle .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+  .api-toggle .dot.active { background: var(--green); }
+
+  .api-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .api-body.open { display: block; }
+
+  .api-body label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 12px 0 6px;
+    letter-spacing: 1px;
+  }
+
+  .api-body input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .api-body input:focus { border-color: var(--gold); }
+
+  /* Script Input */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    color: var(--text);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--border2); }
+
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 3px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: #1a1610;
+    font-weight: 700;
+  }
+
+  .btn-primary:hover { background: var(--gold2); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    font-size: 12px;
+    padding: 7px 14px;
+  }
+
+  .btn-secondary:hover { background: rgba(201,168,76,0.1); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-download {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    font-size: 13px;
+  }
+
+  .btn-download:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .loading .spinner { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* Results area */
+  #results { margin-top: 8px; }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .results-title {
+    font-family: 'Gowun Batang', serif;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  /* Section card */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-badge {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1610;
+    margin-top: 2px;
+  }
+
+  .section-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .section-title {
+    font-family: 'Gowun Batang', serif;
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .section-title-edit {
+    font-family: 'Gowun Batang', serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    color: var(--gold2);
+    padding: 2px 8px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .edit-icon {
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+    user-select: none;
+  }
+
+  .section-card-header:hover .edit-icon { opacity: 1; }
+
+  .section-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-color: var(--border2);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .tag:hover { border-color: var(--gold); color: var(--gold); }
+
+  .tag-edit {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    border: 1px solid var(--gold);
+    background: rgba(201,168,76,0.1);
+    color: var(--gold2);
+    outline: none;
+    font-family: 'Noto Serif KR', serif;
+    letter-spacing: 0.5px;
+    width: auto;
+    min-width: 60px;
+    max-width: 200px;
+  }
+
+  .section-toggle-icon {
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-top: 4px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .section-card.collapsed .section-toggle-icon { transform: rotate(-90deg); }
+
+  .section-body {
+    padding: 0;
+  }
+
+  .section-card.collapsed .section-body { display: none; }
+
+  /* Script text in section */
+  .script-text {
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+    border-bottom: 1px solid var(--border);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .script-text::-webkit-scrollbar { width: 4px; }
+  .script-text::-webkit-scrollbar-track { background: transparent; }
+  .script-text::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .section-actions {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .scene-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  /* Scene list */
+  .scenes-container {
+    border-top: 1px solid var(--border);
+  }
+
+  .scene-item {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .scene-item:last-child { border-bottom: none; }
+
+  .scene-num {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: monospace;
+    padding-top: 2px;
+    letter-spacing: 1px;
+    min-width: 32px;
+  }
+
+  .scene-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .scene-label {
+    font-size: 12px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scene-chars {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: monospace;
+    margin-left: auto;
+  }
+
+  .scene-text {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  /* Error message */
+  .error-msg {
+    background: rgba(204,68,68,0.1);
+    border: 1px solid rgba(204,68,68,0.3);
+    border-radius: 3px;
+    padding: 12px 16px;
+    color: #e08888;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  /* Status message */
+  .status-msg {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 6px 0;
+  }
+
+  /* Color cycle for sections */
+  .color-0 { background: #c9a84c; }
+  .color-1 { background: #6a9e7a; }
+  .color-2 { background: #5a9ab5; }
+  .color-3 { background: #b57a5a; }
+  .color-4 { background: #8a6ab5; }
+
+  /* ── 섹션 수동 분리 모드 ── */
+  .split-mode {
+    border-top: 1px solid var(--border);
+    padding: 12px 18px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .split-mode-hint {
+    font-size: 12px;
+    color: var(--gold);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .split-paragraph {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    padding: 8px 0;
+    white-space: pre-wrap;
+  }
+
+  .split-sentence {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    display: block;
+    padding: 4px 0;
+  }
+
+  .split-point {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    cursor: pointer;
+    opacity: 0.25;
+    transition: opacity 0.2s;
+    margin: 2px 0;
+  }
+
+  .split-point:hover { opacity: 1; }
+
+  .split-point-line {
+    flex: 1;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .split-point-btn {
+    font-size: 11px;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    border-radius: 20px;
+    padding: 2px 10px;
+    white-space: nowrap;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+  }
+
+  .split-mode-cancel {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .split-mode-cancel:hover { color: var(--text-muted); }
+
+  .scene-split-btn {
+    font-size: 11px;
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 1px 6px;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .scene-split-btn:hover { color: var(--amber); border-color: var(--amber); }
+
+  .scene-split-mode {
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .scene-split-hint {
+    font-size: 11px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .scene-split-sentence {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    display: block;
+    padding: 2px 0;
+  }
+
+  .scene-split-cancel {
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .scene-split-cancel:hover { color: var(--text-muted); }
+  .scene-merge-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 18px 4px 52px;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+  }
+
+  .scene-merge-row:hover { opacity: 1; }
+
+  .scene-merge-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border2);
+  }
+
+  .scene-merge-btn {
+    font-size: 11px;
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 2px 10px;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+    white-space: nowrap;
+  }
+
+  .scene-merge-row:hover .scene-merge-btn {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header h1 { font-size: 22px; }
+    .section-card-header { padding: 12px 14px; }
+    .script-text { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<header>
+  <h1>야담 대본 분리 도구</h1>
+  <p>섹션 자동 분리 &nbsp;·&nbsp; 씬 세분화 &nbsp;·&nbsp; 텍스트 파일 다운로드</p>
+</header>
+
+<div class="container">
+
+  <!-- API Key -->
+  <div class="api-section">
+    <div class="api-toggle" id="apiToggle" onclick="toggleApiPanel()">
+      <div class="dot" id="apiDot"></div>
+      <span>OpenAI API 키 설정</span>
+      <span class="arrow" id="apiArrow">▶</span>
+    </div>
+    <div class="api-body" id="apiBody">
+      <label>API KEY (sk-...)</label>
+      <input type="password" id="apiKey" placeholder="sk-..." oninput="onApiKeyChange()">
+    </div>
+  </div>
+
+  <!-- Script Input -->
+  <div class="section-label">대본 입력</div>
+  <textarea id="scriptInput" rows="18" placeholder="여기에 야담 대본을 붙여넣으세요...&#10;&#10;(23,000자 이상도 괜찮습니다)" oninput="updateCharCount()"></textarea>
+  <div class="char-count"><span id="charCount">0</span>자</div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="splitBtn" onclick="splitSections()" disabled>
+      <span class="spinner" id="splitSpinner"></span>
+      <span id="splitBtnText">섹션 자동 분리</span>
+    </button>
+    <span class="status-msg" id="statusMsg"></span>
+  </div>
+
+  <div id="errorMsg"></div>
+
+  <!-- Results -->
+  <div id="results"></div>
+
+
+
+</div>
+
+<script>
+  let sections = [];
+
+  // 저장된 API 키 불러오기
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('openai_api_key');
+    if (saved) {
+      document.getElementById('apiKey').value = saved;
+      document.getElementById('apiDot').classList.add('active');
+    }
+  });
+
+  // API toggle
+  function toggleApiPanel() {
+    const body = document.getElementById('apiBody');
+    const toggle = document.getElementById('apiToggle');
+    const arrow = document.getElementById('apiArrow');
+    body.classList.toggle('open');
+    toggle.classList.toggle('open');
+    arrow.textContent = body.classList.contains('open') ? '▼' : '▶';
+  }
+
+  function onApiKeyChange() {
+    const key = document.getElementById('apiKey').value.trim();
+    document.getElementById('apiDot').classList.toggle('active', key.startsWith('sk-'));
+    if (key.startsWith('sk-')) localStorage.setItem('openai_api_key', key);
+    else if (key === '') localStorage.removeItem('openai_api_key');
+    checkReady();
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('scriptInput').value.length;
+    document.getElementById('charCount').textContent = len.toLocaleString();
+    checkReady();
+  }
+
+  function checkReady() {
+    const key = document.getElementById('apiKey').value.trim();
+    const script = document.getElementById('scriptInput').value.trim();
+    document.getElementById('splitBtn').disabled = !(key.startsWith('sk-') && script.length > 100);
+  }
+
+  function setLoading(id, loading, defaultText) {
+    const btn = document.getElementById(id + 'Btn') || document.querySelector(`[data-btn="${id}"]`);
+    const spinner = document.getElementById(id + 'Spinner') || document.querySelector(`[data-spinner="${id}"]`);
+    const text = document.getElementById(id + 'BtnText') || document.querySelector(`[data-text="${id}"]`);
+    if (btn) btn.disabled = loading;
+    if (spinner) spinner.style.display = loading ? 'inline-block' : 'none';
+    if (text) text.textContent = loading ? '처리 중...' : defaultText;
+  }
+
+  function showError(msg) {
+    document.getElementById('errorMsg').innerHTML =
+      msg ? `<div class="error-msg">⚠ ${msg}</div>` : '';
+  }
+
+  async function callGPT(systemPrompt, userContent, isLarge) {
+    const key = document.getElementById('apiKey').value.trim();
+    const body = {
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ],
+      temperature: 0.2,
+      max_tokens: isLarge ? 4000 : 2000
+    };
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API 오류 (${res.status})`);
+    }
+
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+
+  function parseJSON(raw) {
+    const cleaned = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    return JSON.parse(cleaned);
+  }
+
+  // ─── SECTION SPLIT ───────────────────────────────────────────
+  async function splitSections() {
+    const script = document.getElementById('scriptInput').value.trim();
+    showError('');
+    document.getElementById('results').innerHTML = '';
+    sections = [];
+
+    const btn = document.getElementById('splitBtn');
+    const spinner = document.getElementById('splitSpinner');
+    const btnText = document.getElementById('splitBtnText');
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    btnText.textContent = '분석 중...';
+    document.getElementById('statusMsg').textContent = '대본을 분석하고 있습니다...';
+
+    const systemPrompt = `당신은 조선시대 야담(민담) 대본을 분석하는 전문가입니다.
+아래 대본을 읽고 섹션을 나누어 주세요.
+
+섹션 분리 기준 (하나라도 해당되면 무조건 새 섹션):
+1. 【장소 변경】 물리적 공간이 달라지면 반드시 새 섹션. 예: 안채→뒷산, 사랑채→사랑방, 장터→집 등 조금만 달라져도 분리
+2. 【시간 변경】 아침/낮/저녁/다음날 등 시간대가 바뀔 때
+3. 【에피소드 전환】 완전히 새로운 사건이나 이야기 흐름으로 넘어갈 때
+
+주의:
+- 같은 에피소드라도 장소가 달라지면 반드시 분리
+- 인물들이 이동하는 장면은 이동 후 도착한 곳을 새 섹션으로
+- 각 섹션의 text는 원본 대본 텍스트를 한 글자도 바꾸지 말고 그대로 포함
+- 반드시 JSON만 출력, 다른 설명 없음
+
+출력 형식 (JSON):
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 제목 (장소/상황 요약)",
+      "place": "장소 (구체적으로)",
+      "time": "시간대",
+      "episode_note": "이 섹션의 에피소드 흐름 한 줄 요약",
+      "text": "원본 대본 텍스트 (해당 섹션 부분 전체, 수정 없이)"
+    }
+  ]
+}`;
+
+    try {
+      const raw = await callGPT(systemPrompt, `대본:\n\n${script}`, true);
+      const parsed = parseJSON(raw);
+      sections = parsed.sections;
+      renderSections();
+      document.getElementById('statusMsg').textContent = `${sections.length}개 섹션으로 분리 완료`;
+    } catch (e) {
+      showError(e.message);
+      document.getElementById('statusMsg').textContent = '';
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      btnText.textContent = '섹션 자동 분리';
+      checkReady();
+    }
+  }
+
+  // ─── RENDER SECTIONS ─────────────────────────────────────────
+  function renderSections() {
+    const container = document.getElementById('results');
+
+    const header = `
+      <hr class="divider">
+      <div class="results-header">
+        <div class="results-title">섹션 분리 결과 (${sections.length}개)</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:12px;color:var(--text-muted)">씬 시작 번호</span>
+            <input type="number" id="sceneStartNum" value="1" min="1" max="999"
+              style="width:64px;background:var(--surface2);border:1px solid var(--border2);border-radius:3px;
+                     padding:6px 8px;color:var(--text);font-size:13px;font-family:monospace;outline:none;text-align:center">
+            <button class="btn btn-secondary" onclick="renumberAllScenes()" style="padding:6px 14px;font-size:12px">전체 씬 번호 재매기기</button>
+          </div>
+          <button class="btn btn-download" onclick="downloadAll()">⬇ 전체 텍스트 다운로드</button>
+        </div>
+      </div>
+    `;
+
+    const cards = sections.map((s, i) => renderSectionCard(s, i)).join('');
+    container.innerHTML = header + cards;
+  }
+
+  function renderSectionCard(s, i) {
+    const colorClass = `color-${i % 5}`;
+    return `
+    <div class="section-card" id="section-${s.id}">
+      <div class="section-card-header" onclick="toggleSection(${s.id})">
+        <div class="section-badge ${colorClass}">${s.id}</div>
+        <div class="section-meta">
+          <div class="section-title-wrap">
+            <div class="section-title" id="section-title-${s.id}">${escHtml(s.title)}</div>
+            <span class="edit-icon" title="제목 수정" onclick="editSectionTitle(event, ${s.id})">✏️</span>
+          </div>
+          <div class="section-tags">
+            <span class="tag" id="tag-place-${s.id}" onclick="editTag(event,${s.id},'place','📍')">📍 ${escHtml(s.place)}</span>
+            <span class="tag" id="tag-time-${s.id}" onclick="editTag(event,${s.id},'time','⏱')">⏱ ${escHtml(s.time)}</span>
+            <span class="tag" id="tag-episode-${s.id}" onclick="editTag(event,${s.id},'episode_note','📖')">📖 ${escHtml(s.episode_note)}</span>
+          </div>
+        </div>
+        <div class="section-toggle-icon">▼</div>
+      </div>
+      <div class="section-body">
+        <div class="script-text" id="script-${s.id}">${escHtml(s.text)}</div>
+        <div class="section-actions">
+          <button class="btn btn-secondary" data-btn="scene-${s.id}" onclick="splitScenes(${s.id})">
+            <span class="spinner" data-spinner="scene-${s.id}" style="display:none"></span>
+            <span data-text="scene-${s.id}">씬 분리</span>
+          </button>
+          <button class="btn btn-secondary" onclick="showSectionSplitMode(${s.id})" style="border-color:var(--amber);color:var(--amber)" id="splitModeBtn-${s.id}">✂ 섹션 직접 분리</button>
+          <button class="btn btn-secondary" onclick="showSectionMergeMenu(${s.id})" style="border-color:#7aadcc;color:#7aadcc">⊕ 섹션 합치기</button>
+          <span class="scene-count" id="scene-count-${s.id}">${Math.round(s.text.length).toLocaleString()}자</span>
+        </div>
+        <div id="section-merge-menu-${s.id}"></div>
+        <div id="split-mode-${s.id}"></div>
+        <div class="scenes-container" id="scenes-${s.id}"></div>
+      </div>
+    </div>`;
+  }
+
+  function toggleSection(id) {
+    document.getElementById(`section-${id}`).classList.toggle('collapsed');
+  }
+
+  // ─── SCENE SPLIT ─────────────────────────────────────────────
+  async function splitScenes(sectionId) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+
+    const btnEl = document.querySelector(`[data-btn="scene-${sectionId}"]`);
+    const spinnerEl = document.querySelector(`[data-spinner="scene-${sectionId}"]`);
+    const textEl = document.querySelector(`[data-text="scene-${sectionId}"]`);
+
+    btnEl.disabled = true;
+    spinnerEl.style.display = 'inline-block';
+    textEl.textContent = '처리 중...';
+
+    const systemPrompt = `당신은 조선시대 야담 대본을 씬(Scene) 단위로 나누는 전문가입니다.
+아래 섹션 대본을 씬 단위로 분리해 주세요.
+
+씬 분리 기준:
+- 씬 하나의 글자수 목표: 110~150자
+- 110자 미만인 씬은 절대 독립 씬으로 두지 말 것. 반드시 앞 또는 뒤 씬과 합쳐야 함
+- 합친 후에도 110자 미만이면 계속 다음 문장을 붙여서 110자 이상이 될 때까지 합치기
+- 150자를 넘어도 문장이 자연스럽게 이어지면 해당 문장 끝까지 포함 후 씬 종료
+- 문장 중간에서 씬을 자르지 말 것 (반드시 문장 끝에서 분리)
+- 같은 이미지 한 장으로 표현 가능한 장면끼리 묶기
+- 인물 행동이나 분위기가 바뀌는 지점을 씬 경계로 고려하되, 글자수 규칙이 우선임
+
+최종 점검: 출력 전에 각 씬의 글자수를 직접 세어서 110자 미만인 씬이 있으면 반드시 재합산할 것
+
+반드시 JSON만 출력, 다른 설명 없음.
+
+출력 형식:
+{
+  "scenes": [
+    {
+      "num": 1,
+      "label": "씬 요약 제목 (장면 한 줄 설명)",
+      "char_count": 123,
+      "text": "씬 원본 텍스트"
+    }
+  ]
+}`;
+
+    try {
+      const raw = await callGPT(systemPrompt, `섹션 제목: ${section.title}\n\n대본:\n\n${section.text}`, true);
+      const parsed = parseJSON(raw);
+      section.scenes = parsed.scenes;
+      renderScenes(sectionId, parsed.scenes);
+      document.querySelector(`#scene-count-${sectionId}`).textContent = `${parsed.scenes.length}개 씬`;
+    } catch (e) {
+      document.querySelector(`#scenes-${sectionId}`).innerHTML =
+        `<div class="error-msg" style="margin:12px 18px">⚠ ${escHtml(e.message)}</div>`;
+    } finally {
+      btnEl.disabled = false;
+      spinnerEl.style.display = 'none';
+      textEl.textContent = '씬 재분리';
+    }
+  }
+
+  function renderScenes(sectionId, scenes) {
+    const container = document.getElementById(`scenes-${sectionId}`);
+    let html = '';
+    scenes.forEach((sc, idx) => {
+      const charCount = sc.text ? sc.text.length : (sc.char_count || 0);
+      const countColor = charCount < 110 ? '#cc8844' : charCount > 150 ? '#cc8844' : '#5a9e6f';
+      html += `
+      <div class="scene-item" id="scene-item-${sectionId}-${sc.num}">
+        <div class="scene-num">${String(sc.num).padStart(3,'0')}</div>
+        <div class="scene-content">
+          <div class="scene-label">
+            <span>${escHtml(sc.label)}</span>
+            <span style="display:flex;gap:6px;align-items:center;margin-left:auto">
+              <span class="scene-chars" style="color:${countColor}">${charCount}자</span>
+              <button class="scene-split-btn" onclick="showSceneSplitMode(${sectionId}, ${sc.num})">✂</button>
+            </span>
+          </div>
+          <div class="scene-text">${escHtml(sc.text)}</div>
+          <div id="scene-split-mode-${sectionId}-${sc.num}"></div>
+        </div>
+      </div>`;
+      // 마지막 씬이어도 구분선 없음 (✂ 버튼으로 통합)
+
+    });
+    container.innerHTML = html;
+  }
+
+  // ─── 전체 씬 번호 재매기기 ───────────────────────────────────
+  function renumberAllScenes() {
+    const startNum = parseInt(document.getElementById('sceneStartNum').value) || 1;
+    let counter = startNum;
+    let total = 0;
+
+    sections.forEach(s => {
+      if (!s.scenes || !s.scenes.length) return;
+      s.scenes.forEach(sc => {
+        sc.num = counter++;
+        total++;
+      });
+      renderScenes(s.id, s.scenes);
+      document.querySelector(`#scene-count-${s.id}`).textContent = `${s.scenes.length}개 씬`;
+    });
+
+    const endNum = counter - 1;
+    document.getElementById('statusMsg').textContent =
+      `씬 번호 재매기기 완료: ${String(startNum).padStart(3,'0')} ~ ${String(endNum).padStart(3,'0')} (총 ${total}개)`;
+  }
+
+  // ─── 문장 분리 유틸 ──────────────────────────────────────────
+  function splitSentences(text) {
+    // 마침표, 대사 끝 " , 독백 끝 ' 뒤에서 분리
+    // 순서: 문장 끝 기호(. ! ?) → 닫는 따옴표(" ') 순서로 처리
+    const result = [];
+    let current = '';
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      current += ch;
+
+      const isBreak =
+        ch === '.' || ch === '!' || ch === '?' ||  // 마침표류
+        ch === '"' || ch === '\u201d' ||             // 대사 닫는 따옴표 " "
+        ch === "'" || ch === '\u2019';               // 독백 닫는 따옴표 ' '
+
+      if (isBreak) {
+        // 다음 문자가 공백이거나 개행이거나 문자열 끝이면 분리
+        const next = text[i + 1];
+        if (!next || next === ' ' || next === '\n' || next === '\r') {
+          const trimmed = current.trim();
+          if (trimmed.length > 0) result.push(trimmed);
+          current = '';
+          // 공백/개행 건너뜀
+          while (text[i + 1] === ' ' || text[i + 1] === '\n' || text[i + 1] === '\r') i++;
+        }
+      }
+    }
+
+    if (current.trim().length > 0) result.push(current.trim());
+    return result;
+  }
+
+  // ─── 태그 인라인 편집 ────────────────────────────────────────
+  function editTag(e, sectionId, field, icon) {
+    e.stopPropagation();
+    const tagEl = document.getElementById(`tag-${field === 'episode_note' ? 'episode' : field}-${sectionId}`);
+    if (tagEl.querySelector('input')) return;
+
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+    const current = section[field];
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'tag-edit';
+    input.value = current;
+    input.style.width = Math.max(60, current.length * 11) + 'px';
+    tagEl.innerHTML = '';
+    tagEl.appendChild(input);
+    input.focus();
+    input.select();
+
+    function save() {
+      const val = input.value.trim() || current;
+      section[field] = val;
+      tagEl.innerHTML = `${icon} ${escHtml(val)}`;
+    }
+
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter') { ev.preventDefault(); save(); }
+      if (ev.key === 'Escape') { tagEl.innerHTML = `${icon} ${escHtml(current)}`; }
+    });
+  }
+
+  // ─── 씬 ✂ 메뉴 ──────────────────────────────────────────────
+  function showSceneSplitMode(sectionId, sceneNum) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section || !section.scenes) return;
+    const scIdx = section.scenes.findIndex(sc => sc.num === sceneNum);
+    if (scIdx === -1) return;
+
+    const hasPrev = scIdx > 0;
+    const hasNext = scIdx < section.scenes.length - 1;
+    const container = document.getElementById(`scene-split-mode-${sectionId}-${sceneNum}`);
+
+    let html = `<div class="scene-split-mode">
+      <div class="scene-split-hint">원하는 작업을 선택하세요</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="split-point-btn" style="padding:5px 14px;color:var(--gold2);border-color:var(--gold)"
+          onclick="showSceneManualSplit(${sectionId}, ${sceneNum})">✂ 이 씬 직접 나누기</button>`;
+
+    if (hasPrev) html += `<button class="split-point-btn" style="padding:5px 14px"
+        onclick="mergeSceneOnly(${sectionId}, ${sceneNum}, 'prev')">↑ 위 씬과 합치기만</button>
+      <button class="split-point-btn" style="padding:5px 14px"
+        onclick="mergeSceneThenSplit(${sectionId}, ${sceneNum}, 'prev')">↑ 위 씬과 합치고 나누기</button>`;
+
+    if (hasNext) html += `<button class="split-point-btn" style="padding:5px 14px"
+        onclick="mergeSceneOnly(${sectionId}, ${sceneNum}, 'next')">↓ 아래 씬과 합치기만</button>
+      <button class="split-point-btn" style="padding:5px 14px"
+        onclick="mergeSceneThenSplit(${sectionId}, ${sceneNum}, 'next')">↓ 아래 씬과 합치고 나누기</button>`;
+
+    html += `</div>
+      <span class="scene-split-cancel" onclick="hideSceneSplitMode(${sectionId}, ${sceneNum})">✕ 취소</span>
+    </div>`;
+    container.innerHTML = html;
+  }
+
+  function hideSceneSplitMode(sectionId, sceneNum) {
+    const el = document.getElementById(`scene-split-mode-${sectionId}-${sceneNum}`);
+    if (el) el.innerHTML = '';
+  }
+
+  // 합치기만 (나누기 없이)
+  function mergeSceneOnly(sectionId, sceneNum, direction) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section || !section.scenes) return;
+    const scIdx = section.scenes.findIndex(sc => sc.num === sceneNum);
+    if (scIdx === -1) return;
+
+    const targetIdx = direction === 'prev' ? scIdx - 1 : scIdx + 1;
+    if (targetIdx < 0 || targetIdx >= section.scenes.length) return;
+
+    const idxA = Math.min(scIdx, targetIdx);
+    const idxB = Math.max(scIdx, targetIdx);
+    const mergedText = section.scenes[idxA].text + ' ' + section.scenes[idxB].text;
+    const merged = { num: 0, label: section.scenes[idxA].label, text: mergedText };
+
+    section.scenes.splice(idxA, 2, merged);
+    section.scenes.forEach((sc, i) => { sc.num = i + 1; });
+    renderScenes(sectionId, section.scenes);
+    document.querySelector(`#scene-count-${sectionId}`).textContent = `${section.scenes.length}개 씬`;
+  }
+
+  // 합치고 → 직접 나누기 모드 진입
+  function mergeSceneThenSplit(sectionId, sceneNum, direction) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section || !section.scenes) return;
+    const scIdx = section.scenes.findIndex(sc => sc.num === sceneNum);
+    if (scIdx === -1) return;
+
+    const targetIdx = direction === 'prev' ? scIdx - 1 : scIdx + 1;
+    if (targetIdx < 0 || targetIdx >= section.scenes.length) return;
+
+    const idxA = Math.min(scIdx, targetIdx);
+    const idxB = Math.max(scIdx, targetIdx);
+    const mergedText = section.scenes[idxA].text + ' ' + section.scenes[idxB].text;
+    const merged = { num: 0, label: section.scenes[idxA].label, text: mergedText };
+
+    section.scenes.splice(idxA, 2, merged);
+    section.scenes.forEach((sc, i) => { sc.num = i + 1; });
+    renderScenes(sectionId, section.scenes);
+    document.querySelector(`#scene-count-${sectionId}`).textContent = `${section.scenes.length}개 씬`;
+
+    // 합쳐진 씬으로 바로 직접 나누기 모드 열기
+    const newNum = section.scenes[idxA].num;
+    setTimeout(() => showSceneManualSplit(sectionId, newNum), 50);
+  }
+
+  // 문장 단위 직접 나누기 모드
+  function showSceneManualSplit(sectionId, sceneNum) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section || !section.scenes) return;
+    const scene = section.scenes.find(sc => sc.num === sceneNum);
+    if (!scene) return;
+
+    const container = document.getElementById(`scene-split-mode-${sectionId}-${sceneNum}`);
+    const sentences = splitSentences(scene.text);
+
+    if (sentences.length < 2) {
+      container.innerHTML = `<div class="scene-split-mode">
+        <div class="scene-split-hint">⚠ 문장이 1개뿐이라 나눌 수 없습니다.</div>
+        <span class="scene-split-cancel" onclick="hideSceneSplitMode(${sectionId}, ${sceneNum})">✕ 닫기</span>
+      </div>`;
+      return;
+    }
+
+    let html = `<div class="scene-split-mode">
+      <div class="scene-split-hint">✂ 나누고 싶은 문장 사이를 클릭하세요</div>`;
+
+    sentences.forEach((sent, idx) => {
+      html += `<span class="scene-split-sentence">${escHtml(sent)}</span>`;
+      if (idx < sentences.length - 1) {
+        html += `
+        <div class="split-point" onclick="doSceneManualSplit(${sectionId}, ${sceneNum}, ${idx + 1})">
+          <div class="split-point-line"></div>
+          <button class="split-point-btn">✂ 여기서 나누기</button>
+          <div class="split-point-line"></div>
+        </div>`;
+      }
+    });
+
+    html += `<span class="scene-split-cancel" onclick="hideSceneSplitMode(${sectionId}, ${sceneNum})">✕ 취소</span></div>`;
+    container.innerHTML = html;
+  }
+
+  // 선택 위치에서 씬 나누기
+  function doSceneManualSplit(sectionId, sceneNum, splitAfterIdx) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section || !section.scenes) return;
+    const scIdx = section.scenes.findIndex(sc => sc.num === sceneNum);
+    if (scIdx === -1) return;
+    const scene = section.scenes[scIdx];
+
+    const sentences = splitSentences(scene.text);
+    const textA = sentences.slice(0, splitAfterIdx).join(' ');
+    const textB = sentences.slice(splitAfterIdx).join(' ');
+
+    const sceneA = { ...scene, text: textA };
+    const sceneB = { ...scene, num: sceneNum + 0.5, label: scene.label, text: textB };
+
+    section.scenes.splice(scIdx, 1, sceneA, sceneB);
+    section.scenes.forEach((sc, i) => { sc.num = i + 1; });
+    renderScenes(sectionId, section.scenes);
+    document.querySelector(`#scene-count-${sectionId}`).textContent = `${section.scenes.length}개 씬`;
+  }
+
+  // ─── 섹션 합치기 ─────────────────────────────────────────────
+  function showSectionMergeMenu(sectionId) {
+    const sIdx = sections.findIndex(s => s.id === sectionId);
+    if (sIdx === -1) return;
+    const container = document.getElementById(`section-merge-menu-${sectionId}`);
+
+    const hasPrev = sIdx > 0;
+    const hasNext = sIdx < sections.length - 1;
+
+    let html = `<div class="split-mode">
+      <div class="split-mode-hint">⊕ 어느 섹션과 합칠까요?</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">`;
+
+    if (hasPrev) html += `<button class="split-point-btn" style="padding:5px 14px"
+        onclick="doSectionMerge(${sectionId}, 'prev')">↑ 위 섹션과 합치기</button>`;
+    if (hasNext) html += `<button class="split-point-btn" style="padding:5px 14px"
+        onclick="doSectionMerge(${sectionId}, 'next')">↓ 아래 섹션과 합치기</button>`;
+    if (!hasPrev && !hasNext) html += `<span style="font-size:12px;color:var(--text-dim)">섹션이 1개뿐이라 합칠 수 없습니다.</span>`;
+
+    html += `</div>
+      <div class="split-mode-cancel" onclick="hideSectionMergeMenu(${sectionId})">✕ 취소</div>
+    </div>`;
+    container.innerHTML = html;
+  }
+
+  function hideSectionMergeMenu(sectionId) {
+    const el = document.getElementById(`section-merge-menu-${sectionId}`);
+    if (el) el.innerHTML = '';
+  }
+
+  function doSectionMerge(sectionId, direction) {
+    const sIdx = sections.findIndex(s => s.id === sectionId);
+    if (sIdx === -1) return;
+
+    const targetIdx = direction === 'prev' ? sIdx - 1 : sIdx + 1;
+    if (targetIdx < 0 || targetIdx >= sections.length) return;
+
+    const idxA = Math.min(sIdx, targetIdx);
+    const idxB = Math.max(sIdx, targetIdx);
+    const secA = sections[idxA];
+    const secB = sections[idxB];
+
+    const merged = {
+      ...secA,
+      title: secA.title,
+      text: secA.text + '\n\n' + secB.text,
+      scenes: [...(secA.scenes || []), ...(secB.scenes || [])]
+    };
+
+    sections.splice(idxA, 2, merged);
+    renderSections();
+    document.getElementById('statusMsg').textContent = `섹션 합치기 완료 → 총 ${sections.length}개 섹션`;
+  }
+
+  // ─── 섹션 수동 분리 모드 (문장 단위) ────────────────────────
+  function showSectionSplitMode(sectionId) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+    const container = document.getElementById(`split-mode-${sectionId}`);
+
+    // 문장 분리: 마침표 포함 야담 문체 기준
+    const sentences = splitSentences(section.text);
+
+    if (sentences.length < 2) {
+      container.innerHTML = `<div class="split-mode"><div class="split-mode-hint">⚠ 문장이 1개뿐이라 분리할 수 없습니다.</div></div>`;
+      return;
+    }
+
+    let html = `<div class="split-mode">
+      <div class="split-mode-hint">✂ 나누고 싶은 문장 사이의 구분선을 클릭하세요</div>`;
+
+    sentences.forEach((sent, idx) => {
+      html += `<div class="split-sentence">${escHtml(sent)}</div>`;
+      if (idx < sentences.length - 1) {
+        html += `
+        <div class="split-point" onclick="doSectionSplit(${sectionId}, ${idx + 1}, this)">
+          <div class="split-point-line"></div>
+          <button class="split-point-btn">✂ 여기서 나누기</button>
+          <div class="split-point-line"></div>
+        </div>`;
+      }
+    });
+
+    html += `<div class="split-mode-cancel" onclick="hideSectionSplitMode(${sectionId})">✕ 취소</div></div>`;
+    container.innerHTML = html;
+  }
+
+  function hideSectionSplitMode(sectionId) {
+    document.getElementById(`split-mode-${sectionId}`).innerHTML = '';
+  }
+
+  function doSectionSplit(sectionId, splitAfterIdx, clickedEl) {
+    const sIdx = sections.findIndex(s => s.id === sectionId);
+    if (sIdx === -1) return;
+    const section = sections[sIdx];
+
+    const sentences = splitSentences(section.text);
+
+    const textA = sentences.slice(0, splitAfterIdx).join(' ');
+    const textB = sentences.slice(splitAfterIdx).join(' ');
+
+    const newId = Date.now();
+    const secA = { ...section, text: textA, scenes: [] };
+    const secB = {
+      ...section,
+      id: newId,
+      title: section.title + ' (분리)',
+      place: section.place,
+      time: section.time,
+      episode_note: section.episode_note,
+      text: textB,
+      scenes: []
+    };
+
+    sections.splice(sIdx, 1, secA, secB);
+    renderSections();
+    document.getElementById('statusMsg').textContent = `섹션 분리 완료 → 총 ${sections.length}개 섹션`;
+  }
+
+  // ─── 섹션 제목 편집 ──────────────────────────────────────────
+  function editSectionTitle(e, sectionId) {
+    e.stopPropagation(); // 헤더 토글 방지
+    const titleEl = document.getElementById(`section-title-${sectionId}`);
+    if (titleEl.tagName === 'INPUT') return; // 이미 편집 중
+
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+
+    const currentText = section.title;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'section-title-edit';
+    input.value = currentText;
+
+    titleEl.replaceWith(input);
+    input.focus();
+    input.select();
+
+    function save() {
+      const newTitle = input.value.trim() || currentText;
+      section.title = newTitle;
+      const div = document.createElement('div');
+      div.className = 'section-title';
+      div.id = `section-title-${sectionId}`;
+      div.textContent = newTitle;
+      input.replaceWith(div);
+    }
+
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); save(); }
+      if (e.key === 'Escape') {
+        const div = document.createElement('div');
+        div.className = 'section-title';
+        div.id = `section-title-${sectionId}`;
+        div.textContent = currentText;
+        input.replaceWith(div);
+      }
+    });
+  }
+
+
+
+  // ─── DOWNLOAD ─────────────────────────────────────────────────
+  function downloadAll() {
+    if (!sections.length) return;
+    let output = '야담 대본 분리 결과\n';
+    output += '='.repeat(60) + '\n\n';
+
+    sections.forEach((s, i) => {
+      const num = i + 1;
+      output += `【섹션 ${num}】 ${s.title}\n`;
+      output += `  장소: ${s.place}  |  시간: ${s.time}\n`;
+      output += `  ${s.episode_note}\n`;
+      output += '-'.repeat(60) + '\n\n';
+
+      if (s.scenes && s.scenes.length) {
+        s.scenes.forEach(sc => {
+          output += `  [${String(sc.num).padStart(3,'0')}] ${sc.label}\n\n`;
+          output += sc.text + '\n\n';
+          output += '  ' + '·'.repeat(30) + '\n\n';
+        });
+      } else {
+        output += s.text + '\n\n';
+      }
+
+      output += '='.repeat(60) + '\n\n';
+    });
+
+    // 씬 번호 범위 계산
+    let minScene = Infinity, maxScene = -Infinity;
+    sections.forEach(s => {
+      if (!s.scenes || !s.scenes.length) return;
+      s.scenes.forEach(sc => {
+        if (sc.num < minScene) minScene = sc.num;
+        if (sc.num > maxScene) maxScene = sc.num;
+      });
+    });
+    const rangeStr = (minScene !== Infinity)
+      ? `${String(minScene).padStart(3,'0')}-${String(maxScene).padStart(3,'0')}`
+      : new Date().toISOString().slice(0,10);
+
+    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `대본분리_${rangeStr}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escHtml(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+</script>
+</body>
+</html>
