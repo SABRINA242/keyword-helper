@@ -144,6 +144,21 @@
 
   .api-body input:focus { border-color: var(--gold); }
 
+  .api-help-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--gold2);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(232,201,106,0.45);
+    padding-bottom: 2px;
+  }
+
+  .api-help-link:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
   /* Script Input */
   .section-label {
     font-size: 11px;
@@ -693,6 +708,9 @@
     <div class="api-body" id="apiBody">
       <label>API KEY (sk-...)</label>
       <input type="password" id="apiKey" placeholder="sk-..." oninput="onApiKeyChange()">
+      <a class="api-help-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">
+        OpenAI API 키 받으러 가기
+      </a>
     </div>
   </div>
 
@@ -732,6 +750,7 @@
     <button class="btn btn-secondary" onclick="chooseDownloadRoot()" style="padding:8px 14px">저장 위치 변경</button>
     <span class="status-msg" id="downloadPathStatus">기본 브라우저 다운로드 사용 중, 언제든 변경 가능</span>
   </div>
+  <div class="status-msg" id="downloadCurrentPath" style="margin-top:6px;color:var(--text-muted);font-family:monospace"></div>
   <div class="status-msg" id="downloadResultMsg" style="margin-top:6px;color:var(--gold)"></div>
 
   <div id="errorMsg"></div>
@@ -746,6 +765,9 @@
 <script>
   let sections = [];
   let downloadRootHandle = null;
+  const DOWNLOAD_HANDLE_DB = 'yadamDownloadDB';
+  const DOWNLOAD_HANDLE_STORE = 'handles';
+  const DOWNLOAD_HANDLE_KEY = 'downloadRoot';
 
   // ─── 저장 / 복원 ─────────────────────────────────────────────
   function saveState() {
@@ -772,7 +794,7 @@
   }
 
   // 저장된 API 키 + 작업 복원
-  window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('DOMContentLoaded', async () => {
     // API 키
     const savedKey = localStorage.getItem('openai_api_key');
     if (savedKey) {
@@ -813,6 +835,7 @@
         }
       } catch(e) { sections = []; }
     }
+    await restoreDownloadRootHandle();
     updateDownloadPathStatus();
   });
 
@@ -851,6 +874,35 @@
     updateDownloadPathStatus();
   }
 
+  function getSavedDownloadRootName() {
+    return localStorage.getItem('yadam_downloadRootName') || '';
+  }
+
+  function setSavedDownloadRootName(name) {
+    if (name) localStorage.setItem('yadam_downloadRootName', name);
+    else localStorage.removeItem('yadam_downloadRootName');
+  }
+
+  function updateDownloadCurrentPath() {
+    const pathEl = document.getElementById('downloadCurrentPath');
+    if (!pathEl) return;
+
+    const folderName = getDownloadFolderName();
+    const rootName = downloadRootHandle?.name || getSavedDownloadRootName();
+
+    if (downloadRootHandle?.name) {
+      pathEl.textContent = `현재 저장 경로: ${downloadRootHandle.name}/${folderName}`;
+      return;
+    }
+
+    if (rootName) {
+      pathEl.textContent = `현재 저장 경로: ${rootName}/${folderName} (다시 연결 전 마지막 저장 위치)`;
+      return;
+    }
+
+    pathEl.textContent = `현재 저장 경로: 기본 다운로드/${folderName}`;
+  }
+
   function updateDownloadPathStatus() {
     const statusEl = document.getElementById('downloadPathStatus');
     if (!statusEl) return;
@@ -858,15 +910,78 @@
     const folderName = getDownloadFolderName();
     if (!('showDirectoryPicker' in window)) {
       statusEl.textContent = '이 브라우저는 폴더 저장 미지원, 기본 다운로드 사용';
+      updateDownloadCurrentPath();
       return;
     }
 
     if (downloadRootHandle) {
       statusEl.textContent = `선택한 폴더/${folderName} 에 저장 중, 언제든 변경 가능`;
+      updateDownloadCurrentPath();
       return;
     }
 
-    statusEl.textContent = `기본 다운로드 사용 중 (변경 시 ${folderName} 폴더 생성)`;
+    if (getSavedDownloadRootName()) {
+      statusEl.textContent = '이전 저장 위치가 기억되어 있습니다. 필요하면 다시 연결해 주세요';
+    } else {
+      statusEl.textContent = `기본 다운로드 사용 중 (변경 시 ${folderName} 폴더 생성)`;
+    }
+    updateDownloadCurrentPath();
+  }
+
+  function openDownloadHandleDb() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DOWNLOAD_HANDLE_DB, 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(DOWNLOAD_HANDLE_STORE)) {
+          db.createObjectStore(DOWNLOAD_HANDLE_STORE);
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function saveDownloadRootHandle(handle) {
+    if (!('indexedDB' in window)) return;
+    const db = await openDownloadHandleDb();
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(DOWNLOAD_HANDLE_STORE, 'readwrite');
+      tx.objectStore(DOWNLOAD_HANDLE_STORE).put(handle, DOWNLOAD_HANDLE_KEY);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    db.close();
+  }
+
+  async function loadDownloadRootHandle() {
+    if (!('indexedDB' in window)) return null;
+    const db = await openDownloadHandleDb();
+    const handle = await new Promise((resolve, reject) => {
+      const tx = db.transaction(DOWNLOAD_HANDLE_STORE, 'readonly');
+      const request = tx.objectStore(DOWNLOAD_HANDLE_STORE).get(DOWNLOAD_HANDLE_KEY);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    return handle;
+  }
+
+  async function restoreDownloadRootHandle() {
+    if (!('showDirectoryPicker' in window)) return;
+    try {
+      const savedHandle = await loadDownloadRootHandle();
+      if (!savedHandle) return;
+
+      const permission = await savedHandle.queryPermission({ mode: 'readwrite' });
+      if (permission === 'granted') {
+        downloadRootHandle = savedHandle;
+        setSavedDownloadRootName(savedHandle.name);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function chooseDownloadRoot() {
@@ -877,6 +992,8 @@
 
     try {
       downloadRootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      setSavedDownloadRootName(downloadRootHandle.name);
+      await saveDownloadRootHandle(downloadRootHandle);
       updateDownloadPathStatus();
       document.getElementById('statusMsg').textContent = `저장 위치 변경 완료 - ${getDownloadFolderName()} 폴더에 저장됩니다`;
     } catch (e) {
@@ -1137,6 +1254,19 @@
             <span class="spinner" data-spinner="scene-${s.id}" style="display:none"></span>
             <span data-text="scene-${s.id}">씬 분리</span>
           </button>
+          <select id="scene-layout-${s.id}"
+            style="background:var(--surface2);border:1px solid var(--border2);border-radius:3px;
+                   padding:7px 10px;color:var(--text);font-size:12px;font-family:monospace;outline:none">
+            <option value="1">1</option>
+            <option value="2by2">2by2</option>
+            <option value="3by2">3by2</option>
+            <option value="3by3">3by3</option>
+          </select>
+          <button class="btn btn-secondary" data-btn="layout-scene-${s.id}" onclick="splitScenesByLayout(${s.id})"
+            style="border-color:var(--gold2);color:var(--gold2)">
+            <span class="spinner" data-spinner="layout-scene-${s.id}" style="display:none"></span>
+            <span data-text="layout-scene-${s.id}">씬 나누기</span>
+          </button>
           <button class="btn btn-secondary" onclick="showSectionSplitMode(${s.id})" style="border-color:var(--amber);color:var(--amber)" id="splitModeBtn-${s.id}">✂ 섹션 직접 분리</button>
           <button class="btn btn-secondary" onclick="showSectionMergeMenu(${s.id})" style="border-color:#7aadcc;color:#7aadcc">⊕ 섹션 합치기</button>
           <button class="btn btn-download" onclick="downloadSectionSceneList(${s.id})">⬇ 이 섹션 씬목록</button>
@@ -1244,6 +1374,138 @@
     final.forEach((sc, i) => { sc.num = i + 1; });
     return final;
   }
+
+  function getSceneLayoutCount(layoutValue) {
+    const layoutMap = {
+      '1': 1,
+      '2by2': 4,
+      '3by2': 6,
+      '3by3': 9
+    };
+    return layoutMap[layoutValue] || 1;
+  }
+
+  function buildScenesFromSentencePlan(sentenceChunks, plannedScenes, targetCount, section) {
+    if (targetCount === 1) {
+      return [{
+        num: 1,
+        label: (section.title || '전체 장면').trim(),
+        text: section.text
+      }];
+    }
+
+    if (!Array.isArray(plannedScenes) || plannedScenes.length !== targetCount) {
+      throw new Error(`선택한 옵션에 맞춰 정확히 ${targetCount}개 씬 계획을 만들지 못했습니다.`);
+    }
+
+    const totalSentences = sentenceChunks.length;
+    let previousEnd = 0;
+    const result = plannedScenes.map((scene, idx) => {
+      const rawEnd = parseInt(scene.end_sentence, 10);
+      const endSentence = Number.isNaN(rawEnd) ? -1 : rawEnd;
+
+      if (endSentence <= previousEnd || endSentence > totalSentences) {
+        throw new Error('씬 경계 계산이 잘못되어 다시 시도해 주세요.');
+      }
+
+      const text = sentenceChunks.slice(previousEnd, endSentence).join('');
+      if (!text) {
+        throw new Error('씬 텍스트가 비어 있어 다시 시도해 주세요.');
+      }
+
+      previousEnd = endSentence;
+      return {
+        num: idx + 1,
+        label: (scene.label || `씬 ${idx + 1}`).trim(),
+        text
+      };
+    });
+
+    if (previousEnd !== totalSentences) {
+      throw new Error('대본 전체가 씬으로 모두 연결되지 않았습니다. 다시 시도해 주세요.');
+    }
+
+    return result;
+  }
+
+  async function splitScenesByLayout(sectionId) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+
+    if (section.scenes && section.scenes.length > 0) {
+      if (!confirm('이미 씬이 분리되어 있습니다. 선택한 옵션으로 다시 나눌까요? (기존 작업이 초기화됩니다)')) return;
+    }
+
+    const layoutValue = document.getElementById(`scene-layout-${sectionId}`)?.value || '1';
+    const targetCount = getSceneLayoutCount(layoutValue);
+    const btnEl = document.querySelector(`[data-btn="layout-scene-${sectionId}"]`);
+    const spinnerEl = document.querySelector(`[data-spinner="layout-scene-${sectionId}"]`);
+    const textEl = document.querySelector(`[data-text="layout-scene-${sectionId}"]`);
+
+    btnEl.disabled = true;
+    spinnerEl.style.display = 'inline-block';
+    textEl.textContent = '처리 중...';
+
+    try {
+      const sentenceChunks = splitSentenceChunks(section.text);
+
+      if (targetCount === 1) {
+        section.scenes = buildScenesFromSentencePlan(sentenceChunks, [], 1, section);
+      } else {
+        if (sentenceChunks.length < targetCount) {
+          throw new Error(`이 섹션은 문장 수가 부족해서 ${targetCount}개 씬으로 나눌 수 없습니다.`);
+        }
+
+        const numberedSentences = sentenceChunks
+          .map((chunk, idx) => `${idx + 1}. ${(chunk || '').replace(/\s+/g, ' ').trim()}`)
+          .join('\n');
+
+        const systemPrompt = `당신은 조선시대 야담 대본을 이미지 제작용 씬(Scene) 단위로 나누는 전문가입니다.
+아래 문장 목록 전체를 빠짐없이 사용해서 정확히 ${targetCount}개의 씬으로 나누어 주세요.
+
+핵심 원칙:
+- 반드시 정확히 ${targetCount}개 씬으로 나눌 것
+- 문장 번호 순서를 유지할 것
+- 어떤 문장도 빠뜨리거나 중복하지 말 것
+- 각 씬은 연속된 문장 묶음이어야 함
+- 첫 씬은 1번 문장부터 시작하고, 마지막 씬은 마지막 문장까지 끝나야 함
+- 각 씬의 끝 문장 번호를 지정할 것
+- 각 씬은 이미지 한 장으로 표현하기 좋은 장면이어야 함
+- 인물 행동, 감정 변화, 상황 전환, 시선 포인트를 고려해 맥락에 맞게 분리할 것
+- 글자수 균등보다 장면의 자연스러움을 우선할 것
+
+반드시 JSON만 출력, 다른 설명 없음.
+
+출력 형식:
+{
+  "scenes": [
+    {
+      "num": 1,
+      "label": "씬 요약 제목",
+      "end_sentence": 3
+    }
+  ]
+}`;
+
+        const raw = await callGPT(systemPrompt, `섹션 제목: ${section.title}\n선택 옵션: ${layoutValue} (${targetCount}씬)\n전체 문장 수: ${sentenceChunks.length}\n\n문장 목록:\n${numberedSentences}`, true);
+        const parsed = parseJSON(raw);
+        section.scenes = buildScenesFromSentencePlan(sentenceChunks, parsed.scenes, targetCount, section);
+      }
+      section.sceneLayoutOption = layoutValue;
+
+      renderScenes(sectionId, section.scenes);
+      document.querySelector(`#scene-count-${sectionId}`).textContent = `${section.scenes.length}개 씬`;
+      document.getElementById('statusMsg').textContent = `${section.title} → ${targetCount}개 씬으로 분리 완료`;
+    } catch (e) {
+      document.querySelector(`#scenes-${sectionId}`).innerHTML =
+        `<div class="error-msg" style="margin:12px 18px">⚠ ${escHtml(e.message)}</div>`;
+    } finally {
+      btnEl.disabled = false;
+      spinnerEl.style.display = 'none';
+      textEl.textContent = '씬 나누기';
+    }
+  }
+
   async function splitScenes(sectionId) {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
@@ -1296,6 +1558,7 @@
       const parsed = parseJSON(raw);
       const minChar = parseInt(document.getElementById('globalMinChar')?.value) || 110;
       section.scenes = mergeShortScenes(parsed.scenes, minChar);
+      delete section.sceneLayoutOption;
       renderScenes(sectionId, section.scenes);
       document.querySelector(`#scene-count-${sectionId}`).textContent = `${section.scenes.length}개 씬`;
     } catch (e) {
@@ -1387,6 +1650,54 @@
 
     if (current.trim().length > 0) result.push(current.trim());
     return result;
+  }
+
+  function splitSentenceChunks(text) {
+    const result = [];
+    let current = '';
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      current += ch;
+
+      const isBreak =
+        ch === '.' || ch === '!' || ch === '?' ||
+        ch === '"' || ch === '\u201d' ||
+        ch === "'" || ch === '\u2019';
+
+      if (isBreak) {
+        const next = text[i + 1];
+        if (ch === '.' && (next === '.' || text[i - 1] === '.')) continue;
+
+        if (!next || next === ' ' || next === '\n' || next === '\r') {
+          while (text[i + 1] === ' ' || text[i + 1] === '\n' || text[i + 1] === '\r') {
+            current += text[i + 1];
+            i++;
+          }
+          if (current.length > 0) result.push(current);
+          current = '';
+        }
+      }
+    }
+
+    if (current.length > 0) result.push(current);
+    return result;
+  }
+
+  function joinSectionTexts(textA, textB) {
+    const left = textA || '';
+    const right = textB || '';
+    if (!left) return right;
+    if (!right) return left;
+
+    const leftEndsWithWhitespace = /\s$/.test(left);
+    const rightStartsWithWhitespace = /^\s/.test(right);
+
+    if (leftEndsWithWhitespace || rightStartsWithWhitespace) {
+      return left + right;
+    }
+
+    return left + '\n' + right;
   }
 
   // ─── 태그 인라인 편집 ────────────────────────────────────────
@@ -1609,8 +1920,9 @@
     const merged = {
       ...secA,
       title: secA.text.length >= secB.text.length ? secA.title : secB.title,
-      text: secA.text + '\n\n' + secB.text,
-      scenes: [...(secA.scenes || []), ...(secB.scenes || [])]
+      text: joinSectionTexts(secA.text, secB.text),
+      scenes: [...(secA.scenes || []), ...(secB.scenes || [])],
+      sceneLayoutOption: ''
     };
 
     sections.splice(idxA, 2, merged);
@@ -1660,14 +1972,14 @@
     if (sIdx === -1) return;
     const section = sections[sIdx];
 
-    const sentences = splitSentences(section.text);
+    const sentences = splitSentenceChunks(section.text);
 
-    const textA = sentences.slice(0, splitAfterIdx).join(' ');
-    const textB = sentences.slice(splitAfterIdx).join(' ');
+    const textA = sentences.slice(0, splitAfterIdx).join('');
+    const textB = sentences.slice(splitAfterIdx).join('');
 
     const newId = Date.now();
     // 긴 쪽이 원래 제목 유지, 짧은 쪽도 같은 제목 (분리 표시 없음)
-    const secA = { ...section, text: textA, scenes: [] };
+    const secA = { ...section, text: textA, scenes: [], sceneLayoutOption: '' };
     const secB = {
       ...section,
       id: newId,
@@ -1676,7 +1988,8 @@
       time: section.time,
       episode_note: section.episode_note,
       text: textB,
-      scenes: []
+      scenes: [],
+      sceneLayoutOption: ''
     };
 
     sections.splice(sIdx, 1, secA, secB);
@@ -1838,6 +2151,35 @@
     return startScene === endScene ? `${startScene}` : `${startScene}-${endScene}`;
   }
 
+  function getFirstSceneInfo(section) {
+    if (!section.scenes || !section.scenes.length) return null;
+    const sortedScenes = [...section.scenes].sort((a, b) => {
+      const aNum = parseInt(a.num, 10);
+      const bNum = parseInt(b.num, 10);
+      return aNum - bNum;
+    });
+    const firstScene = sortedScenes[0];
+    if (!firstScene) return null;
+
+    const sceneNum = String(parseInt(firstScene.num, 10)).padStart(3, '0');
+    const preview = (firstScene.text || '').slice(0, 20).replace(/\n/g, ' ').replace(/[,'"'"'"]/g, '').trim();
+    return {
+      num: sceneNum,
+      label: (firstScene.label || '').trim(),
+      preview
+    };
+  }
+
+  function getSceneLayoutGuideText(section) {
+    const layoutMap = {
+      '1': '한 장면 프롬프트로 만드세요',
+      '2by2': '2by2 시네마틱 시퀀스로 만드세요',
+      '3by2': '3by2 시네마틱 시퀀스로 만드세요',
+      '3by3': '3by3 시네마틱 시퀀스로 만드세요'
+    };
+    return layoutMap[section.sceneLayoutOption] || '';
+  }
+
   async function downloadSectionSceneList(sectionId) {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
@@ -1875,31 +2217,6 @@
   // ─── DOWNLOAD ─────────────────────────────────────────────────
   async function downloadAll() {
     if (!sections.length) return;
-    let output = '야담 대본 분리 결과\n';
-    output += '='.repeat(60) + '\n\n';
-
-    sections.forEach((s, i) => {
-      const num = i + 1;
-      output += `【섹션 ${num}】 ${s.title}\n`;
-      output += `  장소: ${s.place}  |  시간: ${s.time}\n`;
-      output += `  ${s.episode_note}\n`;
-      output += '-'.repeat(60) + '\n\n';
-
-      if (s.scenes && s.scenes.length) {
-        s.scenes.forEach(sc => {
-          const preview = (sc.text || '').slice(0, 20).replace(/\n/g, ' ').replace(/[,'"'"'"]/g, '');
-          output += `  ${String(sc.num).padStart(3,'0')} | ${preview}\n\n`;
-          output += sc.text + '\n\n';
-          output += '  ' + '·'.repeat(30) + '\n\n';
-        });
-      } else {
-        output += s.text + '\n\n';
-      }
-
-      output += '='.repeat(60) + '\n\n';
-    });
-
-    // 씬 번호 범위 계산
     let minScene = Infinity, maxScene = -Infinity;
     sections.forEach(s => {
       if (!s.scenes || !s.scenes.length) return;
@@ -1909,8 +2226,38 @@
       });
     });
     const rangeStr = (minScene !== Infinity)
-      ? `${String(minScene).padStart(3,'0')}-${String(maxScene).padStart(3,'0')}`
+      ? `${String(minScene).padStart(3,'0')}~${String(maxScene).padStart(3,'0')}`
       : new Date().toISOString().slice(0,10);
+
+    let output = `대본분리 ${rangeStr}\n`;
+    output += '='.repeat(60) + '\n\n';
+
+    sections.forEach((s, i) => {
+      const num = i + 1;
+      const sceneRange = getSceneRangeText(s);
+      const layoutGuide = getSceneLayoutGuideText(s);
+      const firstScene = getFirstSceneInfo(s);
+      output += `【섹션 ${num}】 ${s.title}\n`;
+      if (sceneRange) {
+        output += `  씬 범위: ${sceneRange}`;
+        if (layoutGuide) output += ` | ${layoutGuide}`;
+        output += '\n';
+      }
+      if (firstScene) {
+        output += `  시작 씬: ${firstScene.num}`;
+        if (firstScene.label) output += ` | ${firstScene.label}`;
+        output += '\n';
+        if (firstScene.preview) output += `  앞부분: ${firstScene.preview}\n`;
+      }
+      output += `  장소: ${s.place}  |  시간: ${s.time}\n`;
+      output += `  ${s.episode_note}\n`;
+      output += '-'.repeat(60) + '\n\n';
+
+      output += s.text + '\n\n';
+
+      output += '='.repeat(60) + '\n\n';
+    });
+
     await saveTextFile(output, `대본분리_${rangeStr}.txt`);
   }
 
