@@ -721,6 +721,19 @@
     <button class="btn btn-secondary" onclick="resetAll()" style="margin-left:auto;font-size:12px;border-color:var(--red);color:var(--red);padding:6px 14px">↺ 새로 시작</button>
   </div>
 
+  <div class="btn-row" style="margin-top:10px;align-items:flex-end">
+    <span style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-muted)">
+      다운로드 폴더명
+      <input type="text" id="downloadFolderName" value="대본분리" placeholder="대본분리"
+        oninput="onDownloadFolderNameChange()"
+        style="width:180px;background:var(--surface);border:1px solid var(--border2);border-radius:3px;
+               padding:8px 10px;color:var(--text);font-size:13px;font-family:'Noto Serif KR', serif;outline:none">
+    </span>
+    <button class="btn btn-secondary" onclick="chooseDownloadRoot()" style="padding:8px 14px">저장 위치 변경</button>
+    <span class="status-msg" id="downloadPathStatus">기본 브라우저 다운로드 사용 중, 언제든 변경 가능</span>
+  </div>
+  <div class="status-msg" id="downloadResultMsg" style="margin-top:6px;color:var(--gold)"></div>
+
   <div id="errorMsg"></div>
 
   <!-- Results -->
@@ -732,6 +745,7 @@
 
 <script>
   let sections = [];
+  let downloadRootHandle = null;
 
   // ─── 저장 / 복원 ─────────────────────────────────────────────
   function saveState() {
@@ -740,6 +754,7 @@
       localStorage.setItem('yadam_sections', JSON.stringify(sections));
       localStorage.setItem('yadam_minChar', document.getElementById('globalMinChar').value);
       localStorage.setItem('yadam_maxChar', document.getElementById('globalMaxChar').value);
+      localStorage.setItem('yadam_downloadFolderName', document.getElementById('downloadFolderName').value);
     } catch(e) {}
   }
 
@@ -769,6 +784,10 @@
     const maxChar = localStorage.getItem('yadam_maxChar');
     if (minChar) document.getElementById('globalMinChar').value = minChar;
     if (maxChar) document.getElementById('globalMaxChar').value = maxChar;
+    const savedDownloadFolderName = localStorage.getItem('yadam_downloadFolderName');
+    if (savedDownloadFolderName) {
+      document.getElementById('downloadFolderName').value = savedDownloadFolderName;
+    }
     // 대본
     const savedScript = localStorage.getItem('yadam_script');
     if (savedScript) {
@@ -794,6 +813,7 @@
         }
       } catch(e) { sections = []; }
     }
+    updateDownloadPathStatus();
   });
 
   // API toggle
@@ -819,6 +839,50 @@
     document.getElementById('charCount').textContent = len.toLocaleString();
     checkReady();
     saveState();
+  }
+
+  function getDownloadFolderName() {
+    const raw = document.getElementById('downloadFolderName')?.value || '대본분리';
+    return raw.replace(/[\\/:*?"<>|]/g, ' ').trim() || '대본분리';
+  }
+
+  function onDownloadFolderNameChange() {
+    saveState();
+    updateDownloadPathStatus();
+  }
+
+  function updateDownloadPathStatus() {
+    const statusEl = document.getElementById('downloadPathStatus');
+    if (!statusEl) return;
+
+    const folderName = getDownloadFolderName();
+    if (!('showDirectoryPicker' in window)) {
+      statusEl.textContent = '이 브라우저는 폴더 저장 미지원, 기본 다운로드 사용';
+      return;
+    }
+
+    if (downloadRootHandle) {
+      statusEl.textContent = `선택한 폴더/${folderName} 에 저장 중, 언제든 변경 가능`;
+      return;
+    }
+
+    statusEl.textContent = `기본 다운로드 사용 중 (변경 시 ${folderName} 폴더 생성)`;
+  }
+
+  async function chooseDownloadRoot() {
+    if (!('showDirectoryPicker' in window)) {
+      alert('이 브라우저에서는 폴더 선택 저장을 지원하지 않습니다. 크롬 또는 엣지에서 열어 주세요.');
+      return;
+    }
+
+    try {
+      downloadRootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      updateDownloadPathStatus();
+      document.getElementById('statusMsg').textContent = `저장 위치 변경 완료 - ${getDownloadFolderName()} 폴더에 저장됩니다`;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+      alert('저장 위치를 선택하지 못했습니다.');
+    }
   }
 
   function checkReady() {
@@ -1075,6 +1139,7 @@
           </button>
           <button class="btn btn-secondary" onclick="showSectionSplitMode(${s.id})" style="border-color:var(--amber);color:var(--amber)" id="splitModeBtn-${s.id}">✂ 섹션 직접 분리</button>
           <button class="btn btn-secondary" onclick="showSectionMergeMenu(${s.id})" style="border-color:#7aadcc;color:#7aadcc">⊕ 섹션 합치기</button>
+          <button class="btn btn-download" onclick="downloadSectionSceneList(${s.id})">⬇ 이 섹션 씬목록</button>
           <button class="btn btn-download" onclick="downloadSection(${s.id})">⬇ 이 섹션 완료본 다운로드</button>
           <span class="scene-count" id="scene-count-${s.id}">${Math.round(s.text.length).toLocaleString()}자</span>
         </div>
@@ -1663,7 +1728,7 @@
 
 
 
-  function downloadSceneList() {
+  async function downloadSceneList() {
     if (!sections.length) return;
     let output = '';
 
@@ -1687,14 +1752,7 @@
     const rangeStr = minScene !== Infinity
       ? `${String(minScene).padStart(3,'0')}-${String(maxScene).padStart(3,'0')}`
       : 'list';
-
-    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `씬목록_${rangeStr}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    await saveTextFile(output, `씬목록_${rangeStr}.txt`);
   }
 
   function buildSectionDownloadText(section, sectionNum) {
@@ -1728,7 +1786,77 @@
       .slice(0, 40) || 'section';
   }
 
-  function downloadSection(sectionId) {
+  function setDownloadResult(message) {
+    const el = document.getElementById('downloadResultMsg');
+    if (el) el.textContent = message || '';
+  }
+
+  function triggerBrowserDownload(content, fileName) {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    setDownloadResult(`다운로드 시작: ${fileName}`);
+  }
+
+  async function saveTextFile(content, fileName) {
+    if (!downloadRootHandle || !('showDirectoryPicker' in window)) {
+      triggerBrowserDownload(content, fileName);
+      return;
+    }
+
+    try {
+      const folderHandle = await downloadRootHandle.getDirectoryHandle(getDownloadFolderName(), { create: true });
+      const fileHandle = await folderHandle.getFileHandle(fileName, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      document.getElementById('statusMsg').textContent = `${getDownloadFolderName()} 폴더에 저장 완료`;
+      setDownloadResult(`저장 완료: ${getDownloadFolderName()}/${fileName}`);
+    } catch (e) {
+      console.error(e);
+      triggerBrowserDownload(content, fileName);
+      document.getElementById('statusMsg').textContent = '폴더 저장에 실패해 기본 다운로드로 저장했습니다';
+      setDownloadResult(`폴더 저장 실패, 기본 다운로드로 전환: ${fileName}`);
+    }
+  }
+
+  function getSceneRangeText(section) {
+    if (!section.scenes || !section.scenes.length) return '';
+    const sceneNumbers = section.scenes
+      .map(sc => parseInt(sc.num, 10))
+      .filter(num => !Number.isNaN(num))
+      .sort((a, b) => a - b);
+
+    if (!sceneNumbers.length) return '';
+
+    const startScene = String(sceneNumbers[0]).padStart(3, '0');
+    const endScene = String(sceneNumbers[sceneNumbers.length - 1]).padStart(3, '0');
+    return startScene === endScene ? `${startScene}` : `${startScene}-${endScene}`;
+  }
+
+  async function downloadSectionSceneList(sectionId) {
+    const section = sections.find(s => s.id === sectionId);
+    if (!section) return;
+    if (!section.scenes || !section.scenes.length) {
+      alert('먼저 이 섹션의 씬을 분리해 주세요.');
+      return;
+    }
+
+    let output = '';
+    section.scenes.forEach(sc => {
+      const preview = (sc.text || '').slice(0, 20).replace(/\n/g, ' ').replace(/[,'"'"'"]/g, '');
+      output += `${String(sc.num).padStart(3,'0')}_${preview}\n`;
+    });
+
+    const sceneRange = getSceneRangeText(section) || '씬목록';
+    await saveTextFile(output, `${sceneRange}씬목록.txt`);
+  }
+
+  async function downloadSection(sectionId) {
     const sectionIndex = sections.findIndex(s => s.id === sectionId);
     if (sectionIndex === -1) return;
 
@@ -1736,33 +1864,16 @@
     const sectionNum = sectionIndex + 1;
     const output = buildSectionDownloadText(section, sectionNum);
     const safeTitle = sanitizeFileName(section.title);
-    let sceneRange = `섹션${String(sectionNum).padStart(2,'0')}`;
-
-    if (section.scenes && section.scenes.length) {
-      const sceneNumbers = section.scenes
-        .map(sc => parseInt(sc.num, 10))
-        .filter(num => !Number.isNaN(num))
-        .sort((a, b) => a - b);
-
-      if (sceneNumbers.length) {
-        const startScene = String(sceneNumbers[0]).padStart(3, '0');
-        const endScene = String(sceneNumbers[sceneNumbers.length - 1]).padStart(3, '0');
-        sceneRange = startScene === endScene ? `${startScene}씬` : `${startScene}-${endScene}씬`;
-      }
-    }
+    let sceneRange = getSceneRangeText(section)
+      ? `${getSceneRangeText(section)}씬`
+      : `섹션${String(sectionNum).padStart(2,'0')}`;
 
     const fileName = `${sceneRange}_${safeTitle}.txt`;
-    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
+    await saveTextFile(output, fileName);
   }
 
   // ─── DOWNLOAD ─────────────────────────────────────────────────
-  function downloadAll() {
+  async function downloadAll() {
     if (!sections.length) return;
     let output = '야담 대본 분리 결과\n';
     output += '='.repeat(60) + '\n\n';
@@ -1800,14 +1911,7 @@
     const rangeStr = (minScene !== Infinity)
       ? `${String(minScene).padStart(3,'0')}-${String(maxScene).padStart(3,'0')}`
       : new Date().toISOString().slice(0,10);
-
-    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `대본분리_${rangeStr}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    await saveTextFile(output, `대본분리_${rangeStr}.txt`);
   }
 
   function escHtml(str) {
